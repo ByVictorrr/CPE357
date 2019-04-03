@@ -1,5 +1,5 @@
-#ifndef PART5_H
-#define PART5_H
+#ifndef PART6_H
+#define PART6_H
 
 struct point
 {
