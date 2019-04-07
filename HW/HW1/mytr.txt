@@ -1,0 +1,23 @@
+# pseduo code for mytr
+
+formats:
+	1.) mytr 'SET1' 'SET2'
+ 	2.) mytr -d 'SET'	
+
+var: char *input[];
+
+program:
+	Decide what format has been inputted to the shell
+	Read in Input from stdin
+	if format_1
+		if SET1 > SET2
+		Translate {SET1[SET2_SIZE-1],..,SET1[SET1_SIZE -1]} -> SET2[SET2_SIZE-1] 
+	        Translate {SET1[i] -> SET2[i]} on input
+	if format_2
+		delete chars in input that are shown in SET 
+	
+
+			
+		
+		 
+	
