@@ -1,0 +1,63 @@
+# pseduo code for mytr
+
+formats:
+	1.) mytr 'SET1' 'SET2'
+ 	2.) mytr -d 'SET'	
+
+var: char *input[];
+
+program:
+
+	get command line arguments
+	decide what format the command line arguments are
+
+	IF argument count isnt 3
+		print usage wrong
+		exit program 
+	ELSE
+		read line from user
+		check the format of command line arugments
+
+		IF format has -d first than a string
+			WHILE transversing the input line
+				IF any chars in SET is in input line
+					delete that character in string line
+				ELSE
+					print orignal line
+				ENDIF
+			
+		ELSE
+			WHILE transversing the input line
+				IF any of SET1 characters are in line
+					IF SET1 has greater length than SET2
+						
+						WHILE	SET1 char isnt first char at the index last of SET2 
+							relate SET2 last char, get that index, relate that last character to SET1[SET2 last char],....,SET1[SET1]
+							delete all elements in SET1 that isnt in line
+							delete corresponding elements in SET2 
+							get the index in which SET1 chars ar and what char we are searching for in SET1
+							use the array indexs where SET1 chars are in line to replace SET2 char in line
+				
+						Replace SET1 string corresponding to last index of SET2 up to SET1 size with SET2 last char
+
+					ELSE
+	
+						delete all elements in SET1 that isnt in line
+						delete corresponding elements in SET2 
+						get the index in which SET1 chars ar and what char we are searching for in SET1
+						use the array indexs where SET1 chars are in line to replace SET2 char in line
+				
+					ENDIF
+				ELSE
+					print of original line
+				ENDIF
+		ENDIF
+	ENDIF
+				
+			
+	
+
+			
+		
+		 
+	
