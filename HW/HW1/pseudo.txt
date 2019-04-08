@@ -24,7 +24,7 @@ program:
 				IF any of SET1 characters are in line
 					delete all elements in SET1 that isnt in line
 					delete corresponding elements in SET2 
-					get the index in which SET1 chars are in line
+					get the index in which SET1 chars ar and what char we are searching for in SET1
 					use the array indexs where SET1 chars are in line
 				
 //what if we used a linked list 				
