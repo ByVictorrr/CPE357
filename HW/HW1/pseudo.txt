@@ -1,0 +1,33 @@
+# pseduo code for mytr
+
+formats:
+	1.) mytr 'SET1' 'SET2'
+ 	2.) mytr -d 'SET'	
+
+var: char *input[];
+
+program:
+	get command line arguments
+	decide what format the command line arguments are
+
+	if argument count isnt 3
+		print usage wrong
+		exit program 
+	else
+		read line from user
+		check the format of command line arugments
+		if format has -d first than a string
+			
+		else
+			while transversing the input line
+				if any of SET1 characters are in line
+					get the index's 
+					change values of line using the index  
+				
+			
+	
+
+			
+		
+		 
+	
