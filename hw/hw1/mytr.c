@@ -15,7 +15,6 @@ int strl(const char * s); /*for getting the length of a string*/
 int getFormat(int argc, const char *argv[]); /*type of format of commandline arguments*/
 int foundInLine(char c); /* returns the index of set/set1 char that is found in line; returns 1 if that char is found, and return 0 if not found */
 int deleteChar(char *line, char c); /* for usage 2; to delete char from set, in line*/ 
-void swap(char *line, int i, int j); /* swaps values at index i and j*/
 
 
 struct node
@@ -47,26 +46,9 @@ main_loop:
 }
 
 
-/*deleteChar: for -d flag, input set and it deletes a the 
-int deleteChars(const char *delete, int size_delete)
-{
-	char c,i;
-	i=0;
-	while ((c=getchar()) != EOF ){
-		for ( i=0; i< size_delete; i++)
-			if ( delete[i] != c)
-				output[i] = c;
-	return 1;
-	}
-	return -1; /*EOF*/
-}
-/*compareSETS: to see if */
 int compareSETS(const char *set1, const char *set2)
 {
 	if (strl(set1) > strl(set2){
-		
-
-
 	
 }
 
