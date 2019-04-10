@@ -134,7 +134,7 @@ int lastNonRepeating(char *set1, char *dupPtr)
 }
 int main()
 {
-	char *set1 = "vickyv";
+	char *set1 = "rorkdr";
 	char *set2 = "kayadf";	
 	char *baseAddr = set1;
 	int size1 = strl(set1);
