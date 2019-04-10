@@ -110,22 +110,25 @@ int lastNonRepeating(char *set1, char *dupPtr)
 {
 	int index = 0, i;
 	int count = 0;
-	int j= numOfDupChars(*set1, dupPtr) ; 
+	int j= numOfDupChars(*set1, dupPtr);
+	if (j==0)
+		j=1;
 	int k;
 	char c = *set1;
 
 		for (i=0; set1[i] != '\0' ; i++){
 		/*j tells us how many duplicates there are for a given char*/
-			if (j == 0)
-			{
-				index = count;
-				break;
-			}
 			if (c == set1[i])
 			{
 				j--; /*j-1 more differnt characters in set1*/
 				count++;
 			}
+			else if (j == 0)
+			{
+				index = count; /*i maybe?*/
+				break;
+			}
+
 			else
 				count++; 
 		}	
@@ -133,14 +136,23 @@ int lastNonRepeating(char *set1, char *dupPtr)
 }
 int main()
 {
-	char *set1 = "freadfunny";
+	char *set1 = "armaner";
 	char *set2 = "kay";	
-	/*j
+	int size1 = strl(set1);
+	int indarr[20];
+	/*
 	printf("should be 1 for duplicates: %d \n", charDup(char1));
 	printf("should be 2 for no duplicates: %d \n", charDup(char2));
-*/	printf("%d",charDup(set1));
-	printf("\nindex shoudl equal 5 where f: %d", lastNonRepeating(set1, dupPtr));
 
+*/	printf("%d",charDup(set1));
+	printf("\ndupPtr : %s", dupPtr);
+	int i=0;
+	while (--size1 >  0)
+	{
+		indarr[i] = lastNonRepeating(set1++,dupPtr++)+i; /*add i because every time we add one ++set changes size of input*/
+		printf("\n\nvictors last non reapeating is at index: %d", indarr[i]);
+		i++;
+	}
 	return 0;
 }
 
