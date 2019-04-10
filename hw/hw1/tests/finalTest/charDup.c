@@ -5,7 +5,6 @@
 
 char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line*/
 char *dupPtr = NULL;
-int sp = -1;
 
 int strl(char * s)
 {
@@ -134,7 +133,7 @@ int lastNonRepeating(char *set1, char *dupPtr)
 }
 int main()
 {
-	char *set1 = "rorkdr";
+	char *set1 = "viorkidr";
 	char *set2 = "kayadf";	
 	char *baseAddr = set1;
 	int size1 = strl(set1);
@@ -158,7 +157,7 @@ int main()
 		printf("\n\nindex = {v,i,c,t,o,r,v} last non reapeating is at index: %d", indarr[i]);
 		i++;
 		if(dubSize >0)
-			dupPtr++;
+			dupPtr++; /*error - we need something to tell us we can move on*/
 
 
 	}
