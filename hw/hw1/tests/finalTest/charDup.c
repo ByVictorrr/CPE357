@@ -109,7 +109,12 @@ int lastNonRepeating(char *set1, char *dupPtr)
 {
 	int index = 0, i;
 	int count = 0;
+	char *base = dupPtr;
 	int j= numOfDupChars(*set1, dupPtr)+1;
+
+	while (j == 1 && *dupPtr != '\0')
+		j = numOfDupChars(*set1, ++dupPtr)+1;
+
 	int k;
 	char c = *set1;
 
@@ -153,11 +158,14 @@ int main()
 	int i=0;
 	while (size1-- >  0)
 	{	
-		indarr[i] = lastNonRepeating(set1++,dupPtr)+i; /*add i because every time we add one ++set changes size of input*/
+		indarr[i] = lastNonRepeating(set1++,dupPtr++)+i; /*add i because every time we add one ++set changes size of input*/
 		printf("\n\nindex = {v,i,c,t,o,r,v} last non reapeating is at index: %d", indarr[i]);
 		i++;
-		if(dubSize >0)
-			dupPtr++; /*error - we need something to tell us we can move on*/
+		
+		/*we gotta use strlen(dubPtr) to indicate when */
+		if(strl(dupPtr) >0)
+			;
+		/*	dupPtr++;*/ /*error - we need something to tell us we can move on*/
 
 
 	}
