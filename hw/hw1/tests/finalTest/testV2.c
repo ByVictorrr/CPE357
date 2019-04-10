@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #define MAXCHAR 1000
 
 char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line*/
@@ -162,9 +163,11 @@ int charDup(char *set1)
 				else if (dupPtr != NULL)
 					dupPtr[k-1] = set1[j]; /* duplicate*/
 			}
-	dupPtr[k+1] = '\0'; /* to tell in the heap when the last value is*/
+	dupPtr[k] = '\0'; /* to tell in the heap when the last value is*/
 	if (k>0)
 		return 1; /* if at least one dup*/
+
+	free(dupPtr);
 	return 0;
 }
  
@@ -249,27 +252,52 @@ main_loop:
 				return; /*hit the EOF*/
 				int size_argv1 = strl(argv[1]);
 				int size_argv2 = strl(argv[2]);
-				int i = 0;
+				int i = 0, j = 0;
 				int size = strl(line);
-				/*j
+				char *baseSet1 = argv[1];
+				char *baseSet2 = argv[2];
+				int indexArr[MAXCHAR]; /*for duplicate indexes*/
+								/*
 				printf("should be 1 for duplicates: %d \n", charDup(argv[1]));
 				printf("should be 2 for no duplicates: %d \n", charDup(argv[2]));
-			*/	
+			*/
+
+
+
+
 				if (cmpStr(argv[1], argv[2]))  /* if argv[1] is longer than argv[2] than map the last char in set 2 to the same index +i ... index size of argv[1]*/
 				{
-					/* maps char to char until last char of argv[2]
-					 * then it maps {argv[1][strl(argv[2])-1], ...,argv[1][strl(argv[1])-1]} -> argv[2][strl(argv[2])-1];
-					 */
-					
-					printf("line before mapChar: %s ",line);
-					while (--size_argv2 > 0 ) /*not at last value of argv[2]*/
+					if (charDup(argv[1])==1) /* if there is at leaste one duplicate*/
+					{	
+						int dup_size = strl(dupPtr);
+						while (size_argv1-- >  0)
+						{	
+							indexArr[i] = lastNonRepeating(argv[1]++,dupPtr)+i; /*add i because every time we add one ++set changes size of input*/
+							printf("\n\nindex = {v,i,c,t,o,r,v} last non reapeating is at index: %d", indexArr[i]);
+							i++;
+						if(dup_size >0)
+							dupPtr++;
+						}
+						
+						while (size-- > 0)
+						{
+							/* i+=mapChar(line, baseSet1[indexArr[j]], indexArr[j] > strl(argv[2])-1 ? argv[2][strl(argv[2])-1] : argv[2][indexArr[j]] );*/
+							i+=mapChar(line, baseSet1[indexArr[j]],argv[2][indexArr[j]] );
+							j++;
+	
+						}
+						printf("\n\noutput line: %s\n", line);
+
+					}else{ /*no duplicates*/
+						printf("line before mapChar: %s ",line);
+						while (--size_argv2 > 0 ) /*not at last value of argv[2]*/
 							i+=mapChar(line, *argv[1]++, *argv[2]++);
 					/*when last value in argv[2]*/
-					/*mapStringToChar(line, char *set(pointing to address of last index of argv[2]), c2)*/
-					
-					printf("\nline before StringToChar: %s ",line);
-					i+=mapStringToChar(line, argv[1], *argv[2]);
-					printf("\nline changed: %s ",line);
+		
+						printf("\nline before StringToChar: %s ",line);
+						i+=mapStringToChar(line, argv[1], *argv[2]);
+						printf("\nline changed: %s ",line);
+					}
 				}
 			
 				else{ /* if argv[1] is less than or equal to argv[2] lenght*/
