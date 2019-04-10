@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #define MAXCHAR 1000
 
-char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line
- */
+char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line*/
 char *dupPtr = NULL;
+int sp = -1;
 
-int strl(char * s)
+int strl(char * s
 {
 		char * base = s;
 
@@ -49,7 +49,6 @@ int deleteChar(char *line, char c)
 	return 1; /*c is in line*/
 }                    
 
-
 /* getDup: returns a pointer to space allocated in heap, if there are duplicates*/
 char *getDup(char *set1)
 {
@@ -87,6 +86,22 @@ int charDup(char *set1)
 	return 0;
 }
 
+ 
+/*numOfChars: counts the number number of duplicated characters in dupPtr
+ * returns 0: if no chars foundj
+ */
+int numOfDupChars(char c, char *dupPtr)
+{
+	int i,j;
+	for (i = 0,j=0; i< strl(dupPtr); i++)
+		if ( *dupPtr == c)
+		{
+			dupPtr++;
+			j++;
+		}
+	return j;
+}
+
 int main()
 {
 	char *char1 = "hihhdfi";
@@ -104,7 +119,18 @@ int main()
 	else
 		printf("should be 0 for no duplicates: %d \n", 0);
 
-
+	char *baseAddr = char1;
+	int i=1; /*line has numOfchars plus one*/
+	while((i = numOfChars(line[i-1], dupPtr)+1) != 1){ /* while there is a duplicate*/
+	int j;	
+	for(int i = 0; i < strl(char1); i++)	
+		for ( j = 0; j < numOfChars(line[i], dupPtr)+1 ;) /* go
+		/*incrment three times each time decrmenting till find one */
+	if ( charDup(char1) == 1) 
+		while && *char1 == *++dupPtr) 
+	else
+		/*normal map because there is no duplicate*/
+}
 	return 0;
 }
 
