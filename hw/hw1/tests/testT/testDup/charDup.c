@@ -157,9 +157,6 @@ int main()
 		indarr[i] = lastNonRepeating(set1++,dupPtr)+i; /*add i because every time we add one ++set changes size of input*/
 		printf("\n\nindex = {v,i,c,t,o,r,v} last non reapeating is at index: %d", indarr[i]);
 		i++;
-		if(dubSize >0)
-			dupPtr++;
-
 
 	}
 	int sizeline = strl(line);
