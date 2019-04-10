@@ -7,7 +7,7 @@ char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is
 char *dupPtr = NULL;
 int sp = -1;
 
-int strl(char * s
+int strl(char * s)
 {
 		char * base = s;
 
@@ -102,36 +102,45 @@ int numOfDupChars(char c, char *dupPtr)
 	return j;
 }
 
+/* getLastRepeating - this function return the index of the last orccuring character in a str
+ * can pass in for set an incrmenting address to check duplicates for every char
+ * /
+*/
+int lastNonRepeating(char *set1, char *dupPtr)
+{
+	int index = 0, i;
+	int count = 0;
+	int j= numOfDupChars(*set1, dupPtr) ; 
+	int k;
+	char c = *set1;
+
+		for (i=0; set1[i] != '\0' ; i++){
+		/*j tells us how many duplicates there are for a given char*/
+			if (j == 0)
+			{
+				index = count;
+				break;
+			}
+			if (c == set1[i])
+			{
+				j--; /*j-1 more differnt characters in set1*/
+				count++;
+			}
+			else
+				count++; 
+		}	
+	return index;
+}
 int main()
 {
-	char *char1 = "hihhdfi";
-	char *char2 = "kay";	
+	char *set1 = "freadfunny";
+	char *set2 = "kay";	
 	/*j
 	printf("should be 1 for duplicates: %d \n", charDup(char1));
 	printf("should be 2 for no duplicates: %d \n", charDup(char2));
-*/	
-	if (charDup(char1) > 0)
-	{
-		printf("\nshould be 1 for duplicates: %d \n", 1);
-		printf("\nptr = shoudl equal h: %s", dupPtr);
-		free(dupPtr);
-	}
-	else
-		printf("should be 0 for no duplicates: %d \n", 0);
+*/	printf("%d",charDup(set1));
+	printf("\nindex shoudl equal 5 where f: %d", lastNonRepeating(set1, dupPtr));
 
-	char *baseAddr = char1;
-	int i=1; /*line has numOfchars plus one*/
-	while((i = numOfChars(line[i-1], dupPtr)+1) != 1){ /* while there is a duplicate*/
-	int j;	
-	for(int i = 0; i < strl(char1); i++)	
-		for ( j = 0; j < numOfChars(line[i], dupPtr)+1 ;) /* go
-		/*incrment three times each time decrmenting till find one */
-	if ( charDup(char1) == 1) 
-		while && *char1 == *++dupPtr) 
-	else
-		/*normal map because there is no duplicate*/
-}
 	return 0;
 }
-
 
