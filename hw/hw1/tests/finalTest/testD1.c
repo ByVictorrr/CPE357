@@ -141,7 +141,7 @@ main_loop:
 	switch(getFormat(argc,argv[1]))
 	{
 		case 0: /* usage error*/
-			printf("usage:\n mytr [-d] 'set1' 'set2'");
+			printf("usage:\n mytr [-d] 'set1' 'set2'\n");
 			break;
 
 		case 1: /* mytr -d 'set' option*/

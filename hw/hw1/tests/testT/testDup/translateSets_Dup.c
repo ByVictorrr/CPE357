@@ -6,6 +6,8 @@
 char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line
  */
 char *dupPtr = NULL;
+int top = -1; /*TPS*/
+
 
 int strl(char * s)
 {
@@ -24,7 +26,7 @@ int mapChar(char *line, char c1, char c2)
 {                                                                                                                                                               
 	int i,j;
 
-	for ( i=0, j=0; i< strl(line); i++) /*plus one because of null char not recognized by strl*/
+		for ( i=0, j=0; i< strl(line); i++) /*plus one because of null char not recognized by strl*/
 				if (line[i] == c1){
 					line[i] = c2;
 					j++;
@@ -35,6 +37,12 @@ int mapChar(char *line, char c1, char c2)
 	return 1; /*c1 is in line*/
 }                    
 
+int lastNonRepeating(char c)
+{
+	int index = 0, i;
+
+	for ( i= 0; i< num 
+}
 
 /* getDup: returns a pointer to space allocated in heap, if there are duplicates*/
 char *getDup(char *set1)
@@ -112,6 +120,23 @@ int mapStringToChar(char *line, char *lastChars, char c2 )
 	return 1; /*c1 is in line*/
 }
 
+
+/*
+ *
+ */
+
+char pop()
+{
+	char c;
+	if(top != -1)
+	{
+		c=dupPtr[top];
+		dupPtr[top] =
+		top-=1;
+		return c;
+	}
+	return '\0';
+}
 int main()
 {	line[0] = 'a';
 	line[1] = 'h';
