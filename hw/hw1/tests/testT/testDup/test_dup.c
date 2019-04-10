@@ -5,6 +5,7 @@
 
 char line[MAXCHAR]; /*deleteChar: for -d flag, deletes each char in set, that is found in line*/
 char *dupPtr = NULL;
+int sp = -1;
 
 int strl(char * s)
 {
@@ -68,7 +69,7 @@ int charDup(char *set1)
 	int i, j;
 	int k=0; /*indicate how many duplicates, alse used to incrment char array*/
 
-	for(i = 0; i< strl(set1)-1; i++)
+	for(i = 0; i< strl(set1); i++)
 		for (j = i+1;  j < strl(set1); j++)
 			if ( set1[i] == set1[j]){
 				if (++k==1 && dupPtr == NULL) /* if at least one duplicate create memory*/	
@@ -109,12 +110,7 @@ int lastNonRepeating(char *set1, char *dupPtr)
 {
 	int index = 0, i;
 	int count = 0;
-	char *base = dupPtr;
 	int j= numOfDupChars(*set1, dupPtr)+1;
-
-	while (j == 1 && *dupPtr != '\0')
-		j = numOfDupChars(*set1, ++dupPtr)+1;
-
 	int k;
 	char c = *set1;
 
@@ -138,7 +134,7 @@ int lastNonRepeating(char *set1, char *dupPtr)
 }
 int main()
 {
-	char *set1 = "viorkidr";
+	char *set1 = "vickyv";
 	char *set2 = "kayadf";	
 	char *baseAddr = set1;
 	int size1 = strl(set1);
@@ -158,15 +154,9 @@ int main()
 	int i=0;
 	while (size1-- >  0)
 	{	
-		indarr[i] = lastNonRepeating(set1++,dupPtr++)+i; /*add i because every time we add one ++set changes size of input*/
+		indarr[i] = lastNonRepeating(set1++,dupPtr)+i; /*add i because every time we add one ++set changes size of input*/
 		printf("\n\nindex = {v,i,c,t,o,r,v} last non reapeating is at index: %d", indarr[i]);
 		i++;
-		
-		/*we gotta use strlen(dubPtr) to indicate when */
-		if(strl(dupPtr) >0)
-			;
-		/*	dupPtr++;*/ /*error - we need something to tell us we can move on*/
-
 
 	}
 	int sizeline = strl(line);
