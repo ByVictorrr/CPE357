@@ -25,8 +25,7 @@ void initTable(struct node *table)
 		table[i].next = NULL;
 	}
 }
-int strl(char * s)
-{
+int strl(char * s) {
 		char * base = s;
 
 		while (*(++s) != '\0')
@@ -56,13 +55,11 @@ int getLine( struct node *table)
 {
 	int i=0,j=0;
 	char c;
-
+	struct node* temp = NULL;
 	while ( (c = getchar()) != EOF )
 	{	
-		if(table[c].value != DELETED &&  table[c].next == NULL) 
+		if(table[c].value != DELETED && !(table[c].next != NULL && table[c].value == table[c].next -> value))
 			putchar(table[c].value);
-		else if (table[c].value == table[c].next->value)
-			getchar();
 	}
 	return 0; /*for overflow error or EOF*/
 }
@@ -145,7 +142,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		/*will get here if set1 > set2*/	
 		if (j< size2-1 )
 			j++;
-		else if ( i == size2  && size1>size2) /*if we gone past last character in set2*/
+		else if ( i >= size2  && size1>size2) /*if we gone past last character in set2*/
 		{
 			table[prev_c].next = &table[c]; /*linking on */	
 		}
