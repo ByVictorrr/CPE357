@@ -124,19 +124,25 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 	int i, j, size1 = strl(set1), size2 = strl(set2);
 	for(i=0,j=0; i< size1; i++) /*go till set1 == '\0'*/
 	{ 
-		if(set1[i] == '\\')
+		if(set1[i] == '\\'){
 			c=getEscChar(set1[i+1]);
+			if(c == '\t' || c=='\\' || c== '\n')
+				size1 = size1 -1; 
+		}
 		else
 			c=set1[i];	
 /*check set 2*/
-		if(set2[j] == '\\' && j < size2-1)
-			b=getEscChar(set2[j+1]);
+		if(set2[j] == '\\' && j < size2)
+		{	b=getEscChar(set2[j+1]);
+			if(b == '\t' || b=='\\' || b== '\n')
+				size2 = size2 -1;
+		}
 		else
 			b=set2[j];	
 
 		table[c].value = b;	
 		/*will get here if set1 > set2*/	
-		if (j< size2-1)
+		if (j< size2)
 			j++;
 		else if ( j >= size2 -1 && size1>size2)
 		{
