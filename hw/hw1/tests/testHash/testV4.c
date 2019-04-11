@@ -4,6 +4,7 @@
 
 #define ASCII 256
 #define DELETED -1
+typedef enum { false, true } bool;
 
 int hashTable[ASCII]; 
 
@@ -36,17 +37,28 @@ int cmpStr(char *set1, char *set2)
 	return -1;
 }
 
+bool isValueDuplicate(int v1, int v2)
+{
+	if(v1==v2)
+		return true;
+	else
+		return false;
+}
+
 /* getline: reads a line then stores into line 
 return 0: returned normall;
 */
 int getLine(int *table)
 {
-	int i;
-	char c;
+	int i=0;
+	char c, temp;
 	while ( (c = getchar()) != EOF )
 	{
-		if(table[c] != DELETED)
+			
+		if(table[c] != DELETED && !isValueDuplicate(table[c],table[temp]))
 			putchar(table[c]);
+
+		temp = c;
 	}
 	return 0; /*for overflow error or EOF*/
 }
