@@ -127,7 +127,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		if(set1[i] == '\\'){
 			c=getEscChar(set1[i+1]);
 			if(c == '\t' || c=='\\' || c== '\n')
-				size1 = size1 -1; 
+				i++;
 		}
 		else
 			c=set1[i];	
@@ -135,14 +135,14 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		if(set2[j] == '\\' && j < size2)
 		{	b=getEscChar(set2[j+1]);
 			if(b == '\t' || b=='\\' || b== '\n')
-				size2 = size2 -1;
+				j++;
 		}
 		else
 			b=set2[j];	
 
 		table[c].value = b;	
 		/*will get here if set1 > set2*/	
-		if (j< size2)
+		if (j< size2 )
 			j++;
 		else if ( j >= size2 -1 && size1>size2)
 		{
@@ -156,7 +156,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 int main(int argc, char *argv[])
 {
 
-
+			
 			initTable(hashTable); /* hashTable[i] = i; if not used*/
 
 			fillTranslateTable(hashTable, argv[1], argv[2]);
