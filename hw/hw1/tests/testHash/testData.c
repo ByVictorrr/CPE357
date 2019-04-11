@@ -144,7 +144,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		/*will get here if set1 > set2*/	
 		if (j< size2 )
 			j++;
-		else if ( j >= size2 -1 && size1>size2)
+		else if ( i == size2  && size1>size2)
 		{
 			table[prev_c].next = &table[c]; /*linking on */	
 		}
