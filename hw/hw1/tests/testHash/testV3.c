@@ -2,8 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define ASCII 255
+#define ASCII 256
 #define DELETED -1
+
 int hashTable[ASCII]; 
 
 void initTable(int *table)
@@ -45,7 +46,7 @@ int getLine(int *table)
 	while ( (c = getchar()) != EOF )
 	{
 		if(table[c] != DELETED)
-			putchar(c);
+			putchar(table[c]);
 	}
 	return 0; /*for overflow error or EOF*/
 }
@@ -55,8 +56,7 @@ returns 1: in -d mode
 return  2: in tranlate mode
 */
 int getFormat(int argc, char *set1)
-{
-
+{ 
 	switch(argc)
 	{
 		case 1: 
@@ -80,20 +80,6 @@ int getFormat(int argc, char *set1)
 			return 0;
 	}
 }
-
-
-
-
-/* getDup: returns a pointer to space allocated in heap, if there are duplicates*/
-char *getDup(char *set1)
-{
-	int size_heap = strl(set1)+1 ; /*plus one to include \0*/
-	char *dupPtr = (char*)calloc(size_heap, sizeof(char)); /* allocates MAXCHAR/2 elements in heap contingously) */
-	printf("\n max allocated: size of :  %d", size_heap);
-	return dupPtr;
-}
-
- 
 
 /*getEscChar: return the value value of espace character given that \ is the character before c in the string*/
 char getEscChar(char c)
@@ -127,6 +113,28 @@ void fillDeleteTable(int *table, char *argv2)
 	}
 }
 
+void fillTranslateTable(int *table, char *set1, char *set2)
+{
+	char c, b;
+	int i, j, size1 = strl(set1), size2 = strl(set2);
+	for(i=0,j=0; i< size1; i++, j++) /*go till set1 == '\0'*/
+	{ 
+		if(set1[i] == '\\')
+			c=getEscChar(set1[i+1]);
+		else
+			c=set1[i];	
+/*check set 2*/
+		if(set2[j] == '\\')
+			b=getEscChar(set2[j+1]);
+		else
+			b=set2[j];	
+		
+		table[c] = b;
+
+	}
+		
+	/*if reached last char of set2 i is index at which that ends*/
+}
 int main(int argc, char *argv[])
 {
 main_loop:
@@ -150,7 +158,10 @@ return  2: in tranlate mode
 		}
 		case 2: /* mytr 'argv[1]' 'argv[2]'*'*/
 		{
-			
+			fillTranslateTable(hashTable, argv[1], argv[2]);
+			getLine(hashTable);
+			goto main_loop;
+
 		}
 	}
 		return 0;
