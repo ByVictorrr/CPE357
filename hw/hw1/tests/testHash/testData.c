@@ -132,7 +132,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		else
 			c=set1[i];	
 /*check set 2*/
-		if(set2[j] == '\\' && j < size2)
+		if(set2[j] == '\\' && j < size2-1)
 		{	b=getEscChar(set2[j+1]);
 			if(b == '\t' || b=='\\' || b== '\n')
 				j++;
