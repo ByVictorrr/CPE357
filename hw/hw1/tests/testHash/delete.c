@@ -139,34 +139,11 @@ void fillTranslateTable(int *table, char *set1, char *set2)
 }
 int main(int argc, char *argv[])
 {
-main_loop:
-/* getFormat: 
-return  0: if there is an error end program
-returns 1: in -d mode
-return  2: in tranlate mode
-*/
-
-	switch(getFormat(argc,argv[1]))
-	{
-		case 0: /* usage error*/
-			return 0;
-
-		case 1: /* mytr -d 'set' option*/
-		{
+			printf("argv[2]=%s: ", argv[2]);
+		
 			initTable(hashTable); /* hashTable[i] = i; if not used*/
 			fillDeleteTable(hashTable, argv[2]);
-			getLine(hashTable);
-			goto main_loop;
-		}
-		case 2: /* mytr 'argv[1]' 'argv[2]'*'*/
-		{
-			initTable(hashTable); /* hashTable[i] = i; if not used*/
-			fillTranslateTable(hashTable, argv[1], argv[2]);
-			getLine(hashTable);
-			goto main_loop;
 
-		}
-	}
 		return 0;
 }
 
