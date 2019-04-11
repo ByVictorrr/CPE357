@@ -61,12 +61,6 @@ int getLine( struct node *table)
 	{	
 		if(table[c].value != DELETED &&  table[c].next == NULL)
 			putchar(table[c].value);
-		struct node *temp = &table[c];
-		if (temp != NULL && temp->value == temp->next->value)
-		{	
-			j--;
-			printf("dont do anything");	
-		}
 
 	}
 	return 0; /*for overflow error or EOF*/
@@ -140,16 +134,16 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		else
 			b=set2[j];	
 
+		table[c].value = b;	
 		/*will get here if set1 > set2*/	
 		if (j< size2-1)
 			j++;
-		else	
+		else if ( j >= size2 -1 && size1>size2)
 		{
 			table[prev_c].next = &table[c]; /*linking on */	
 		}
 		prev_c = c;
-		table[c].value = b;	
-	}
+		}
 		
 	/*if reached last char of set2 i is index at which that ends*/
 }
@@ -161,7 +155,7 @@ int main(int argc, char *argv[])
 
 			fillTranslateTable(hashTable, argv[1], argv[2]);
 			
-		/*	getLine(hashTable);*/
+		getLine(hashTable);
 
 		return 0;
 }
