@@ -59,9 +59,10 @@ int getLine( struct node *table)
 
 	while ( (c = getchar()) != EOF )
 	{	
-		if(table[c].value != DELETED &&  table[c].next == NULL)
+		if(table[c].value != DELETED &&  table[c].next == NULL) 
 			putchar(table[c].value);
-
+		else if (table[c].value == table[c].next->value)
+			getchar();
 	}
 	return 0; /*for overflow error or EOF*/
 }

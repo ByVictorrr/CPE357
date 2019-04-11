@@ -48,6 +48,13 @@ int cmpStr(char *set1, char *set2)
 	return -1;
 }
 
+bool isValueDuplicate(int v1, int v2)
+{
+	if(v1==v2)
+		return true;
+	else
+		return false;
+}
 
 /* getline: reads a line then stores into line 
 return 0: returned normall;
@@ -59,8 +66,14 @@ int getLine( struct node *table)
 
 	while ( (c = getchar()) != EOF )
 	{	
-		if(table[c].value != DELETED &&  table[c].next == NULL)
+		if(table[c].value != DELETED && table[c].next == NULL)
 			putchar(table[c].value);
+		struct node *temp = &table[c];
+		if (temp != NULL && temp->value == temp->next->value)
+		{	
+			j--;
+			printf("dont do anything");	
+		}
 
 	}
 	return 0; /*for overflow error or EOF*/
@@ -70,6 +83,31 @@ return  0: if there is an error end program
 returns 1: in -d mode
 return  2: in tranlate mode
 */
+int getFormat(int argc, char *set1)
+{ 
+	switch(argc)
+	{
+		case 1: 
+			fprintf(stderr, "mytr:\n usage: mytr [-d] 'set1' ['set2'] \n");
+			return 0;
+			break;
+		case 2:
+			if ( cmpStr(set1,"-d") != 0)
+				fprintf(stderr, "mytr: missing operand after '%s'\nTwo strings must be given when translating\nTry 'tr --help' for more information.\n",set1);
+			else
+				fprintf(stderr, "mytr: missing operand after -d \nTry 'tr --help' for more information.\n");
+			return 0;
+			break;
+		case 3: /*should be three if no error*/
+			if ( cmpStr(set1,"-d") == 0) /* if set1 is -d - delete mode*/
+				return 1;
+			else
+				return 2; /*translation set1 -> set 2*/
+		default:
+			fprintf(stderr, "mytr: extra operand\nTry 'tr --help' for more information.\n");
+			return 0;
+	}
+}
 
 /*getEscChar: return the value value of espace character given that \ is the character before c in the string*/
 char getEscChar(char c)
@@ -94,10 +132,13 @@ void fillDeleteTable(struct node *table, char *set)
 {
 	char c;
 	while (*set){
-		if (*set == '\\') /* if set1 has a escape character*/
+		if (*set == '\\' && *(set+1) != '\0') /* if set1 has a escape character*/
 		{
+			if(*(set+1) == '\t' || *(set+1) =='\\' || *(set+1) == '\n')
+			{
 			c = getEscChar(*(set+1));
 			set++;
+			}
 		}else
 			c = *set;
 	table[c].value = DELETED; /*this indicates that in our hash table if you give it a key of c->-1 if used alread*/
@@ -155,14 +196,34 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 }
 int main(int argc, char *argv[])
 {
+main_loop:
+/* getFormat: 
+return  0: if there is an error end program
+returns 1: in -d mode
+return  2: in tranlate mode
+*/
 
-			
+	switch(getFormat(argc,argv[1]))
+	{
+		case 0: /* usage error*/
+			return 0;
+
+		case 1: /* mytr -d 'set' option*/
+		{
 			initTable(hashTable); /* hashTable[i] = i; if not used*/
-
+			fillDeleteTable(hashTable, argv[2]);
+			getLine(hashTable);
+			goto main_loop;
+		}
+		case 2: /* mytr 'argv[1]' 'argv[2]'*'*/
+		{
+			initTable(hashTable); /* hashTable[i] = i; if not used*/
 			fillTranslateTable(hashTable, argv[1], argv[2]);
-			
-		getLine(hashTable);
+			getLine(hashTable);
+			goto main_loop;
 
+		}
+	}
 		return 0;
 }
 
