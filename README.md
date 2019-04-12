@@ -1,3 +1,4 @@
 # CPE357
 
-Some notes trying to get ahead for spring 2019
+![link pdf](http://users.csc.calpoly.edu/~getaylor/courses/csc357/)
+

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic
+CFLAGS = -Wall -g -ansi -pedantic
 MAIN = example
 OBJS = example.o
 all : $(MAIN)
