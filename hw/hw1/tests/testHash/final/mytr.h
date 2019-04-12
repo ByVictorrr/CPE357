@@ -55,7 +55,6 @@ bool isValueDuplicate(int v1, int v2)
 	else
 		return false;
 }
-
 /* getline: reads a line then stores into line 
 return 0: returned normall;
 */
@@ -63,20 +62,14 @@ int getLine( struct node *table)
 {
 	int i=0,j=0;
 	char c;
-
+	struct node* temp = NULL;
 	while ( (c = getchar()) != EOF )
 	{	
-		if(table[c].value != DELETED && table[c].next == NULL)
+		if(table[c].value != DELETED && !(table[c].next != NULL && table[c].value == table[c].next -> value))
 			putchar(table[c].value);
 	}
-
 	return 0; /*for overflow error or EOF*/
 }
-/* getFormat: 
-return  0: if there is an error end program
-returns 1: in -d mode
-return  2: in tranlate mode
-*/
 int getFormat(int argc, char *set1)
 { 
 	switch(argc)
@@ -128,7 +121,7 @@ void fillDeleteTable(struct node *table, char *set)
 	while (*set){
 		if (*set == '\\' && *(set+1) != '\0') /* if set1 has a escape character*/
 		{
-			if(*(set+1) == '\t' || *(set+1) =='\\' || *(set+1) == '\n')
+			if(*(set+1) == 't' || *(set+1) =='\\' || *(set+1) == 'n')
 			{
 			c = getEscChar(*(set+1));
 			set++;
@@ -158,7 +151,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 	char c, b, prev_c;
 	int i, j, size1 = strl(set1), size2 = strl(set2);
 	for(i=0,j=0; i< size1; i++) /*go till set1 == '\0'*/
-	{
+	{ 
 		if(set1[i] == '\\' && i < size1-1){
 			c=getEscChar(set1[i+1]);
 			if(c == '\t' || c=='\\' || c== '\n')
@@ -169,7 +162,7 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 /*check set 2*/
 		if(set2[j] == '\\' && j < size2-1)
 		{	b=getEscChar(set2[j+1]);
-			if(b == '\t' || b=='\\' || b== '\n')
+			if(b == 't' || b=='\\' || b== 'n')
 				j++;
 		}
 		else
