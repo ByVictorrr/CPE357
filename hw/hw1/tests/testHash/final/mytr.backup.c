@@ -1,7 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "mytr.h"
+
+#define ASCII 256
+#define DELETED -1
+typedef enum { false, true } bool;
+
+struct node
+{
+	int value;
+	struct node *next;
+};
+
+
+struct node hashTable[ASCII]; 
+
 
 void initTable(struct node *table)
 {
@@ -35,16 +48,25 @@ int cmpStr(char *set1, char *set2)
 	return -1;
 }
 
+bool isValueDuplicate(int v1, int v2)
+{
+	if(v1==v2)
+		return true;
+	else
+		return false;
+}
 /* getline: reads a line then stores into line 
 return 0: returned normall;
 */
 int getLine( struct node *table)
 {
+	int i=0,j=0;
 	char c;
+	struct node* temp = NULL;
 	while ( (c = getchar()) != EOF )
 	{	
-		if(table[(int)c].value != DELETED && !(table[(int)c].next != NULL && table[(int)c].value == table[(int)c].next -> value))
-			putchar(table[(int)c].value);
+		if(table[c].value != DELETED && !(table[c].next != NULL && table[c].value == table[c].next -> value))
+			putchar(table[c].value);
 	}
 	return 0; /*for overflow error or EOF*/
 }
@@ -106,10 +128,23 @@ void fillDeleteTable(struct node *table, char *set)
 			}
 		}else
 			c = *set;
-	table[(int)c].value = DELETED; /*this indicates that in our hash table if you give it a key of c->-1 if used alread*/
+	table[c].value = DELETED; /*this indicates that in our hash table if you give it a key of c->-1 if used alread*/
 	set++;
 	}
 }
+
+int count(struct node *head)
+{
+	struct node*cursor = head;
+	int i =0;
+	while(cursor !=NULL)
+	{
+		i++;
+		cursor = cursor->next;
+	}
+	return i;
+}
+
 
 void fillTranslateTable(struct node *table, char *set1, char *set2)
 {
@@ -133,13 +168,13 @@ void fillTranslateTable(struct node *table, char *set1, char *set2)
 		else
 			b=set2[j];	
 
-		table[(int)c].value = b;	
+		table[c].value = b;	
 		/*will get here if set1 > set2*/	
 		if (j< size2-1 )
 			j++;
 		else if ( i == size2  && size1>size2) /*if we gone past last character in set2*/
 		{
-			table[(int)prev_c].next = &table[(int)c]; /*linking on */	
+			table[prev_c].next = &table[c]; /*linking on */	
 		}
 		prev_c = c;
 		}
