@@ -28,7 +28,6 @@ int getLine( int *table)
 	{	
 		if(table[(int)c]!= DELETED)
 			putchar(table[(int)c]);
-		if(c=='\n');
 	}
 	return 0; /*for overflow error or EOF*/
 }
@@ -119,11 +118,10 @@ void fillTranslateTable(int *table, char *set1, char *set2)
 
 		if(c != '\n')	
 			table[(int)c] = b;	
-		else{ /*if set1 has \n' in it everything else equals null*/
-			int k;
-			for(k=0; k<ASCII; k++){
-				table[(int)k] = '\0';
-			}
+		else{
+			table[(int)c-1] = '\0';
+			table[(int)c] = '\0';
+			table[(int)'n'] = '\0';
 			}
 		/*will get here if set1 > set2*/	
 		if (j< size2-1 )

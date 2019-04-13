@@ -5,7 +5,6 @@
 int hashTable[ASCII]; 
 void initTable(int *table);
 int strl(char * s);
-int cmpStr(char *set1, char *set2);
 int getLine( int *table);
 int getFormat(int argc, char *set1);
 char getEscChar(char c);

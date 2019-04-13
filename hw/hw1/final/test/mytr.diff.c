@@ -18,6 +18,20 @@ int strl(char * s)
 			return s - base;
 }
 
+/*cmpStr: compares length of set1 and set2
+ * return -1 - if set1 < set2
+ * return 0 - if set1==set2
+ * return 1 - if set 1 > set2
+ */
+int cmpStr(char *set1, char *set2)
+{
+	if(strl(set1) > strl(set2))
+			return 1;
+	else if (strl(set1) == strl(set2))
+			return 0;
+	return -1;
+}
+
 /* getline: reads a line then stores into line 
 return 0: returned normall;
 */
@@ -28,7 +42,6 @@ int getLine( int *table)
 	{	
 		if(table[(int)c]!= DELETED)
 			putchar(table[(int)c]);
-		if(c=='\n');
 	}
 	return 0; /*for overflow error or EOF*/
 }
@@ -41,14 +54,14 @@ int getFormat(int argc, char *set1)
 			return 0;
 			break;
 		case 2:
-			if (strcmp(set1,"-d") != 0)
+			if ( cmpStr(set1,"-d") != 0)
 				fprintf(stderr, "mytr:\n usage: mytr [-d] 'set1' ['set2'] \n");
 			else
 				fprintf(stderr, "mytr:\n usage: mytr [-d] 'set1' ['set2'] \n");
 			return 0;
 			break;
 		case 3: /*should be three if no error*/
-			if ( strcmp(set1,"-d") == 0) /* if set1 is -d - delete mode*/
+			if ( cmpStr(set1,"-d") == 0) /* if set1 is -d - delete mode*/
 				return 1;
 			else
 				return 2; /*translation set1 -> set 2*/
@@ -103,7 +116,7 @@ void fillTranslateTable(int *table, char *set1, char *set2)
 	{ 
 		if(set1[i] == '\\' && i <= size1-2){
 			c=getEscChar(set1[i+1]);
-			if(c == '\t' || c=='\\' || c == '\n' )
+			if(c == '\t' || c=='\\' || c== '\n')
 				i++;
 		}
 		else
@@ -117,14 +130,7 @@ void fillTranslateTable(int *table, char *set1, char *set2)
 		else
 			b=set2[j];	
 
-		if(c != '\n')	
-			table[(int)c] = b;	
-		else{ /*if set1 has \n' in it everything else equals null*/
-			int k;
-			for(k=0; k<ASCII; k++){
-				table[(int)k] = '\0';
-			}
-			}
+		table[(int)c] = b;	
 		/*will get here if set1 > set2*/	
 		if (j< size2-1 )
 			j++;
