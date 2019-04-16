@@ -1,0 +1,40 @@
+1. 
+(a) char *cp;
+(b) char *ap;
+(c) int **pp;
+
+2. Yes its possible to initalize a pointer, to point to itself because it has
+ and address you just have to cast it.
+	Ex: int *ptr = (int*)&ptr;
+3. 
+int main()
+{
+	char s[] = "Hello, World!\n";
+	char *p;
+	for(p=s; *p !='\0'; p++)
+		putchar(*p);
+}
+
+Error: In the original code, they were comparing the address to a null
+character, instead of the value of the string that terminates it. This will
+step through address starting at s till p gets to NULL.
+
+4. 
+(a) Arrays are the same as pointers a way that there name corresponds to a
+memory address.
+(b) Arrays are fundamentally different than pointer because they are a
+contingious block in memory that stores values. Whereas pointers are variables
+that store addresses.
+
+5.
+
+6. In Section 1.7, the argument to perror is defined with the ISO C attribute
+const, whereas the integer argument to strerror isn’t defined with this attribute. Why?
+
+
+
+7. If the process time is stored as a signed 32-bit integer, and if the system
+counts 100 ticks per
+second, after how many days will the value overflow?
+
+8. What is the acutal data tyype of a size_t? In what header is it defined?
