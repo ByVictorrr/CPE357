@@ -2,9 +2,9 @@
 
 #include "checkit.h"
 #include "part2.h"
-#define SIZE1 5
-#define SIZE2 3
-#define SIZE3 3
+#define SIZE1 6
+#define SIZE2 4
+#define SIZE3 4
 
 
 void test_strLower_1()
@@ -41,7 +41,7 @@ void test_strLower()
    test_strLower_3();
 }
 
-int main(void)
+int main()
 {
    test_strLower();
 

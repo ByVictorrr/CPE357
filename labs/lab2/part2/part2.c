@@ -7,6 +7,6 @@ void strLower(char *orginal, char *lower)
 	/* function tolower */
 	while ((*lower++ = tolower(*orginal++)) != '\0')
 		;
-}
 
+}
 
