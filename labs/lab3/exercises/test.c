@@ -31,7 +31,7 @@ char *read_long_line(FILE *file)
 {
 
 	int getc(FILE *), prev_size = 0;
-	char c, *lines, *startPtr, *prev, *current;
+	char c, *lines, *startPtr, *prev, *current, *temp;
 
 	int numLines = 0, numChars=0;
 
@@ -58,29 +58,30 @@ char *read_long_line(FILE *file)
 
 				free(current); /*free old buffer*/
 				current = (char*)malloc(INITAL); 	/*get new buffer*/
+				temp = current; /*hold base address of buffer*/
 			}
 			else{ /*check if the prev line is the same as current*/
-				if (strcmp(prev,current) == 0) /*if they are the same line*/
+				if (strcmp(prev,temp) == 0) /*if they are the same line*/
 					;
 					/*dont change prev*/
 				else{ /*if adjacent lines are not the same*/
-					int new_size = prev_size + strlen(current)+ 1;
+					int new_size = prev_size + strlen(temp)+ 1;
 
 					lines = (char *)realloc(lines, new_size); /*plus one for /0*/
-
+					
 					startPtr = prev + strlen(prev); /*starting addres in the heap for next line*/
 					
 					/*find end of line then copy that pointer*/
-					strcpy(startPtr,current);
+					strcpy(startPtr,temp);
 					/*if it isnt then realloc pointer line*/
 					prev_size = new_size; 
 
-					free(current); /*free old buffer*/
+					free(temp); /*free old buffer*/
 					current = (char*)malloc(INITAL); 	/*get new buffer*/
+					temp = current;
 			}
-		numLines++; /*next line*/
 		}
-
+		numLines++; /*next line*/
 	}
 		numChars++; /*next char in the line*/
 		if (numChars >= INITAL - 1)
