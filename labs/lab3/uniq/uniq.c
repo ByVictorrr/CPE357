@@ -48,7 +48,7 @@ char *read_long_line(FILE *file)
 	{
 		/*case 3: store value of c in buffer */
 		*temp++ = c;
-		/*case 4: check if an overflow occured in buffer
+		/*case 4: check if an overflow occured in buffer same line
 		 *		count number of overflows in buff */
 		if ( temp >= (MAXCHAR-1)+ pbuff )
 		{
@@ -60,7 +60,8 @@ char *read_long_line(FILE *file)
 		/*case 5: we got a new line*/
 		if ( c == '\n')
 		{
-			temp--;
+		   	/*go back to last value of '\n'*/ 
+			
 			oneline = temp - pbuff;
 			/*Case 5.1: check if the first line becaue numLines==0*/
 			if (!numLines)
@@ -69,14 +70,15 @@ char *read_long_line(FILE *file)
 				line = (char*)malloc(oneline); /*what if not overflowed*/
 				strcpy(line,pbuff);
 				prev = line; /*have prev point to first char*/
-				sizeLines = oneline; 
+				sizeLines = oneline;
 			}else{ /*Case 5.1.2: ith time allocating space for line, also need to only reallocate on condition*/
 				/*If were in this scope its assume that there is at least two lines*/
 				if (strcmp(pbuff, prev)) /* if they arent equal*/
 				{
 					line = (char*)realloc(line,oneline+sizeLines);
 					/*copy contents from buffer to prev*/
-					strcpy((prev = prev + sizeLines ), pbuff);
+					strcpy((prev = prev + sizeLines), pbuff);
+					sizeLines += oneline;
 				}
 
 			}
@@ -91,6 +93,7 @@ char *read_long_line(FILE *file)
 
 	} 
 	*(prev+oneline)='\0';
+	free(prev);
 
 	return line;
 }
@@ -106,7 +109,15 @@ int main(int argc, char *argv[])
 
 	char *line = read_long_line(fp);
 
-	printf("printing line %s", line );
+	while(*line++ != '\n')
+	{
+		putchar(*line);
+	}	
+	while(*line++ != '\n')
+	{
+		putchar(*line);
+	}	
+
 
 	fclose(fp);
 
