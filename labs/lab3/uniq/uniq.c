@@ -43,7 +43,7 @@ char *read_long_line(FILE *file)
 
 	/*initalize current size of buffer*/	
 	unsigned sizebuff = MAXCHAR;
-
+	int oneline = 0;
 	while((c=getc(file)) != EOF)
 	{
 		/*case 3: store value of c in buffer */
@@ -60,8 +60,8 @@ char *read_long_line(FILE *file)
 		/*case 5: we got a new line*/
 		if ( c == '\n')
 		{
-			*(temp-1) = '\0'; /*change new line to end of string char*/
-			int oneline = temp - pbuff;
+			temp--;
+			oneline = temp - pbuff;
 			/*Case 5.1: check if the first line becaue numLines==0*/
 			if (!numLines)
 			{
@@ -76,14 +76,13 @@ char *read_long_line(FILE *file)
 				{
 					line = (char*)realloc(line,oneline+sizeLines);
 					/*copy contents from buffer to prev*/
-					strcpy((prev = prev + sizeLines - 1), pbuff);
-					sizeLines = sizeLines + oneline;
+					strcpy((prev = prev + sizeLines ), pbuff);
 				}
 
 			}
 			/*case 6: reset buffer*/
 			free(pbuff);
-			pbuff = (char*)malloc(MAXCHAR);
+			pbuff = (char*)calloc(MAXCHAR,sizeof(char));
 			temp = pbuff;
 
 	sizebuff = MAXCHAR;
@@ -91,6 +90,8 @@ char *read_long_line(FILE *file)
 		}
 
 	} 
+	*(prev+oneline)='\0';
+
 	return line;
 }
 
