@@ -14,31 +14,85 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-/*usage: ./unique filename filemod[-r, -w, -a]*/
+#define MAXCHAR 1000 /*inital amt of lines in the buffer*/
 
+/*======================lines memory=================================*/
+char *line;
+char *prev; /*prev is the pointing to the beginingin of the ith line*/
+/*===================================================================*/
+
+/*======================Current line buffer=========================*/
+char *pbuff;
+/*==================================================================*/
+
+/*================count number of lines==================*/
+unsigned numLines =0;
+unsigned sizeLines = 0;
+/*=======================================================*/
 char *read_long_line(FILE *file)
 {
 
-	int getc(FILE *), start=0;
-	char c, *line, *startPtr;
-
-	if (!file) return NULL;  /*if error in the file*/
+	int getc(FILE *);
+	char *strcat(char *dest, const char *src);
+	char *temp, c; /*temp is for moving allong pbuff*/
 	
-	while((c=getc(file)) != EOF && c != '\n') /*read while not end of line*/
+	/*case 1: file error*/
+	if (!file) return NULL; 
+	/*case 2: reading the whole file */
+	pbuff = temp = (char*)malloc(MAXCHAR);
+
+	/*initalize current size of buffer*/	
+	unsigned sizebuff = MAXCHAR;
+
+	while((c=getc(file)) != EOF)
 	{
-		*line++=c;
-		if(start==0) startPtr = line-1;
-		start++;
-	}
-	/*if found new line change to \0*/
-	*line = '\0';
-	line = startPtr; /*get start of addres*/
-	/*char *pc = (char *)malloc(sizeof(strlen(startPtr))) + 1;*/
+		/*case 3: store value of c in buffer */
+		*temp++ = c;
+		/*case 4: check if an overflow occured in buffer
+		 *		count number of overflows in buff */
+		if ( temp >= (MAXCHAR-1)+ pbuff )
+		{
+			/*Size alloationa are alwaysgoing to be mutliples os MAXCHAr*/
+			sizebuff = sizebuff + MAXCHAR;
+			pbuff = (char*)realloc(pbuff,sizebuff);
+			temp = pbuff + (sizebuff - MAXCHAR); /*tryin to get next spot in stack for word*/
+		}
+		/*case 5: we got a new line*/
+		if ( c == '\n')
+		{
+			*(temp-1) = '\0'; /*change new line to end of string char*/
+			int oneline = temp - pbuff;
+			/*Case 5.1: check if the first line becaue numLines==0*/
+			if (!numLines)
+			{
+				/*case 5.1.1: 1st time allocate space for line*/
+				line = (char*)malloc(oneline); /*what if not overflowed*/
+				strcpy(line,pbuff);
+				prev = line; /*have prev point to first char*/
+				sizeLines = oneline; 
+			}else{ /*Case 5.1.2: ith time allocating space for line, also need to only reallocate on condition*/
+				/*If were in this scope its assume that there is at least two lines*/
+				if (strcmp(pbuff, prev)) /* if they arent equal*/
+				{
+					line = (char*)realloc(line,oneline+sizeLines);
+					/*copy contents from buffer to prev*/
+					strcpy((prev = prev + sizeLines - 1), pbuff);
+					sizeLines = sizeLines + oneline;
+				}
 
-	return strcpy((char *)malloc(sizeof(strlen(startPtr))+1),startPtr);
-} 
+			}
+			/*case 6: reset buffer*/
+			free(pbuff);
+			pbuff = (char*)malloc(MAXCHAR);
+			temp = pbuff;
 
+	sizebuff = MAXCHAR;
+	numLines++;
+		}
 
+	} 
+	return line;
+}
 
 
 
@@ -47,7 +101,7 @@ int main(int argc, char *argv[])
 
 	FILE *fopen(const char *, const char *);
 
-	FILE *fp = fopen(argv[1], argv[2]);
+	FILE *fp = fopen("inputs/test.txt", "r");
 
 	char *line = read_long_line(fp);
 

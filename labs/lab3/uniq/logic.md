@@ -5,4 +5,5 @@
 		put chars in the buffer;
 	* ENDIF
 # Check to see if buffer line == heap_line (need a ptr to to start of the prev word and one to the end of the line in head )
-	* every new line clear the buffer`
+	* every new line clear the buffer`(that is when input '\n') clear
+	
