@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
 	FILE *fopen(const char *, const char *);
 
-	FILE *fp = fopen("inputs/test.txt", "r");
+	FILE *fp = fopen(argv[1], "r");
 
 	char *line_ptr = read_long_line(fp);
 	int i;
