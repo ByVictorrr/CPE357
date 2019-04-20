@@ -77,13 +77,14 @@ char *read_long_line(FILE *file)
 				{
 					line = (char*)realloc(line,oneline+sizeLines);
 					/*copy contents from buffer to prev*/
+					char *temp = prev;
+					prev = line;
 					strcpy((prev = prev + sizeLines), pbuff);
 					sizeLines += oneline;
 				}
 
 			}
-			/*case 6: reset buffer*/
-			free(pbuff);
+			/*case 6: reset buffer*/ free(pbuff);
 			pbuff = (char*)calloc(MAXCHAR,sizeof(char));
 			temp = pbuff;
 
@@ -93,7 +94,6 @@ char *read_long_line(FILE *file)
 
 	} 
 	*(prev+oneline)='\0';
-	free(prev);
 
 	return line;
 }
@@ -107,17 +107,10 @@ int main(int argc, char *argv[])
 
 	FILE *fp = fopen("inputs/test.txt", "r");
 
-	char *line = read_long_line(fp);
-
-	while(*line++ != '\n')
-	{
-		putchar(*line);
-	}	
-	while(*line++ != '\n')
-	{
-		putchar(*line);
-	}	
-
+	char *line_ptr = read_long_line(fp);
+	int i;
+	for(i=0; *line_ptr != '\0'; line_ptr++)
+		putchar(*line_ptr);
 
 	fclose(fp);
 
