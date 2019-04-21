@@ -9,11 +9,19 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
     char a = 1;
     if (fp == NULL)
     {
-        while (size < arraylength && a != NULL)
+        while (size <= arraylength && a != NULL)
         {
             /*need to add typcheck for input*/
 
-            word[size] = getchar();
+            a = getchar();
+			tolowercase(a);
+			if (a == a) {/*need to put valid check*/
+				word[size++] = a;
+			}
+			if (size == arraylength) {
+				arraylength += 256;
+				word = (char*)realloc(word, arraylength *sizeof(char));
+			}
         }
     }
     else
