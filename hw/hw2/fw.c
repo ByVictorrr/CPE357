@@ -9,6 +9,7 @@ struct WordItem {
 };
 
 
+
 int format(int argc, char *argv[])
 {
 	switch(argc)
