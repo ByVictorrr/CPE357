@@ -2,6 +2,12 @@
 
 #include "fw.h"
 
+/*possible format for our word items*/
+struct WordItem {
+   int count;   
+   char word[];
+};
+
 
 int format(int argc, char *argv[])
 {
@@ -9,12 +15,14 @@ int format(int argc, char *argv[])
 	{
 		case 1: /*case 1: only input executable*/
 		   /*this case we want to get input from std in*/	
+		   
 			
 		break;
 		case 2: /*could use option */
 			/*case 2.1: if the argv[1] != -n treat is a file input*/
 			if(!strcmp(argv[1], "-n"))
 					fprintf(stderr, "usage: fw [-n num] [ file1 [ file2 [..]]]\n");
+					return -1;
 			/*case 2.2: if the argv[1] is anything other than -n treat it as a file**/	
 			else
 					fprintf(stderr, "%s: No such file or directory\n The top 10 words (out of 0 are:\n");
@@ -31,7 +39,9 @@ int format(int argc, char *argv[])
 }
 int main(int argc, char*argv[])
 {
+	int TopWords=10;
 	FILE *fp;
+
 	switch(argc)
 	{
 		case 1: /*case 1: only input executable*/
