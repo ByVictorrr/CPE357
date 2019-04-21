@@ -38,12 +38,13 @@ struct hashtable * table = initalizeTable(SIZE);
 
 char *tWord = "victor";
 
-int indexArr[] = {insertNode(table, tWord),insertNode(table,tWord)};
+int index1 = insertNode(table, tWord);
+	
+int index2 = insertNode(table,"victor");
 
 //shoud print out prinf("wCount = 2);
-
-printf("inputed %s at: %d\n", tWord, indexArr[0]);
-printf("inputed %s at: %d\n", tWord, indexArr[1]);
+printf("inputed %s at: %d\n", tWord, index1);
+printf("inputed %s at: %d\n", tWord, index2);
 
 return 0;
 }
@@ -106,10 +107,10 @@ int insertNode(struct hashtable *table, char *word)
 
 
 
-
+/*hash - djb2 algorithm */
 int hash(struct hashtable *table, char *word) 
 {
-	int i, hash;
+	int i, hash = 0;
 	for(i=0; i<table->size; i++)
 		hash = 31*hash + word[i];
 
