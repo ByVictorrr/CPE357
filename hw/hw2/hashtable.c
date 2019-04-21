@@ -45,7 +45,28 @@ hashtable *initalizeTable(int size)
 	//step 1: check if size is valid
 	if (size <= 0) return NULL;
 	//step 2: allocate the table using safe_malloc
-	else if (!(hashtable *table = (hashtable*)malloc(sizeof(hashtable)))
+	hashtable *table;
+	else if (!(table = (hashtable*)malloc(sizeof(hashtable)))
 		return NULL;
 	//step 3: allocate buckets
-	else if (!(hashtable *table = (hashtable*)malloc(sizeof(hashtable)))
+	else if (!(table->buckets = (hashtable*)malloc(sizeof(node*)*size));
+		return NULL;
+	//step 4:  intialize all the buckets
+	int i;
+	for ( i = 0; i < size; i++)
+		table-> buckets[i] = NULL; //setting each node ptr in the heap to NULL
+	//step 5: initalize table vars
+	table->size = size;
+	table->numEnteries = 0;
+	return table;
+}
+
+int insertNode()
+int hash(hash_table *table, int key) 
+{
+	return key % table->size;
+}
+
+
+
+
