@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#define SIZE 1000
 
 /*entry in the hash table*/
 struct node{
@@ -22,46 +22,56 @@ struct hashtable
 
 };
 	/*initalizeTable: allocates a finite size table*/
-	hashtable * initalizeTable(int size); 
+	struct hashtable * initalizeTable(int size); 
 
 	/*inserts: information to the table*/
-	int insert(hashtable *table, int key);
+	int insertNode(struct hashtable *table, char *word);
 	
-	int destroy(hashtable *table);
-
+	int destroy(struct hashtable *table);
+	int hash(struct hashtable* table, char *word);
 
 
 
 int main()
 {
+struct hashtable * table = initalizeTable(SIZE);
 
+char *tWord = "victor";
 
+int indexArr[] = {insertNode(table, tWord),insertNode(table,tWord)};
+
+//shoud print out prinf("wCount = 2);
+
+printf("inputed %s at: %d\n", tWord, indexArr[0]);
+printf("inputed %s at: %d\n", tWord, indexArr[1]);
+
+return 0;
 }
 
 
-hashtable *initalizeTable(int size)
+struct hashtable *initalizeTable(int size)
 {
 	//step 1: check if size is valid
 	if (size <= 0) return NULL;
 	//step 2: allocate the table using safe_malloc
-	hashtable *table;
-	else if (!(table = (hashtable*)malloc(sizeof(hashtable)))
+	struct hashtable *table;
+	if (!(table = (struct hashtable*)malloc(sizeof(struct hashtable))))
 		return NULL;
 	//step 3: allocate buckets
-	else if (!(table->buckets = (hashtable*)malloc(sizeof(node*)*size));
+	else if (!(table->buckets = (struct node**)malloc(sizeof(struct node*)*size)))
 		return NULL;
 	//step 4:  intialize all the buckets
 	int i;
 	for ( i = 0; i < size; i++)
-		table-> buckets[i] = NULL; //setting each node ptr in the heap to NULL
+		table-> buckets[i] = NULL; //setting each struct node ptr in the heap to NULL
 	//step 5: initalize table vars
 	table->size = size;
 	table->numEnteries = 0;
 	return table;
 }
 
-/*insertNode: returns the index at which node inserted*/
-int insertNode(hashtable *table, char *word)
+/*insertNode: returns the index at which struct node inserted*/
+int insertNode(struct hashtable *table, char *word)
 {
 	//step1 - table is empty
 	if(table == NULL)
@@ -69,7 +79,7 @@ int insertNode(hashtable *table, char *word)
 	
 	int index = hash(table, word); //index into table
 
-	node *entry = hash->buckets[i]; //get the ith index in the table
+	struct node *entry = table->buckets[index]; //get the ith index in the table
 
 	//step 2 - if entry isnt null that means there is a entry in there
 	while (entry != NULL)
@@ -78,24 +88,30 @@ int insertNode(hashtable *table, char *word)
 		if(entry->word == word) //if the same word lets incrment wCount
 		{
 			entry->wCount++;
+			printf("wCount =%d \n", entry->wCount);
 			return index; //if same word return that index
 		}
 
-		entry = entry->next; //go to the next node
+		entry = entry->next; //go to the next struct node
 	}
 	//Step 2.2 - this means the two enteries share same hash value (key) but arent same word
-	entry = (node*)malloc(sizeof(node)); //creat a new node
+
+	entry = (struct node*)malloc(sizeof(struct node)); //creat a new struct node
 	entry->wCount = 1;
 	entry->word = (char*)malloc(strlen(word));
 	
 	return index;
 }
 
-int hash(hash_table *table, char *word) 
+
+
+
+
+int hash(struct hashtable *table, char *word) 
 {
 	int i, hash;
 	for(i=0; i<table->size; i++)
-		hash = 31*hash + key[i];
+		hash = 31*hash + word[i];
 
 	return hash % table->size;
 }
