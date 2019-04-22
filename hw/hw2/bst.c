@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "bufferinput.h"
 
 #define SIZE 5
 
@@ -20,18 +21,21 @@ void inOrder(struct node *root);
 void freeTree(struct node *root);
 void freeNode(struct node *root);
 
-int main()
+int main(int argc, char*argv[])
 {
+	int TopWords=10;
+	FILE *fp = fopen(argv[1]);
+	
 
 	struct node *root = NULL;
 	char *words[SIZE] = {"victor","marilyn","victor","zebra","high"};
 	int i = 0;
 
-	for (i = 0; i<SIZE; i++)
+	while ( (c = getc(fp)) != EOF)
 	{
+		while(buffer
 		root = insertNode(root, words[i]);
-	}
-	
+	}	
 	inOrder(root);
 	
 	freeTree(root);
@@ -54,7 +58,7 @@ void freeTree(struct node *root)
 	else{
 		freeTree(root->left_child);
 		printf("freed : %s\n", root->word);
-		free(root);
+		freeNode(root);
 		freeTree(root->right_child);
 		}
 }
@@ -84,7 +88,7 @@ struct node *newNode(char *word)
 		return NULL;
 
 	new->wCount = 1;
-	new->word = word;
+	strcpy(new->word,word);
 	new->left_child = NULL;
 	new->right_child = NULL;
 
