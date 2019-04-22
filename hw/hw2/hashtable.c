@@ -82,6 +82,7 @@ int insertNode(struct hashtable *table, char *word)
 
 	struct node *entry = table->buckets[index]; //get the ith index in the table
 
+	struct node *prev = NULL;
 	//step 2 - if entry isnt null that means there is a entry in there
 	while (entry != NULL)
 	{
@@ -93,19 +94,32 @@ int insertNode(struct hashtable *table, char *word)
 			return index; //if same word return that index
 		}
 
+		prev = entry;
 		entry = entry->next; //go to the next struct node
 	}
-	//Step 2.2 - this means the two enteries share same hash value (key) but arent same word
+	//Step 2.2 - getting here means there is no index there or  were at the end of the linked listj
+	struct node *temp = (struct node*)malloc(sizeof(struct node)); //creat a new struct node
+	temp->word = (char*)malloc(strlen(word));
+	strcpy(temp->word,word); //copy string contents to knew node
+	temp->wCount = 1;
+	temp->next = NULL;
 
-	entry = (struct node*)malloc(sizeof(struct node)); //creat a new struct node
-	entry->wCount = 1;
-	entry->word = (char*)malloc(strlen(word));
+	entry = table->buckets[i];
+
+	while (table->buckets[i] != prev)
+		prev=prev->next;
+
+	prev->next = temp;
+	
+	while(buckets -> 
+	table->buckets[i];
+	table->numEnteries++;
 	
 	return index;
 }
 
 
-
+struct node *addNodeNext
 
 /*hash - djb2 algorithm */
 int hash(struct hashtable *table, char *word) 
