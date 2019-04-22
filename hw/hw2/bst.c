@@ -2,38 +2,21 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "bst.h"
 #include "bufferinput.h"
 
 #define SIZE 5
 
-struct node{
-	char * word;
-	int wCount;
-	struct node *left_child; //lexicographically less
-	struct node *right_child; //lexicographically greater
-};
-
-
-struct node *newNode(char *word);
-struct node *insertNode(struct node *root, char*word);
-struct node *searchNode(struct node *root, char *word );
-void inOrder(struct node *root);
-void freeTree(struct node *root);
-void freeNode(struct node *root);
-
 int main(int argc, char*argv[])
 {
-	int TopWords=10;
 	FILE *fp = fopen(argv[1]);
 	
-
 	struct node *root = NULL;
 	char *words[SIZE] = {"victor","marilyn","victor","zebra","high"};
 	int i = 0;
 
 	while ( (c = getc(fp)) != EOF)
 	{
-		while(buffer
 		root = insertNode(root, words[i]);
 	}	
 	inOrder(root);
