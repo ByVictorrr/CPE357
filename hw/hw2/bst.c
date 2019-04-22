@@ -7,6 +7,9 @@
 
 #define SIZE 5
 
+int numOfNodes=0;
+
+
 int main(int argc, char*argv[])
 {
 	FILE *fp = fopen(argv[1]);
@@ -26,6 +29,21 @@ int main(int argc, char*argv[])
 
 }
 
+struct node ** arrOfAddress(struct node *root, int numOfNodes , struct node **arr)
+{
+	w
+	//Base case when reached a leaf
+	if(root == NULL)
+		return root;
+	//General case
+	else
+		inOrder(root->left_child);
+		printf("word: %s, wordCount: %d\n", root->word, root->wCount);
+		inOrder(root->right_child);
+
+}
+
+}
 void freeNode(struct node *root)
 {
 	if(!root)
@@ -74,6 +92,7 @@ struct node *newNode(char *word)
 	strcpy(new->word,word);
 	new->left_child = NULL;
 	new->right_child = NULL;
+	numOfNodes++;
 
 	return new;
 }
