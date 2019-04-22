@@ -71,6 +71,43 @@ struct hashtable *initalizeTable(int size)
 	return table;
 }
 
+/*locationNode: lookeds for a word in the table for a given hash value*/
+struct *locationNode(struct *hashtable, char *word)
+{
+	struct node * find = hashtable->buckets[hash(word)]; 
+	struct node *prev = NULL;
+
+	if(find == NULL) return NULL; //if the head is NULL
+
+	while(find != NULL) //checks from the 1st plus node
+	{
+		//if input word already exist, return the address
+		if(!strcmp(find->word,word))
+			return find;
+
+			prev = find;
+			find=find->next;
+	}
+	return prev; //return node before NULL hits
+}
+
+
+
+
+/*createUniqueWord - returns a unqiue word*/ 
+struct node *createUniqueWord(char *word)
+{
+	if (!table) return NULL;
+
+	struct node *temp = (struct node*)malloc(sizeof(struct node)); //creat a new struct node
+	temp->word = (char*)malloc(strlen(word));
+	strcpy(temp->word,word); //copy string contents to knew node
+	temp->wCount = 1;
+	temp->next = NULL;
+
+	return temp;
+}
+
 /*insertNode: returns the index at which struct node inserted*/
 int insertNode(struct hashtable *table, char *word)
 {
@@ -80,11 +117,20 @@ int insertNode(struct hashtable *table, char *word)
 	
 	int index = hash(table, word); //index into table
 
-	struct node *entry = table->buckets[index]; //get the ith index in the table
+	struct node **bucketsCpy= table->buckets; //get the ith index in the table
 
-	struct node *prev = NULL;
-	//step 2 - if entry isnt null that means there is a entry in there
-	while (entry != NULL)
+	struct node *list;
+
+	//if word doesnt exist
+	if (!(list = locationNode(hashtable, word))) 
+	{
+		list->next = createUniqueWord(word);
+		
+	}
+	else{ //list has prev addresss to the NULL in it
+
+	}
+	while (bucketsCpy[index]  )
 	{
 		//Step 2.1 - check if the word is in the table alread 
 		if(entry->word == word) //if the same word lets incrment wCount
@@ -97,13 +143,6 @@ int insertNode(struct hashtable *table, char *word)
 		prev = entry;
 		entry = entry->next; //go to the next struct node
 	}
-	//Step 2.2 - getting here means there is no index there or  were at the end of the linked listj
-	struct node *temp = (struct node*)malloc(sizeof(struct node)); //creat a new struct node
-	temp->word = (char*)malloc(strlen(word));
-	strcpy(temp->word,word); //copy string contents to knew node
-	temp->wCount = 1;
-	temp->next = NULL;
-
 	entry = table->buckets[i];
 
 	while (table->buckets[i] != prev)
