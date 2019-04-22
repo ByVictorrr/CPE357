@@ -10,7 +10,7 @@ struct node{
 struct node *newNode(char *word);
 struct node *insertNode(struct node *root, char*word);
 struct node *searchNode(struct node *root, char *word );
-void inOrder(struct node *root);
+void inOrder(struct node *root, struct node **arr);
 void freeTree(struct node *root);
 void freeNode(struct node *root);
 

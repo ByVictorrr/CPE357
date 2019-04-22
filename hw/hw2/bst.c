@@ -3,7 +3,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "bst.h"
-#include "bufferinput.h"
 
 #define SIZE 5
 
@@ -12,38 +11,23 @@ int numOfNodes=0;
 
 int main(int argc, char*argv[])
 {
-	FILE *fp = fopen(argv[1]);
 	
 	struct node *root = NULL;
 	char *words[SIZE] = {"victor","marilyn","victor","zebra","high"};
 	int i = 0;
-
-	while ( (c = getc(fp)) != EOF)
-	{
+	struct node **arr = (struct node**)malloc(sizeof(struct node *)*SIZE);
+	for(i=0; i<SIZE; i++)
 		root = insertNode(root, words[i]);
-	}	
-	inOrder(root);
+	inOrder(root,arr);
 	
+
+
+
 	freeTree(root);
 	return 0;
 
 }
-
-struct node ** arrOfAddress(struct node *root, int numOfNodes , struct node **arr)
-{
-	w
-	//Base case when reached a leaf
-	if(root == NULL)
-		return root;
-	//General case
-	else
-		inOrder(root->left_child);
-		printf("word: %s, wordCount: %d\n", root->word, root->wCount);
-		inOrder(root->right_child);
-
-}
-
-}
+  
 void freeNode(struct node *root)
 {
 	if(!root)
@@ -65,16 +49,17 @@ void freeTree(struct node *root)
 }
 
 
-void inOrder(struct node *root)
+void inOrder(struct node *root, struct node **arr)
 {
 	//Base case when reached a leaf
 	if(root == NULL)
 		return;
 	//General case
 	else
-		inOrder(root->left_child);
+		inOrder(root->left_child,arr++);
+		arr = &root;
 		printf("word: %s, wordCount: %d\n", root->word, root->wCount);
-		inOrder(root->right_child);
+		inOrder(root->right_child,arr++);
 }
 
 struct node *newNode(char *word)
