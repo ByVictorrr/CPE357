@@ -18,6 +18,7 @@ struct node *insertNode(struct node *root, char*word);
 struct node *searchNode(struct node *root, char *word );
 void inOrder(struct node *root);
 void freeTree(struct node *root);
+void freeNode(struct node *root);
 
 int main()
 {
@@ -38,17 +39,24 @@ int main()
 
 }
 
-void freeTree (struct node *root)
+void freeNode(struct node *root)
+{
+	if(!root)
+		return;
+	free(root->word);
+	free(root);
+}
+void freeTree(struct node *root)
 {
 	//Base case until root == NULL
 	if(root == NULL)
 		return;
-	else
+	else{
 		freeTree(root->left_child);
 		printf("freed : %s\n", root->word);
 		free(root);
 		freeTree(root->right_child);
-
+		}
 }
 
 
