@@ -28,23 +28,24 @@ char *pbuff;
 /*================count number of lines==================*/
 unsigned numLines =0;
 unsigned sizeLines = 0;
+
 /*=======================================================*/
+
 char *read_long_line(FILE *file)
 {
-
+	unsigned sizebuff = MAXCHAR;
 	int getc(FILE *);
 	char *strcat(char *dest, const char *src);
 	char *temp, c; /*temp is for moving allong pbuff*/
-	
+	/*initalize current size of buffer*/	
+		int oneline = 0;
+
 	/*case 1: file error*/
 	if (!file) return NULL; 
 	/*case 2: reading the whole file */
 	pbuff = temp = (char*)malloc(MAXCHAR);
 
-	/*initalize current size of buffer*/	
-	unsigned sizebuff = MAXCHAR;
-	int oneline = 0;
-	while((c=getc(file)) != EOF)
+		while((c=getc(file)) != EOF)
 	{
 		/*case 3: store value of c in buffer */
 		*temp++ = c;
@@ -60,14 +61,14 @@ char *read_long_line(FILE *file)
 		/*case 5: we got a new line*/
 		if ( c == '\n')
 		{
+			*temp = '\0';
 		   	/*go back to last value of '\n'*/ 
-			
-			oneline = temp - pbuff;
+			oneline = (temp+1) - pbuff;
 			/*Case 5.1: check if the first line becaue numLines==0*/
 			if (!numLines)
 			{
 				/*case 5.1.1: 1st time allocate space for line*/
-				line = (char*)malloc(oneline); /*what if not overflowed*/
+				line = (char*)malloc(oneline+1); /*what if not overflowed*/
 				strcpy(line,pbuff);
 				prev = line; /*have prev point to first char*/
 				sizeLines = oneline;
@@ -75,9 +76,8 @@ char *read_long_line(FILE *file)
 				/*If were in this scope its assume that there is at least two lines*/
 				if (strcmp(pbuff, prev)) /* if they arent equal*/
 				{
-					line = (char*)realloc(line,oneline+sizeLines);
+					line = (char*)realloc(line,oneline+sizeLines+1);
 					/*copy contents from buffer to prev*/
-					char *temp = prev;
 					prev = line;
 					strcpy((prev = prev + sizeLines), pbuff);
 					sizeLines += oneline;
@@ -93,8 +93,8 @@ char *read_long_line(FILE *file)
 		}
 
 	} 
-	*(prev+oneline)='\0';
-
+	*(prev+oneline)=EOF;
+	
 	return line;
 }
 
@@ -109,11 +109,14 @@ int main(int argc, char *argv[])
 
 	char *line_ptr = read_long_line(fp);
 	int i;
-	for(i=0; *line_ptr != '\0'; line_ptr++)
+
+	for (;*line_ptr != EOF; line_ptr++)
 		putchar(*line_ptr);
 
 	fclose(fp);
 
+	free(pbuff);
 	free(line);
+
 	return 0;
 }

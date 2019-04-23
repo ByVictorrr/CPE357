@@ -1,7 +1,0 @@
-(1) Initally the first line_0 has no lines before it, so get next line(line_i)
-
-(2) compare line_i with line_i-1
-	if (line_i == line_i-1)
-		free(line_i)
-	else
-		getline()

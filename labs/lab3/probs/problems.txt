@@ -1,12 +1,22 @@
-1. 
-(a) char *cp;
-(b) char *ap;
-(c) int **pp;
+1. (Warm up) Please provide declarations for the following data:
+    • a pointer cp that points to a char.
+    • a pointer ap that points to an array of chars.
+    • a pointer pp that points to a pointer that points to an int.
+	(a) char *cp;
+	(b) char *ap;
+	(c) int **pp;
 
-2. Yes its possible to initalize a pointer, to point to itself because it has
- and address you just have to cast it.
+2. is it possible in C to declare and initialize a pointer that points to itself?
+Why or why not? (And, if so, how, of course.)
+
+Yes its possible to initalize a pointer to point to itself because it has and
+address and there for you can store an address in a ptr, you just have to case
+it to a single pointer because &ptr is a double ptr.
+
 	Ex: int *ptr = (int*)&ptr;
-3. 
+
+
+3. What is the fundamental problem with the following code fragment intended to print out a string:
 int main()
 {
 	char s[] = "Hello, World!\n";
@@ -19,14 +29,25 @@ Error: In the original code, they were comparing the address to a null
 character, instead of the value of the string that terminates it. This will
 step through address starting at s till p gets to NULL.
 
-4. 
+4. C programmers often say “arrays are the same as pointers”. In one sense this
+is true. In another, more correct, sense they are fundamentally different.
+
+	• In what ways is this statement correct?
+
 (a) Arrays are the same as pointers a way that there name corresponds to a
 memory address.
-(b) Arrays are fundamentally different than pointer because they are a
+
+	• How is it in error? That is, what makes a pointer fundamentally different from an array?
+
+(b) Arrays are fundamentally different than pointer because they are a 
 contingious block in memory that stores values. Whereas pointers are variables
 that store addresses.
 
-5.
+5. List the three flaws you discover in part 1 of the laboratory exercise
+
+(i) 
+(ii)
+(iii)
 
 6. In Section 1.7, the argument to perror is defined with the ISO C attribute
 const, whereas the integer argument to strerror isn’t defined with this attribute. Why?
