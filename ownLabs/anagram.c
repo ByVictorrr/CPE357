@@ -8,7 +8,8 @@ char *anagram(char *s)
 		temp++;
 	int size = temp - s;
 	int i;
-	for(i=size; i>0; i++)
+	temp = s;
+	for(i=size; i>0; i--)
 		*temp++ = s[i-rand()%size];
 
 	return s;
