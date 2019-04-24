@@ -4,41 +4,12 @@
 #include <stdlib.h>
 #include "bst.h"
 
-#define SIZE 5
 
-int numOfNodes=0;
-
-/*
-int main(int argc, char*argv[])
-{
-	
-struct node *root = NULL;
-	struct node *ptrArry;
-
-	char *words[SIZE] = {"victor","marilyn","victor","zebra","high"};
-	int i = 0;
-	for(i=0; i<SIZE; i++)
-		root = insertNode(root, words[i]);
-	
-	ptrArry=addToAddrNodeArr(root,numOfNodes);
-
-	for(i=0; i<numOfNodes; i++)
-		printf("node %d word %s\n", i, ptrArry[i].word);
-
-	
-	free(ptrArry);
-	freeTree(root);
-
-	return 0;
-
-}  
-
-
-*/
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	//Step 1 - create a stack for iterative transversal
-	struct node *stack[numNodes], *current=root;
+	struct node **stack = (struct node**)malloc(sizeof(struct node)*numNodes);
+	struct node *current=root;
 	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);
 	struct node *baseAddrArr = nodeArry;
 

@@ -1,4 +1,6 @@
 
+extern int numOfNodes=0;
+
 struct node{
 	char * word;
 	int wCount;
