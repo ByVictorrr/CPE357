@@ -5,12 +5,18 @@ int main(int argc, char*argv[])
 {
 	int TopWords=10;
 	FILE *fp;
-	char *word = (char *)malloc(7*sizeof(char));
+	int arraysize=40;
+	char *word = (char *)malloc(arraysize*sizeof(char));
+	int wordsize=0;
 
 	switch(argc)
 	{
 		case 1: /*case 1: only input executable*/
 		   /*this case we want to get input from std in*/
+		   while(wordsize != -1){
+			   wordsize=bufferinput(stdin,word,&arraysize);
+		   }
+
 		   	
 			
 		break;
