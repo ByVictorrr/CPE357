@@ -167,8 +167,9 @@ void merge(struct node *arr[], int left, int middle, int right)
             k++;
         }
     }
+}
 
-    /* Copy the remaining elements of L[], if there 
+    /* Copy the remaining elements of L[], if there */
 
 int bufferinput(FILE *fp, char *word, int *arraylength)
 {
@@ -195,9 +196,9 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 				word = (char*)realloc(word, *arraylength *sizeof(char));
 			}
         }
-        word[size]= NULL;
+        word[size]= NULL
         return size; 
-}
+
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	struct node **stack = (struct node**)malloc(sizeof(struct node)*numNodes);
