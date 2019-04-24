@@ -3,7 +3,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "fw.h"
-#include "bufferinput.c"
 #define SIZE 100
 
 
@@ -196,9 +195,9 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 				word = (char*)realloc(word, *arraylength *sizeof(char));
 			}
         }
-        word[size]= NULL
+        word[size]= NULL;
         return size; 
-
+}
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	struct node **stack = (struct node**)malloc(sizeof(struct node)*numNodes);
