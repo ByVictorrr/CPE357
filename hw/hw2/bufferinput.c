@@ -14,7 +14,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
             if(size==0 && a== EOF){
                 return -1;
             }
-            /*tolowercase(a);*/
+            tolowercase(a);
 			if (61<=(int)a && a<=122 ) {/*printable characters brah*/
 				word[size++] = a;
 			}else
