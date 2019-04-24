@@ -239,7 +239,10 @@ int main(int argc, char *argv[])
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
+				root = insertNode(root, word);
 			}
+				ptrArry = addToAddrNodeArr(root,numOfNodes);
+				mergeSort(ptrArry,0,numOfNodes-1);
 
 			break;
 			/*==============================================================================*/
@@ -266,7 +269,7 @@ int main(int argc, char *argv[])
 				
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				mergeSort(ptrArry,0,numOfNodes-1);
-				
+				readOutWords(TopWords,ptrArry);
 				break;
 			}
 			/*==============================================================================*/
@@ -282,6 +285,7 @@ int main(int argc, char *argv[])
 				} /*stuff read in now need to do stuff*/
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				mergeSort(ptrArry,0,numOfNodes-1);
+				readOutWords(TopWords,ptrArry);
 			}
 			else
 			{
@@ -320,6 +324,7 @@ int main(int argc, char *argv[])
 				}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				mergeSort(ptrArry,0,numOfNodes-1);
+				readOutWords(TopWords,ptrArry);
 			}
 		}
 
