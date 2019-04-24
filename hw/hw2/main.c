@@ -224,7 +224,10 @@ struct node *searchNode(struct node *root, char *word )
 		return searchNode(root->right_child,word);
 }
 
-
+int compare (struct node *n1, struct node *n2)
+{
+	return (n1->wCount - n2->wCount);
+}
 
 int main(int argc, char *argv[])
 {
@@ -237,6 +240,9 @@ int main(int argc, char *argv[])
 	struct node *root = NULL;
 	struct node *ptrArry;
 	int i;
+	
+
+	
 		switch (argc)
 		{
 	case 1: /*case 1: only input executable*/
@@ -254,7 +260,7 @@ int main(int argc, char *argv[])
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				int j=0;
 
-				mergeSort(ptrArry,0,numOfNodes);
+				qsort((void**) ptrArry, 0, numOfNodes-1, &compare);
 
 			break;
 			/*==============================================================================*/
