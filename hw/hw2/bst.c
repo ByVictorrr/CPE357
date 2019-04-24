@@ -8,7 +8,7 @@
 
 int numOfNodes=0;
 
-
+/*
 int main(int argc, char*argv[])
 {
 	
@@ -32,6 +32,9 @@ struct node *root = NULL;
 	return 0;
 
 }  
+
+
+*/
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	//Step 1 - create a stack for iterative transversal
