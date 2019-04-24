@@ -22,7 +22,7 @@ struct node *root = NULL;
 	
 	ptrArry=addToAddrNodeArr(root,numOfNodes);
 
-	for(i=0; i<SIZE; i++)
+	for(i=0; i<numOfNodes; i++)
 		printf("node %d word %s\n", i, ptrArry[i]);
 
 	
@@ -38,7 +38,7 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);
 	struct node *baseAddrArr = nodeArry;
 
-	int i,j; //count num of nodes
+	int j; //count num of nodes
 	
 	//Step 2 - check if root isnt null
 	if(!root) return NULL;
