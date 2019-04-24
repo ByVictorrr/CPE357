@@ -41,8 +41,6 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 	}
 	return baseAddrArr;
 }
-
-
 void inOrder(struct node *root)
 {
 	//Base case when reached a leaf
@@ -70,7 +68,6 @@ struct node *newNode(char *word)
 	 struct node *new;
 	 new = (struct node*)malloc(sizeof(struct node));
 	 new->word=(char*)malloc(sizeof(strlen(word)+1));
-
 	
 	 //case 1: if either allocation of node or word NULL  - return NULL
 	if(!new || !new -> word) 

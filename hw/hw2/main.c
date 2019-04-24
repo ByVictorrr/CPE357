@@ -300,6 +300,7 @@ int main(int argc, char *argv[])
 				}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				mergeSort(ptrArry,0,numOfNodes-1);
+				readOutWords(TopWords,ptrArry);
 			}
 			else
 			{
