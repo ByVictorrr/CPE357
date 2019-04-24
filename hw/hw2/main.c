@@ -5,24 +5,26 @@
 #include "fw.h"
 #define SIZE 100
 
-void readOutWords(int amount, struct node *arr[])
+void readOutWords(int amount, struct node arr[])
 {
     int n = 0;
     printf("these are the %d top words", amount);
     for (n = 0; n < amount; n++)
     {
-        printf("%s: count: %d\n", arr[n]->word, arr[n]->wCount);
+        printf("%s: count: %d\n", arr->word, arr->wCount);
     }
 }
 
-void merge(struct node *arr[], int left, int middle, int right)
+void merge(struct node arr[], int left, int middle, int right)
 {
+	printf("sort %s and wordcount %d\n", arr->word, arr->wCount);
+
     int i, j, k;
     int n1 = middle - left + 1;
     int n2 = right - middle;
 
     /* create temp arrays */
-    struct node *L[n1], *R[n2];
+    struct node L[n1], R[n2];
 
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++)
@@ -30,23 +32,25 @@ void merge(struct node *arr[], int left, int middle, int right)
     for (j = 0; j < n2; j++)
         R[j] = arr[middle + 1 + j];
 
+	printf("R[j] %s and wc %d\n", R[j].word, R[j].wCount);
+	printf("L[j] %s and wordcount %d\n", L[j].word, L[j].wCount);
     /* Merge the temp arrays back into arr[l..r]*/
     i = 0;    // Initial index of first subarray
     j = 0;    // Initial index of second subarray
     k = left; // Initial index of merged subarray
     while (i < n1 && j < n2)
     {
-        if(L[i]->wCount > R[j]->wCount){
+        if(L[i].wCount > R[j].wCount){
             arr[k]=L[i];
             i++;
         }
-        else if(L[i]->wCount < R[j]->wCount){
+        else if(L[i].wCount < R[j].wCount){
             arr[k]=R[j];
             j++;
         }
-        else if (L[i]->wCount == R[j]->wCount)
+        else if (L[i].wCount == R[j].wCount)
         {
-            if (strcmp((L[i]->word), (R[j]->word)) == -1)
+            if (strcmp((L[i].word), (R[j].word)) == -1)
             {
                 arr[k] = L[i];
                 i++;
@@ -64,6 +68,7 @@ void merge(struct node *arr[], int left, int middle, int right)
  /* left is initally 0 and right is n-1 for the size */
 void mergeSort(struct node arr[], int left, int right)
 {
+	
     if (left < right)
     {
         // this is the better way to do it.. no segfault
@@ -135,6 +140,7 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 				break;
 			current = stack[j--];
 			*nodeArry++ = *current;
+			printf("word: %s and wcount: %d\n", (nodeArry-1)->word,(nodeArry-1)->wCount);
 			current = current->right_child;
 		}
 
@@ -195,7 +201,7 @@ struct node *insertNode(struct node *root, char*word)
 		return root;
 	}
 	//Case 3: if current word is less than current node then go to left node
-	else if( strcmp(word, root->word) ) //if condition is negative word is lexicograpically less than root->word
+	else if( strcmp(word, root->word) < 0 ) //if condition is negative word is lexicograpically less than root->word
 		root->left_child = insertNode(root->left_child, word);
 	else	
 		//Case 4: if current greater than current node then go to left node
@@ -230,8 +236,7 @@ int main(int argc, char *argv[])
 	int wordsize = 0;
 	struct node *root = NULL;
 	struct node *ptrArry;
-
-	if (fp == NULL)
+	int i;
 		switch (argc)
 		{
 	case 1: /*case 1: only input executable*/
@@ -239,10 +244,17 @@ int main(int argc, char *argv[])
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
-				root = insertNode(root, word);
+				if (wordsize != EOF)
+				{
+					root = insertNode(root, word);
+				}
+				/*printf("word: %s \n", word);*/
+
 			}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
-				mergeSort(ptrArry,0,numOfNodes-1);
+				int j=0;
+
+				mergeSort(ptrArry,0,numOfNodes);
 
 			break;
 			/*==============================================================================*/
