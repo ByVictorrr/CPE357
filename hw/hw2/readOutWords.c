@@ -1,4 +1,6 @@
 #include "fw.h"
+#include <stdio.h>
+
 void readOutWords(int amount, struct node *arr[])
 {
     int n = 0;
