@@ -22,12 +22,12 @@ MergeSortBaby.o : MergeSortBaby.c
 bufferinput.o : bufferinput.c
 		$(CC) $(CFLAGS) -c bufferinput.c
 	
-bst.o : bst.c bst.h
+bst.o : bst.c
 	$(CC) $(CFLAGS) -c bst.c
 
 
 readOutWords.o : readOutWords.c
-		$(CC) $(CFLAGS) -c layout.c
+		$(CC) $(CFLAGS) -c readOutWords.c
 
 
 clean :
