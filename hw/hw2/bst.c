@@ -34,25 +34,24 @@ struct node *root = NULL;
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	//Step 1 - create a stack for iterative transversal
-	struct node stack[numNodes], *current=root;
+	struct node *stack[numNodes], *current=root;
 	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);
 	struct node *baseAddrArr = nodeArry;
 
 	int i,j; //count num of nodes
-
+	
 	//Step 2 - check if root isnt null
 	if(!root) return NULL;
-	
+	j=-1;
 	/*Step 3 - while numnodes not equal to i */
-	for (i=0,j=0; i<= numNodes; i++)
+	while(1)
 	{
 		/*INORDER*/
 
 		//Step 4.1  - is current null? if it isnt add it to the stack
 		if (current !=NULL)
 		{
-			stack[j++] = *current;  //push into stack
-			*nodeArry++ = *current;
+			stack[++j] = current;  //push into stack
 			current = current->left_child;
 		}
 		//step 4.2 - go right if current == NULL
@@ -60,7 +59,8 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 		{
 			if (j==-1)
 				break;
-			*current = stack[j--];
+			current = stack[j--];
+			*nodeArry++ = *current;
 			current = current->right_child;
 		}
 
@@ -86,8 +86,8 @@ void freeTree(struct node *root)
 	else
 	{
 		freeTree(root->left_child);
-		free(root->word);
 		freeTree(root->right_child);
+		free(root->word);
 		free(root);
 	}
 }
