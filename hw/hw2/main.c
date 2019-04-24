@@ -30,8 +30,8 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
                 return -1;
             }
             tolower(a);
-			if (61<=(int)a && a<=122 ) {
-			/*printf("%s",a);printable characters brah*/
+			if (61<=(int)a && (int)a<=122 ) {
+			/*;printable characters brah*/
 				word[size++] = a;
 			}else
             {
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
-				if (wordsize != EOF)
+				if (wordsize != EOF && wordsize !=NULL)
 				{
 					root = insertNode(root, word);
 				}
@@ -222,7 +222,10 @@ int main(int argc, char *argv[])
 					while (wordsize != -1)
 					{
 						wordsize = bufferinput(fp, word, &arraysize);
-						root = insertNode(root, word);
+						if (wordsize != EOF && wordsize !=NULL)
+				{
+					root = insertNode(root, word);
+				}
 					}
 
 				}
@@ -247,7 +250,10 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(stdin, word, &arraysize);
+					if (wordsize != EOF && wordsize !=NULL)
+				{
 					root = insertNode(root, word);
+				}
 				} /*stuff read in now need to do stuff*/
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
@@ -269,7 +275,10 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
+					if (wordsize != EOF && wordsize !=NULL)
+				{
 					root = insertNode(root, word);
+				}
 				}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
@@ -288,7 +297,10 @@ int main(int argc, char *argv[])
 						while (wordsize != -1)
 						{
 							wordsize = bufferinput(fp, word, &arraysize);
-							root = insertNode(root, word);
+							if (wordsize != EOF && wordsize !=NULL)
+				{
+					root = insertNode(root, word);
+				}
 						}
 					}else{
 						fprintf(stderr, "usage No such file or directory\n The top 10 words (out of 0 are:\n");
