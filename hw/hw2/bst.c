@@ -23,11 +23,12 @@ struct node *root = NULL;
 	ptrArry=addToAddrNodeArr(root,numOfNodes);
 
 	for(i=0; i<numOfNodes; i++)
-		printf("node %d word %s\n", i, ptrArry[i]);
+		printf("node %d word %s\n", i, ptrArry[i].word);
 
 	
 	free(ptrArry);
 	freeTree(root);
+
 	return 0;
 
 }  
