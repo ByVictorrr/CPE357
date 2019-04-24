@@ -5,82 +5,17 @@
 #include "fw.h"
 #define SIZE 100
 
-void readOutWords(int amount, struct node arr[])
+void readOutWords(int amount,int numnodes, struct node arr[])
 {
     int n = 0;
-    printf("these are the %d top words", amount);
+    printf("The top %d words (out of %d)are:\n",amount,numnodes);
     for (n = 0; n < amount; n++)
     {
         printf("%s: count: %d\n", arr->word, arr->wCount);
+        arr++;
     }
 }
 
-void merge(struct node arr[], int left, int middle, int right)
-{
-	printf("sort %s and wordcount %d\n", arr->word, arr->wCount);
-
-    int i, j, k;
-    int n1 = middle - left + 1;
-    int n2 = right - middle;
-
-    /* create temp arrays */
-    struct node L[n1], R[n2];
-
-    /* Copy data to temp arrays L[] and R[] */
-    for (i = 0; i < n1; i++)
-        L[i] = arr[left + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[middle + 1 + j];
-
-	printf("R[j] %s and wc %d\n", R[j].word, R[j].wCount);
-	printf("L[j] %s and wordcount %d\n", L[j].word, L[j].wCount);
-    /* Merge the temp arrays back into arr[l..r]*/
-    i = 0;    // Initial index of first subarray
-    j = 0;    // Initial index of second subarray
-    k = left; // Initial index of merged subarray
-    while (i < n1 && j < n2)
-    {
-        if(L[i].wCount > R[j].wCount){
-            arr[k]=L[i];
-            i++;
-        }
-        else if(L[i].wCount < R[j].wCount){
-            arr[k]=R[j];
-            j++;
-        }
-        else if (L[i].wCount == R[j].wCount)
-        {
-            if (strcmp((L[i].word), (R[j].word)) == -1)
-            {
-                arr[k] = L[i];
-                i++;
-            }
-            else
-            {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-    }
-}
-
- /* left is initally 0 and right is n-1 for the size */
-void mergeSort(struct node arr[], int left, int right)
-{
-	
-    if (left < right)
-    {
-        // this is the better way to do it.. no segfault
-        int middi = left + (right - left) / 2;
-
-        // Sort first then the second...the dirty dirty second
-        mergeSort(arr, left, middi);
-        mergeSort(arr, middi + 1, right);
-
-        merge(arr, left, middi, right);
-    }
-}   /* Copy the remaining elements of L[], if there */
 
 int bufferinput(FILE *fp, char *word, int *arraylength)
 {
@@ -95,7 +30,8 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
                 return -1;
             }
             tolower(a);
-			if (61<=(int)a && a<=122 ) {/*printable characters brah*/
+			if (61<=(int)a && a<=122 ) {
+			/*printf("%s",a);printable characters brah*/
 				word[size++] = a;
 			}else
             {
@@ -224,10 +160,13 @@ struct node *searchNode(struct node *root, char *word )
 		return searchNode(root->right_child,word);
 }
 
-int compare (struct node *n1, struct node *n2)
+
+int comparator(const void *p, const void *q)  
 {
-	return (n1->wCount - n2->wCount);
-}
+    int l = ((struct node *)p)->wCount; 
+    int r = ((struct node *)q)->wCount;  
+    return (r-l); 
+} 
 
 int main(int argc, char *argv[])
 {
@@ -260,7 +199,13 @@ int main(int argc, char *argv[])
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
 				int j=0;
 
-				qsort((void**) ptrArry, 0, numOfNodes-1, &compare);
+				int sizeoarray = sizeof(ptrArry) / sizeof(ptrArry[0]);
+
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if(TopWords>numOfNodes){
+					TopWords=numOfNodes;
+				}
+				readOutWords(TopWords,numOfNodes,ptrArry);
 
 			break;
 			/*==============================================================================*/
@@ -286,8 +231,11 @@ int main(int argc, char *argv[])
 				
 				
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
-				mergeSort(ptrArry,0,numOfNodes-1);
-				readOutWords(TopWords,ptrArry);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if(TopWords>numOfNodes){
+					TopWords=numOfNodes;
+				}
+				readOutWords(TopWords,numOfNodes,ptrArry);
 				break;
 			}
 			/*==============================================================================*/
@@ -302,8 +250,11 @@ int main(int argc, char *argv[])
 					root = insertNode(root, word);
 				} /*stuff read in now need to do stuff*/
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
-				mergeSort(ptrArry,0,numOfNodes-1);
-				readOutWords(TopWords,ptrArry);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if(TopWords>numOfNodes){
+					TopWords=numOfNodes;
+				}
+				readOutWords(TopWords,numOfNodes,ptrArry);
 			}
 			else
 			{
@@ -321,8 +272,11 @@ int main(int argc, char *argv[])
 					root = insertNode(root, word);
 				}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
-				mergeSort(ptrArry,0,numOfNodes-1);
-				readOutWords(TopWords,ptrArry);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if(TopWords>numOfNodes){
+					TopWords=numOfNodes;
+				}
+				readOutWords(TopWords,numOfNodes,ptrArry);
 			}
 			else
 			{
@@ -341,8 +295,11 @@ int main(int argc, char *argv[])
 					}
 				}
 				ptrArry = addToAddrNodeArr(root,numOfNodes);
-				mergeSort(ptrArry,0,numOfNodes-1);
-				readOutWords(TopWords,ptrArry);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if(TopWords>numOfNodes){
+					TopWords=numOfNodes;
+				}
+				readOutWords(TopWords,numOfNodes,ptrArry);
 			}
 		}
 
