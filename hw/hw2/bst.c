@@ -12,56 +12,85 @@ int numOfNodes=0;
 int main(int argc, char*argv[])
 {
 	
-	struct node *root = NULL;
+struct node *root = NULL;
+	struct node *ptrArry;
+
 	char *words[SIZE] = {"victor","marilyn","victor","zebra","high"};
 	int i = 0;
-	struct node **arr = (struct node**)malloc(sizeof(struct node *)*SIZE);
 	for(i=0; i<SIZE; i++)
 		root = insertNode(root, words[i]);
-	inOrder(root,arr);
 	
+	ptrArry=addToAddrNodeArr(root,numOfNodes);
 
+	for(i=0; i<SIZE; i++)
+		printf("node %d word %s\n", i, ptrArry[i]);
 
-
+	
+	free(ptrArry);
 	freeTree(root);
 	return 0;
 
-}
-  
-void freeNode(struct node *root)
+}  
+struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
-	if(!root)
-		return;
-	free(root->word);
-	free(root);
-}
-void freeTree(struct node *root)
-{
-	//Base case until root == NULL
-	if(root == NULL)
-		return;
-	else{
-		freeTree(root->left_child);
-		printf("freed : %s\n", root->word);
-		freeNode(root);
-		freeTree(root->right_child);
+	//Step 1 - create a stack for iterative transversal
+	struct node stack[numNodes], *current=root;
+	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);
+	struct node *baseAddrArr = nodeArry;
+
+	int i,j; //count num of nodes
+
+	//Step 2 - check if root isnt null
+	if(!root) return NULL;
+	
+	/*Step 3 - while numnodes not equal to i */
+	for (i=0,j=0; i<= numNodes; i++)
+	{
+		/*INORDER*/
+
+		//Step 4.1  - is current null? if it isnt add it to the stack
+		if (current !=NULL)
+		{
+			stack[j++] = *current;  //push into stack
+			*nodeArry++ = *current;
+			current = current->left_child;
 		}
+		//step 4.2 - go right if current == NULL
+		else
+		{
+			if (j==-1)
+				break;
+			*current = stack[j--];
+			current = current->right_child;
+		}
+
+	}
+	return baseAddrArr;
 }
 
 
-void inOrder(struct node *root, struct node **arr)
+void inOrder(struct node *root)
 {
 	//Base case when reached a leaf
 	if(root == NULL)
 		return;
 	//General case
 	else
-		inOrder(root->left_child,arr++);
-		arr = &root;
+		inOrder(root->left_child);
 		printf("word: %s, wordCount: %d\n", root->word, root->wCount);
-		inOrder(root->right_child,arr++);
+		inOrder(root->right_child);
 }
-
+void freeTree(struct node *root)
+{
+	if(!root) return;
+	else
+	{
+		freeTree(root->left_child);
+		free(root->word);
+		freeTree(root->right_child);
+		free(root);
+	}
+}
 struct node *newNode(char *word)
 {
 	 struct node *new;
