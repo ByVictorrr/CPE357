@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include "fw.h"
 
-void merge(WordItem *arr[], int left, int middle, int right)
+void merge(struct node *arr[], int left, int middle, int right)
 {
     int i, j, k;
     int n1 = middle - left + 1;
     int n2 = right - middle;
 
     /* create temp arrays */
-    WordItem *L[n1], *R[n2];
+    struct node *L[n1], *R[n2];
 
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++)
@@ -23,15 +23,15 @@ void merge(WordItem *arr[], int left, int middle, int right)
     k = left; // Initial index of merged subarray
     while (i < n1 && j < n2)
     {
-        if(L[i]->count > R[j]->count){
+        if(L[i]->wCount > R[j]->wCount){
             arr[k]=L[i];
             i++;
         }
-        else if(L[i]->count < R[j]->count){
+        else if(L[i]->wCount < R[j]->wCount){
             arr[k]=R[j];
             j++;
         }
-        else if (L[i]->count == R[j]->count)
+        else if (L[i]->wCount == R[j]->wCount)
         {
             if (strcmp((L[i]->word), (R[j]->word)) == -1)
             {
@@ -65,7 +65,7 @@ void merge(WordItem *arr[], int left, int middle, int right)
 }
 
 /* left is initally 0 and right is n-1 for the size */
-void mergeSort(WordItem arr[], int left, int right)
+void mergeSort(struct node arr[], int left, int right)
 {
     if (left < right)
     {

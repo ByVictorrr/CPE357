@@ -3,7 +3,7 @@
 
 #Vars:
 CC= gcc
-CFLAGS = -Wall -ansi -pedantic -g
+CFLAGS = -g
 MAIN = fw
 OBJS = fw.o MergeSortBaby.o bufferinput.o bst.o readOutWords.o
 all : $(MAIN)

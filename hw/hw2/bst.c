@@ -2,12 +2,11 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "bst.h"
+#include "fw.h"
 
 
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
-	//Step 1 - create a stack for iterative transversal
 	struct node **stack = (struct node**)malloc(sizeof(struct node)*numNodes);
 	struct node *current=root;
 	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);

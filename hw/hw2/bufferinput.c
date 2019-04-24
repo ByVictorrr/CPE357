@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
-#include "bst.h"
 
 
 int bufferinput(FILE *fp, char *word, int *arraylength)
