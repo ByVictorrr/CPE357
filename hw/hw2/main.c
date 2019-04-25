@@ -172,11 +172,13 @@ int comparator(const void *p, const void *q)
 {
 	int l = ((struct node *)p)->wCount;
 	int r = ((struct node *)q)->wCount;
-	if((r-l)!=0){
-	return (r - l);
-	}else
+	if ((r - l) != 0)
 	{
-		return (strcmp((((struct node *)q)->word),((struct node *)p)->word));
+		return (r - l);
+	}
+	else
+	{
+		return (strcmp((((struct node *)q)->word), ((struct node *)p)->word));
 	}
 }
 
@@ -304,20 +306,22 @@ int main(int argc, char *argv[])
 					}
 					fclose(fp);
 				}
-				else{
+				else
+				{
 					fprintf(stderr, "usage unable to open file error %s\n", argv[m]);
 				}
 				wordsize = 0;
 				m++;
 			}
-			if(numOfNodes>0){
-			ptrArry = addToAddrNodeArr(root, numOfNodes);
-			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-			if (TopWords > numOfNodes)
+			if (numOfNodes > 0)
 			{
-				TopWords = numOfNodes;
-			}
-			readOutWords(TopWords, numOfNodes, ptrArry);
+				ptrArry = addToAddrNodeArr(root, numOfNodes);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if (TopWords > numOfNodes)
+				{
+					TopWords = numOfNodes;
+				}
+				readOutWords(TopWords, numOfNodes, ptrArry);
 			}
 			break;
 		}
@@ -336,29 +340,35 @@ int main(int argc, char *argv[])
 			{
 				fp = fopen(argv[m], "r");
 
-				if (fp == NULL)
+				if (fp != NULL)
 				{
-					fprintf(stderr, "usage unable to open file error\n");
-					return -1;
-				}
-				while (wordsize != -1)
-				{
-					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != (int)NULL)
+					while (wordsize != -1)
 					{
-						root = insertNode(root, word);
+						wordsize = bufferinput(fp, word, &arraysize);
+						if (wordsize != EOF && wordsize != (int)NULL)
+						{
+							root = insertNode(root, word);
+						}
 					}
+					fclose(fp);
+				}
+				else
+				{
+					fprintf(stderr, "usage unable to open file error %s\n", argv[m]);
 				}
 				wordsize = 0;
 				m++;
 			}
-			ptrArry = addToAddrNodeArr(root, numOfNodes);
-			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-			if (TopWords > numOfNodes)
+			if (numOfNodes > 0)
 			{
-				TopWords = numOfNodes;
+				ptrArry = addToAddrNodeArr(root, numOfNodes);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if (TopWords > numOfNodes)
+				{
+					TopWords = numOfNodes;
+				}
+				readOutWords(TopWords, numOfNodes, ptrArry);
 			}
-			readOutWords(TopWords, numOfNodes, ptrArry);
 			break;
 		}
 		else
@@ -380,22 +390,23 @@ int main(int argc, char *argv[])
 					}
 					fclose(fp);
 				}
-				else{
+				else
+				{
 					fprintf(stderr, "usage unable to open file error %s\n", argv[m]);
 				}
 				wordsize = 0;
 				m++;
 			}
-			if(numOfNodes>0){
-			ptrArry = addToAddrNodeArr(root, numOfNodes);
-			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-			if (TopWords > numOfNodes)
+			if (numOfNodes > 0)
 			{
-				TopWords = numOfNodes;
+				ptrArry = addToAddrNodeArr(root, numOfNodes);
+				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+				if (TopWords > numOfNodes)
+				{
+					TopWords = numOfNodes;
+				}
+				readOutWords(TopWords, numOfNodes, ptrArry);
 			}
-			readOutWords(TopWords, numOfNodes, ptrArry);
-			}
-			break;
 			break;
 		}
 	}
