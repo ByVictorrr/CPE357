@@ -21,7 +21,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 {
 	int size = 0;
 	char a = 1;
-	while (size <= *arraylength && a != (char) NULL)
+	while (size <= *arraylength && a != (char)NULL)
 	{
 		/*need to add typcheck for input*/
 
@@ -93,10 +93,10 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 }
 void inOrder(struct node *root)
 {
-	//Base case when reached a leaf
+	/*Base case when reached a leaf*/
 	if (root == NULL)
 		return;
-	//General case
+	/*General case*/
 	else
 		inOrder(root->left_child);
 	printf("word: %s, wordCount: %d\n", root->word, root->wCount);
@@ -120,7 +120,7 @@ struct node *newNode(char *word)
 	new = (struct node *)malloc(sizeof(struct node));
 	new->word = (char *)malloc(sizeof(strlen(word) + 1));
 
-	//case 1: if either allocation of node or word NULL  - return NULL
+	/*case 1: if either allocation of node or word NULL  - return NULL*/
 	if (!new || !new->word)
 		return NULL;
 
@@ -145,7 +145,7 @@ struct node *insertNode(struct node *root, char *word)
 		return root;
 	}
 	/*Case 3: if current word is less than current node then go to left node*/
-	else if (strcmp(word, root->word) < 0) //if condition is negative word is lexicograpically less than root->word
+	else if (strcmp(word, root->word) < 0) /*if condition is negative word is lexicograpically less than root->word*/
 		root->left_child = insertNode(root->left_child, word);
 	else
 		/*Case 4: if current greater than current node then go to left node*/
@@ -172,7 +172,12 @@ int comparator(const void *p, const void *q)
 {
 	int l = ((struct node *)p)->wCount;
 	int r = ((struct node *)q)->wCount;
+	if((r-l)!=0){
 	return (r - l);
+	}else
+	{
+		return (strcmp((((struct node *)q)->word),((struct node *)p)->word));
+	}
 }
 
 int main(int argc, char *argv[])
@@ -247,7 +252,7 @@ int main(int argc, char *argv[])
 			}
 			else
 			{ /*else file ptr null - something wrong with the file*/
-				fprintf(stderr, "usage unable to open file error %s\n",argv[1]);
+				fprintf(stderr, "usage unable to open file error %s\n", argv[1]);
 				return -1;
 			}
 		}
@@ -287,24 +292,25 @@ int main(int argc, char *argv[])
 			{
 				fp = fopen(argv[m], "r");
 
-				if (fp == NULL)
+				if (fp != NULL)
 				{
-					fprintf(stderr, "usage unable to open file error %s\n",argv[m]);
-					return -1;
-				}
-
-				while (wordsize != -1)
-				{
-					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != (int)NULL)
+					while (wordsize != -1)
 					{
-						root = insertNode(root, word);
+						wordsize = bufferinput(fp, word, &arraysize);
+						if (wordsize != EOF && wordsize != (int)NULL)
+						{
+							root = insertNode(root, word);
+						}
 					}
+					fclose(fp);
 				}
-				fclose(fp);
-				wordsize=0;
+				else{
+					fprintf(stderr, "usage unable to open file error %s\n", argv[m]);
+				}
+				wordsize = 0;
 				m++;
 			}
+			if(numOfNodes>0){
 			ptrArry = addToAddrNodeArr(root, numOfNodes);
 			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 			if (TopWords > numOfNodes)
@@ -312,6 +318,7 @@ int main(int argc, char *argv[])
 				TopWords = numOfNodes;
 			}
 			readOutWords(TopWords, numOfNodes, ptrArry);
+			}
 			break;
 		}
 
@@ -337,12 +344,12 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize !=(int)NULL)
+					if (wordsize != EOF && wordsize != (int)NULL)
 					{
 						root = insertNode(root, word);
 					}
 				}
-				wordsize=0;
+				wordsize = 0;
 				m++;
 			}
 			ptrArry = addToAddrNodeArr(root, numOfNodes);
@@ -356,10 +363,12 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			int i = 1;
-			while (i < argc)
+			int m = 1;
+			while (m < argc)
 			{
-				if ((fp = fopen(argv[i], "r")))
+				fp = fopen(argv[m], "r");
+
+				if (fp != NULL)
 				{
 					while (wordsize != -1)
 					{
@@ -369,15 +378,15 @@ int main(int argc, char *argv[])
 							root = insertNode(root, word);
 						}
 					}
+					fclose(fp);
 				}
-				else
-				{
-					fprintf(stderr, "usage No such file or directory\n");
-					return -1;
+				else{
+					fprintf(stderr, "usage unable to open file error %s\n", argv[m]);
 				}
-				i++;
-				wordsize=0;
+				wordsize = 0;
+				m++;
 			}
+			if(numOfNodes>0){
 			ptrArry = addToAddrNodeArr(root, numOfNodes);
 			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 			if (TopWords > numOfNodes)
@@ -385,6 +394,8 @@ int main(int argc, char *argv[])
 				TopWords = numOfNodes;
 			}
 			readOutWords(TopWords, numOfNodes, ptrArry);
+			}
+			break;
 			break;
 		}
 	}
