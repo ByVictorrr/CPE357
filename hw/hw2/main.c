@@ -80,7 +80,6 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 				break;
 			current = stack[j--];
 			*nodeArry++ = *current;
-			printf("word: %s and wcount: %d\n", (nodeArry - 1)->word, (nodeArry - 1)->wCount);
 			current = current->right_child;
 		}
 	}
@@ -233,7 +232,13 @@ int main(int argc, char *argv[])
 				int m = 1;
 				while (m < argc)
 				{
-					fp = fopen(argv[m], 'r') while (wordsize != -1) if (fp = NULL)
+					fp = fopen(argv[m], 'r');
+
+					if (fp = NULL)
+					{
+						fprintf(stderr, "usage unable to open file error");
+					}
+					while (wordsize != -1)
 					{
 						fprintf(stderr, "usage unable to open file error");
 					}
@@ -244,7 +249,7 @@ int main(int argc, char *argv[])
 							root = insertNode(root, word);
 						}
 					}
-					m++
+					m++;
 				}
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
@@ -256,95 +261,41 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-	}
-	/*==============================================================================*/
-case 3: /*case 3: could be -n option and number, or just files or combination*/
-	/*case 3.1: fw -n number*/
-	if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
-	{
-		TopWords = argv[2];
-		while (wordsize != -1)
+
+		/*==============================================================================*/
+	case 3: /*case 3: could be -n option and number, or just files or combination*/
+		/*case 3.1: fw -n number*/
+		if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
 		{
-			wordsize = bufferinput(stdin, word, &arraysize);
-			if (wordsize != EOF && wordsize != NULL)
+			TopWords = argv[2];
+			while (wordsize != -1)
 			{
-				root = insertNode(root, word);
-			}
-		} /*stuff read in now need to do stuff*/
-		ptrArry = addToAddrNodeArr(root, numOfNodes);
-		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-		if (TopWords > numOfNodes)
-		{
-			TopWords = numOfNodes;
-		}
-		readOutWords(TopWords, numOfNodes, ptrArry);
-		break;
-	}
-	else
-	{
-		int m = 1;
-		while (m < argc)
-		{
-			fp = fopen(argv[m], 'r') while (wordsize != -1) if (fp = NULL)
-			{
-				fprintf(stderr, "usage unable to open file error");
-			}
-			{
-				wordsize = bufferinput(fp, word, &arraysize);
+				wordsize = bufferinput(stdin, word, &arraysize);
 				if (wordsize != EOF && wordsize != NULL)
 				{
 					root = insertNode(root, word);
 				}
-			}
-			m++
-		}
-		ptrArry = addToAddrNodeArr(root, numOfNodes);
-		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-		if (TopWords > numOfNodes)
-		{
-			TopWords = numOfNodes;
-		}
-		readOutWords(TopWords, numOfNodes, ptrArry);
-		break;
-	}
-
-default:
-
-	if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
-	{
-		int m = 3;
-		TopWords = (int)argv[2];
-		while (m < argc)
-		{
-			fp = fopen(argv[m], 'r') while (wordsize != -1) if (fp = NULL)
+			} /*stuff read in now need to do stuff*/
+			ptrArry = addToAddrNodeArr(root, numOfNodes);
+			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+			if (TopWords > numOfNodes)
 			{
-				fprintf(stderr, "usage unable to open file error");
+				TopWords = numOfNodes;
 			}
+			readOutWords(TopWords, numOfNodes, ptrArry);
+			break;
+		}
+		else
+		{
+			int m = 1;
+			while (m < argc)
 			{
-				wordsize = bufferinput(fp, word, &arraysize);
-				if (wordsize != EOF && wordsize != NULL)
+				fp = fopen(argv[m], 'r');
+
+				if (fp = NULL)
 				{
-					root = insertNode(root, word);
+					fprintf(stderr, "usage unable to open file error");
 				}
-			}
-			m++
-		}
-		ptrArry = addToAddrNodeArr(root, numOfNodes);
-		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-		if (TopWords > numOfNodes)
-		{
-			TopWords = numOfNodes;
-		}
-		readOutWords(TopWords, numOfNodes, ptrArry);
-		break;
-	}
-	else
-	{
-		int i = 1;
-		while (i < argc)
-		{
-			if (fp = fopen(argv[i], 'r'))
-			{
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
@@ -353,19 +304,81 @@ default:
 						root = insertNode(root, word);
 					}
 				}
+				m++;
 			}
-			else
+			ptrArry = addToAddrNodeArr(root, numOfNodes);
+			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+			if (TopWords > numOfNodes)
 			{
-				fprintf(stderr, "usage No such file or directory\n The top 10 words (out of 0 are:\n");
+				TopWords = numOfNodes;
 			}
+			readOutWords(TopWords, numOfNodes, ptrArry);
+			break;
 		}
-		ptrArry = addToAddrNodeArr(root, numOfNodes);
-		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-		if (TopWords > numOfNodes)
+
+	default:
+
+		if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
 		{
-			TopWords = numOfNodes;
+			int m = 3;
+			TopWords = (int)argv[2];
+			while (m < argc)
+			{
+				fp = fopen(argv[m], 'r');
+
+				if (fp = NULL)
+				{
+					fprintf(stderr, "usage unable to open file error");
+				}
+				while (wordsize != -1)
+				{
+					wordsize = bufferinput(fp, word, &arraysize);
+					if (wordsize != EOF && wordsize != NULL)
+					{
+						root = insertNode(root, word);
+					}
+				}
+				m++;
+			}
+			ptrArry = addToAddrNodeArr(root, numOfNodes);
+			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+			if (TopWords > numOfNodes)
+			{
+				TopWords = numOfNodes;
+			}
+			readOutWords(TopWords, numOfNodes, ptrArry);
+			break;
 		}
-		readOutWords(TopWords, numOfNodes, ptrArry);
-		break;
-	}return 0;
+		else
+		{
+			int i = 1;
+			while (i < argc)
+			{
+				if (fp = fopen(argv[i], 'r'))
+				{
+					while (wordsize != -1)
+					{
+						wordsize = bufferinput(fp, word, &arraysize);
+						if (wordsize != EOF && wordsize != NULL)
+						{
+							root = insertNode(root, word);
+						}
+					}
+				}
+				else
+				{
+					fprintf(stderr, "usage No such file or directory\n The top 10 words (out of 0 are:\n");
+				}
+			}
+			ptrArry = addToAddrNodeArr(root, numOfNodes);
+			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+			if (TopWords > numOfNodes)
+			{
+				TopWords = numOfNodes;
+			}
+			readOutWords(TopWords, numOfNodes, ptrArry);
+			break;
+		}
+	}
+	return 0;
 }
