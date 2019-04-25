@@ -62,9 +62,9 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 	struct node *nodeArry = (struct node *)malloc(sizeof(struct node) * numNodes);
 	struct node *baseAddrArr = nodeArry;
 
-	int j; //count num of nodes
+	int j; /*count num of nodes*/
 
-	//Step 2 - check if root isnt null
+	/*Step 2 - check if root isnt null*/
 	if (!root)
 		return NULL;
 	j = -1;
@@ -73,13 +73,13 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 	{
 		/*INORDER*/
 
-		//Step 4.1  - is current null? if it isnt add it to the stack
+		/*Step 4.1  - is current null? if it isnt add it to the stack*/
 		if (current != NULL)
 		{
-			stack[++j] = current; //push into stack
+			stack[++j] = current; /*push into stack*/
 			current = current->left_child;
 		}
-		//step 4.2 - go right if current == NULL
+		/*step 4.2 - go right if current == NULL*/
 		else
 		{
 			if (j == -1)
@@ -135,20 +135,20 @@ struct node *newNode(char *word)
 /* insertNode: if (word is lexicographically less than root-> word stored in left child*/
 struct node *insertNode(struct node *root, char *word)
 {
-	//Case 1: if tree is empty
+	/*Case 1: if tree is empty*/
 	if (!root)
 		return newNode(word);
-	//Case 2: if the word in current node is word inserted
+	/*Case 2: if the word in current node is word inserted*/
 	else if (strcmp(root->word, word) == 0)
 	{
 		root->wCount++;
 		return root;
 	}
-	//Case 3: if current word is less than current node then go to left node
+	/*Case 3: if current word is less than current node then go to left node*/
 	else if (strcmp(word, root->word) < 0) //if condition is negative word is lexicograpically less than root->word
 		root->left_child = insertNode(root->left_child, word);
 	else
-		//Case 4: if current greater than current node then go to left node
+		/*Case 4: if current greater than current node then go to left node*/
 		root->right_child = insertNode(root->right_child, word);
 
 	return root;
@@ -156,10 +156,10 @@ struct node *insertNode(struct node *root, char *word)
 /*returns Null if not found*/
 struct node *searchNode(struct node *root, char *word)
 {
-	//case 1: base case if node isnt foud
+	/*case 1: base case if node isnt foud*/
 	if (root == NULL)
 		return NULL;
-	//case 2: if word is found return address
+	/*case 2: if word is found return address*/
 	else if (root->word == word)
 		return root;
 	else if (strcmp(word, root->word))
@@ -185,8 +185,6 @@ int main(int argc, char *argv[])
 	int wordsize = 0;
 	struct node *root = NULL;
 	struct node *ptrArry;
-	int i = 0;
-	int z = 0;
 
 	switch (argc)
 	{
@@ -206,9 +204,6 @@ int main(int argc, char *argv[])
 			/*printf("word: %s \n", word);*/
 		}
 		ptrArry = addToAddrNodeArr(root, numOfNodes);
-		int j = 0;
-
-		int sizeoarray = sizeof(ptrArry) / sizeof(ptrArry[0]);
 
 		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 		if (TopWords > numOfNodes)
