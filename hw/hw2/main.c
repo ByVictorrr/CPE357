@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "fw.h"
+#include <ctype.h>
 #define SIZE 100
 
 void readOutWords(int amount, int numnodes, struct node arr[])
@@ -20,7 +21,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 {
 	int size = 0;
 	char a = 1;
-	while (size <= *arraylength && a != NULL)
+	while (size <= *arraylength && a != (char) NULL)
 	{
 		/*need to add typcheck for input*/
 
@@ -31,7 +32,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		}
 		else if (size > 0 && a == EOF)
 		{
-			word[size] = NULL;
+			word[size] = (char)NULL;
 			return -5;
 		}
 		a = tolower(a);
@@ -42,7 +43,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		}
 		else
 		{
-			a = NULL;
+			a = (char)NULL;
 		}
 
 		if (size == *arraylength)
@@ -51,7 +52,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 			word = (char *)realloc(word, *arraylength * sizeof(char));
 		}
 	}
-	word[size] = NULL;
+	word[size] = (char)NULL;
 	return size;
 }
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
@@ -156,7 +157,7 @@ struct node *insertNode(struct node *root, char *word)
 struct node *searchNode(struct node *root, char *word)
 {
 	//case 1: base case if node isnt foud
-	if (root = NULL)
+	if (root == NULL)
 		return NULL;
 	//case 2: if word is found return address
 	else if (root->word == word)
@@ -194,7 +195,7 @@ int main(int argc, char *argv[])
 		while (wordsize != -1)
 		{
 			wordsize = bufferinput(stdin, word, &arraysize);
-			if (wordsize != EOF && wordsize != NULL)
+			if (wordsize != EOF && wordsize != (int)NULL)
 			{
 				root = insertNode(root, word);
 			}
@@ -235,7 +236,7 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != NULL)
+					if (wordsize != EOF && wordsize != (int)NULL)
 					{
 						root = insertNode(root, word);
 					}
@@ -270,7 +271,7 @@ int main(int argc, char *argv[])
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
-				if (wordsize != EOF && wordsize != NULL)
+				if (wordsize != EOF && wordsize != (int)NULL)
 				{
 					root = insertNode(root, word);
 				}
@@ -300,7 +301,7 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != NULL)
+					if (wordsize != EOF && wordsize != (int)NULL)
 					{
 						root = insertNode(root, word);
 					}
@@ -335,13 +336,13 @@ int main(int argc, char *argv[])
 
 				if (fp == NULL)
 				{
-					fprintf(stderr, "usage unable to open file error");
+					fprintf(stderr, "usage unable to open file error\n");
 					return -1;
 				}
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != NULL)
+					if (wordsize != EOF && wordsize !=(int)NULL)
 					{
 						root = insertNode(root, word);
 					}
@@ -368,7 +369,7 @@ int main(int argc, char *argv[])
 					while (wordsize != -1)
 					{
 						wordsize = bufferinput(fp, word, &arraysize);
-						if (wordsize != EOF && wordsize != NULL)
+						if (wordsize != EOF && wordsize != (int)NULL)
 						{
 							root = insertNode(root, word);
 						}
