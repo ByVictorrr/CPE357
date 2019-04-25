@@ -29,7 +29,12 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		{
 			return -1;
 		}
-		tolower(a);
+		else if (size > 0 && a == EOF)
+		{
+			word[size] = NULL;
+			return -5;
+		}
+		a = tolower(a);
 		if (61 <= (int)a && (int)a <= 122)
 		{
 			/*;printable characters brah*/
@@ -179,7 +184,8 @@ int main(int argc, char *argv[])
 	int wordsize = 0;
 	struct node *root = NULL;
 	struct node *ptrArry;
-	int i;
+	int i = 0;
+	int z =0;
 
 	switch (argc)
 	{
@@ -191,6 +197,10 @@ int main(int argc, char *argv[])
 			if (wordsize != EOF && wordsize != NULL)
 			{
 				root = insertNode(root, word);
+			}
+			if (wordsize == -5)
+			{
+				wordsize = -1;
 			}
 			/*printf("word: %s \n", word);*/
 		}
@@ -210,13 +220,16 @@ int main(int argc, char *argv[])
 		/*==============================================================================*/
 	case 2: /*could use option */
 		/*case 2.1: if the argv[1] != -n treat is a file input*/
-		if (!strcmp(argv[1], "-n"))
+		if (!strcmp(argv[1], "-n")){
 			fprintf(stderr, "usage: fw [-n num] [ file1 [ file2 [..]]]\n");
+			return -1;
+		}
 		/*case 2.2: if the argv[1] is anything other than -n treat it as a file**/
 		else
 		{
+			fp = fopen(argv[1],"r");
 
-			if ((fp = fopen(argv[1], 'r')))
+			if (fp != NULL)
 			{
 				while (wordsize != -1)
 				{
@@ -225,31 +238,6 @@ int main(int argc, char *argv[])
 					{
 						root = insertNode(root, word);
 					}
-				}
-			}
-			else
-			{ /*else file ptr null - something wrong with the file*/
-				int m = 1;
-				while (m < argc)
-				{
-					fp = fopen(argv[m], 'r');
-
-					if (fp = NULL)
-					{
-						fprintf(stderr, "usage unable to open file error");
-					}
-					while (wordsize != -1)
-					{
-						fprintf(stderr, "usage unable to open file error");
-					}
-					{
-						wordsize = bufferinput(fp, word, &arraysize);
-						if (wordsize != EOF && wordsize != NULL)
-						{
-							root = insertNode(root, word);
-						}
-					}
-					m++;
 				}
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
@@ -260,14 +248,22 @@ int main(int argc, char *argv[])
 				readOutWords(TopWords, numOfNodes, ptrArry);
 				break;
 			}
+			else
+			{ /*else file ptr null - something wrong with the file*/
+				fprintf(stderr, "usage unable to open file error");
+			}
 		}
 
 		/*==============================================================================*/
 	case 3: /*case 3: could be -n option and number, or just files or combination*/
 		/*case 3.1: fw -n number*/
-		if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
+		if (!strcmp(argv[1], "-n"))
 		{
-			TopWords = argv[2];
+			TopWords = atoi(argv[2]);
+			if (TopWords==0){
+				fprintf(stderr,"usage,  this is why we cant have nice things use a number!\n");
+				return -1;
+			}
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
@@ -290,9 +286,9 @@ int main(int argc, char *argv[])
 			int m = 1;
 			while (m < argc)
 			{
-				fp = fopen(argv[m], 'r');
+				fp = fopen(argv[m], "r");
 
-				if (fp = NULL)
+				if (fp == NULL)
 				{
 					fprintf(stderr, "usage unable to open file error");
 				}
@@ -317,18 +313,22 @@ int main(int argc, char *argv[])
 		}
 
 	default:
-
-		if (!strcmp(argv[1], "-n") && isdigit(argv[2]))
+		if (strncmp(argv[1], "-n",2)==0)
 		{
 			int m = 3;
-			TopWords = (int)argv[2];
+			TopWords = atoi(argv[2]);
+			if (TopWords==0){
+				fprintf(stderr,"usage,  this is why we cant have nice things use a number!\n");
+				return -1;
+			}
 			while (m < argc)
 			{
-				fp = fopen(argv[m], 'r');
+				fp = fopen(argv[m], "r");
 
-				if (fp = NULL)
+				if (fp == NULL)
 				{
 					fprintf(stderr, "usage unable to open file error");
+					return -1;
 				}
 				while (wordsize != -1)
 				{
@@ -351,10 +351,11 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
+			printf("In defult without n %d\n",z++);
 			int i = 1;
 			while (i < argc)
 			{
-				if (fp = fopen(argv[i], 'r'))
+				if ((fp = fopen(argv[i], "r")))
 				{
 					while (wordsize != -1)
 					{
@@ -367,7 +368,8 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
-					fprintf(stderr, "usage No such file or directory\n The top 10 words (out of 0 are:\n");
+					fprintf(stderr, "usage No such file or directory\n");
+					return -1;
 				}
 			}
 			ptrArry = addToAddrNodeArr(root, numOfNodes);
