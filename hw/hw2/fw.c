@@ -42,7 +42,7 @@ int bufferinput(FILE *fp, char **word, int *arraylength)
 			return -5;
 		}
 		a = tolower(a);
-		if (60 <= (int)a && (int)a <= 122)
+		if ( (65 <= (int)a && (int)a <= 90)  || (97 <= (int)a && (int)a <= 122) )
 		{
 			/*;printable characters brah*/
 			word[0][size++] = a;
@@ -107,6 +107,7 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 			current = current->right_child;
 		}
 	}
+	free(stack);
 	return baseAddrArr;
 }
 
