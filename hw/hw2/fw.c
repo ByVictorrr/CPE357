@@ -38,7 +38,7 @@ int bufferinput(FILE *fp, char **word, int *arraylength)
 		}
 		else if (size > 0 && a == EOF)
 		{
-			word[size] = '\0';
+			word[0][size] = '\0';
 			return -5;
 		}
 		a = tolower(a);
