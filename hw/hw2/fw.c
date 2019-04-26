@@ -23,7 +23,7 @@ void readOutWords(int amount, int numnodes, struct node arr[])
 	}
 }
 
-int bufferinput(FILE *fp, char *word, int *arraylength)
+int bufferinput(FILE *fp, char **word, int *arraylength)
 {
 	int size = 0;
 	char a = 1;
@@ -45,7 +45,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		if (60 <= (int)a && (int)a <= 122)
 		{
 			/*;printable characters brah*/
-			word[size++] = a;
+			word[0][size++] = a;
 		}
 		else
 		{
@@ -55,15 +55,15 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		if (size == *arraylength)
 		{ 
 			*arraylength += CHUNK;
-			word = (char *)realloc(word, *arraylength * sizeof(char));
-			if (!word)
+			*word = (char *)realloc(*word, *arraylength * sizeof(char));
+			if (!*word)
 			{ /* realloc failed. */
 				perror("realloc");
 				exit(2);
 			}
 		}
 	}
-	word[size] = '\0';
+	word[0][size] = '\0';
 	/*trim words*/
 	/*
 	if(size){
@@ -107,7 +107,6 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 			current = current->right_child;
 		}
 	}
-	free(stack);
 	return baseAddrArr;
 }
 
@@ -226,7 +225,7 @@ int main(int argc, char *argv[])
 		/*this case we want to get input from std in*/
 		while (wordsize != -1)
 		{
-			wordsize = bufferinput(stdin, word, &arraysize);
+			wordsize = bufferinput(stdin, &word, &arraysize);
 			if (wordsize != EOF && wordsize)
 			{
 				root = insertNode(root, word);
@@ -265,7 +264,7 @@ int main(int argc, char *argv[])
 			{
 				while (wordsize != -1)
 				{
-					wordsize = bufferinput(fp, word, &arraysize);
+					wordsize = bufferinput(fp, &word, &arraysize);
 					if (wordsize != EOF && wordsize != 0)
 					{
 						root = insertNode(root, word);
@@ -300,7 +299,7 @@ int main(int argc, char *argv[])
 			}
 			while (wordsize != -1)
 			{
-				wordsize = bufferinput(stdin, word, &arraysize);
+				wordsize = bufferinput(stdin, &word, &arraysize);
 				if (wordsize != EOF && wordsize != 0)
 				{
 					root = insertNode(root, word);
@@ -325,7 +324,7 @@ int main(int argc, char *argv[])
 				{
 					while (wordsize != -1)
 					{
-						wordsize = bufferinput(fp, word, &arraysize);
+						wordsize = bufferinput(fp, &word, &arraysize);
 						if (wordsize != EOF && wordsize != 0)
 						{
 							root = insertNode(root, word);
@@ -370,7 +369,7 @@ int main(int argc, char *argv[])
 				{
 					while (wordsize != -1)
 					{
-						wordsize = bufferinput(fp, word, &arraysize);
+						wordsize = bufferinput(fp, &word, &arraysize);
 						if (wordsize != EOF && wordsize != 0)
 						{
 							root = insertNode(root, word);
@@ -407,7 +406,7 @@ int main(int argc, char *argv[])
 				{
 					while (wordsize != -1)
 					{
-						wordsize = bufferinput(fp, word, &arraysize);
+						wordsize = bufferinput(fp, &word, &arraysize);
 						if (wordsize != EOF && wordsize != 0)
 						{
 							root = insertNode(root, word);
