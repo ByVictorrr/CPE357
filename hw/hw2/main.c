@@ -21,7 +21,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 {
 	int size = 0;
 	char a = 1;
-	while (size <= *arraylength && a != (char)NULL)
+	while (size <= *arraylength && a != NULL)
 	{
 		/*need to add typcheck for input*/
 
@@ -32,7 +32,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		}
 		else if (size > 0 && a == EOF)
 		{
-			word[size] = (char)NULL;
+			word[size] = NULL;
 			return -5;
 		}
 		a = tolower(a);
@@ -43,7 +43,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		}
 		else
 		{
-			a = (char)NULL;
+			a = NULL;
 		}
 
 		if (size == *arraylength)
@@ -52,7 +52,7 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 			word = (char *)realloc(word, *arraylength * sizeof(char));
 		}
 	}
-	word[size] = (char)NULL;
+	word[size] = NULL;
 	return size;
 }
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
