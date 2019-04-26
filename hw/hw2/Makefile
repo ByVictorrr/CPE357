@@ -1,7 +1,7 @@
 C = gcc
 CFLAGS = -Wall -ansi -pedantic
 MAIN = fw
-OBJS = fw.o
+OBJS = fw.c
 all : $(MAIN)
 
 $(MAIN) : $(OBJS) fw.h
