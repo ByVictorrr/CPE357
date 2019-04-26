@@ -8,7 +8,7 @@ OBJS = main.o
 all : $(MAIN)
 
 $(MAIN) : $(OBJS) fw.h
-	$(CC) $(CFLAGS) -o $(MAIN) $(OBJS)
+	$(CC) $(CFLAGS) $(MAIN) $(OBJS)
 
 main.0 : main.c fw.h
 	$(CC) $(CFLAGS) -c main.c
