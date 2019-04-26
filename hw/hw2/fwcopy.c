@@ -4,21 +4,20 @@
 #include <stdlib.h>
 #include "fw.h"
 #include <ctype.h>
-#define CHUNK 399
+#define CHUNK 300
 #define SIZE 100
 
 void readOutWords(int amount, int numnodes, struct node arr[])
 {
 	int n = 0;
+	printf("The top %d words (out of %d) are:\n", amount, numnodes);
 	if (amount > numnodes)
 	{
 		amount = numnodes;
 	}
-	printf("The top %d words (out of %d) are:\n", amount, numnodes);
-	
 	for (n = 0; n < amount; n++)
 	{
-		printf("    %d %s \n", arr->wCount, arr->word);
+		printf("     %d %s\n", arr->wCount, arr->word);
 		arr++;
 	}
 }
@@ -27,7 +26,10 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 {
 	int size = 0;
 	char a = 1;
-	while (size <= *arraylength && a)
+    /* get an initial buffer, and make it a well–formed string */
+    word[0] = '\0';
+    size = 0; 
+	while (size <= *arraylength && a != (char)NULL)
 	{
 		/*need to add typcheck for input*/
 
@@ -38,41 +40,35 @@ int bufferinput(FILE *fp, char *word, int *arraylength)
 		}
 		else if (size > 0 && a == EOF)
 		{
-			word[size] = '\0';
+			word[size] = (char)NULL;
 			return -5;
 		}
 		a = tolower(a);
-		if (60 <= (int)a && (int)a <= 122)
+		if (61 <= (int)a && (int)a <= 122)
 		{
 			/*;printable characters brah*/
 			word[size++] = a;
+			
 		}
 		else
 		{
-			a = '\0';
+			a = (char)NULL;
 		}
 
 		if (size == *arraylength)
-		{ 
-			*arraylength += CHUNK;
+		{
+			*arraylength += 256;
 			word = (char *)realloc(word, *arraylength * sizeof(char));
-			if (!word)
-			{ /* realloc failed. */
+			if ( NULL == word ) { /* realloc failed. */
 				perror("realloc");
 				exit(2);
 			}
 		}
 	}
-	word[size] = '\0';
-	/*trim words*/
-	/*
-	if(size){
-		word = (char *)realloc(word, size* sizeof(char)); 
-	}
-*/
+
+	word[size] = (char)NULL;
 	return size;
 }
-
 struct node *addToAddrNodeArr(struct node *root, int numNodes)
 {
 	struct node **stack = (struct node **)malloc(sizeof(struct node) * numNodes);
@@ -107,10 +103,8 @@ struct node *addToAddrNodeArr(struct node *root, int numNodes)
 			current = current->right_child;
 		}
 	}
-	free(stack);
 	return baseAddrArr;
 }
-
 void inOrder(struct node *root)
 {
 	/*Base case when reached a leaf*/
@@ -121,11 +115,6 @@ void inOrder(struct node *root)
 		inOrder(root->left_child);
 	printf("word: %s, wordCount: %d\n", root->word, root->wCount);
 	inOrder(root->right_child);
-}
-void freeArray(struct node *array){
-	while(array++){
-		free(array);
-	}
 }
 void freeTree(struct node *root)
 {
@@ -139,12 +128,11 @@ void freeTree(struct node *root)
 		free(root);
 	}
 }
-
 struct node *newNode(char *word)
 {
 	struct node *new;
 	new = (struct node *)malloc(sizeof(struct node));
-	new->word = (char *)malloc(sizeof(char)*(strlen(word) + 1));
+	new->word = (char *)malloc(sizeof(strlen(word) + 1));
 
 	/*case 1: if either allocation of node or word NULL  - return NULL*/
 	if (!new || !new->word)
@@ -158,7 +146,6 @@ struct node *newNode(char *word)
 
 	return new;
 }
-
 /* insertNode: if (word is lexicographically less than root-> word stored in left child*/
 struct node *insertNode(struct node *root, char *word)
 {
@@ -177,9 +164,9 @@ struct node *insertNode(struct node *root, char *word)
 	else
 		/*Case 4: if current greater than current node then go to left node*/
 		root->right_child = insertNode(root->right_child, word);
+
 	return root;
 }
-
 /*returns Null if not found*/
 struct node *searchNode(struct node *root, char *word)
 {
@@ -214,7 +201,7 @@ int main(int argc, char *argv[])
 	struct node *addToAddrNodeArr(struct node * root, int numOfNodes);
 	int TopWords = 10;
 	FILE *fp;
-	int arraysize = 400;
+	int arraysize = 40;
 	char *word = (char *)malloc(arraysize * sizeof(char));
 	int wordsize = 0;
 	struct node *root = NULL;
@@ -227,7 +214,7 @@ int main(int argc, char *argv[])
 		while (wordsize != -1)
 		{
 			wordsize = bufferinput(stdin, word, &arraysize);
-			if (wordsize != EOF && wordsize)
+			if (wordsize != EOF && wordsize != (int)NULL)
 			{
 				root = insertNode(root, word);
 			}
@@ -240,11 +227,8 @@ int main(int argc, char *argv[])
 		ptrArry = addToAddrNodeArr(root, numOfNodes);
 
 		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-
+	
 		readOutWords(TopWords, numOfNodes, ptrArry);
-		freeTree(root);
-		free(word);
-		free(ptrArry);
 
 		break;
 		/*==============================================================================*/
@@ -253,7 +237,6 @@ int main(int argc, char *argv[])
 		if (!strcmp(argv[1], "-n"))
 		{
 			fprintf(stderr, "usage: fw [-n num] [ file1 [ file2 [..]]]\n");
-			free(word);
 			return -1;
 		}
 		/*case 2.2: if the argv[1] is anything other than -n treat it as a file**/
@@ -266,18 +249,15 @@ int main(int argc, char *argv[])
 				while (wordsize != -1)
 				{
 					wordsize = bufferinput(fp, word, &arraysize);
-					if (wordsize != EOF && wordsize != 0)
+					if (wordsize != EOF && wordsize != (int)NULL)
 					{
 						root = insertNode(root, word);
 					}
 				}
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-
+		
 				readOutWords(TopWords, numOfNodes, ptrArry);
-				freeTree(root);
-				free(word);
-				free(ptrArry);
 				break;
 			}
 			else
@@ -301,7 +281,7 @@ int main(int argc, char *argv[])
 			while (wordsize != -1)
 			{
 				wordsize = bufferinput(stdin, word, &arraysize);
-				if (wordsize != EOF && wordsize != 0)
+				if (wordsize != EOF && wordsize != (int)NULL)
 				{
 					root = insertNode(root, word);
 				}
@@ -309,9 +289,6 @@ int main(int argc, char *argv[])
 			ptrArry = addToAddrNodeArr(root, numOfNodes);
 			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 			readOutWords(TopWords, numOfNodes, ptrArry);
-			freeTree(root);
-			free(word);
-			free(ptrArry);
 			break;
 		}
 		else
@@ -326,7 +303,7 @@ int main(int argc, char *argv[])
 					while (wordsize != -1)
 					{
 						wordsize = bufferinput(fp, word, &arraysize);
-						if (wordsize != EOF && wordsize != 0)
+						if (wordsize != EOF && wordsize != (int)NULL)
 						{
 							root = insertNode(root, word);
 						}
@@ -345,9 +322,6 @@ int main(int argc, char *argv[])
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 				readOutWords(TopWords, numOfNodes, ptrArry);
-				freeTree(root);
-				free(word);
-				free(ptrArry);
 			}
 			break;
 		}
@@ -371,7 +345,7 @@ int main(int argc, char *argv[])
 					while (wordsize != -1)
 					{
 						wordsize = bufferinput(fp, word, &arraysize);
-						if (wordsize != EOF && wordsize != 0)
+						if (wordsize != EOF && wordsize != (int)NULL)
 						{
 							root = insertNode(root, word);
 						}
@@ -390,9 +364,6 @@ int main(int argc, char *argv[])
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 				readOutWords(TopWords, numOfNodes, ptrArry);
-				freeTree(root);
-				free(word);
-				free(ptrArry);
 			}
 			break;
 		}
@@ -408,7 +379,7 @@ int main(int argc, char *argv[])
 					while (wordsize != -1)
 					{
 						wordsize = bufferinput(fp, word, &arraysize);
-						if (wordsize != EOF && wordsize != 0)
+						if (wordsize != EOF && wordsize != (int)NULL)
 						{
 							root = insertNode(root, word);
 						}
@@ -427,9 +398,6 @@ int main(int argc, char *argv[])
 				ptrArry = addToAddrNodeArr(root, numOfNodes);
 				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
 				readOutWords(TopWords, numOfNodes, ptrArry);
-				freeTree(root);
-				free(word);
-				free(ptrArry);
 			}
 			break;
 		}

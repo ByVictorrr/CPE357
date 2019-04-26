@@ -1,5 +1,5 @@
 C = gcc
-CFLAGS = -Wall -ansi -pedantic
+CFLAGS = -Wall -ansi -pedantic -g
 MAIN = fw
 OBJS = fw.c
 all : $(MAIN)
