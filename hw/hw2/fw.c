@@ -138,6 +138,12 @@ void freeTree(struct node *root)
 		free(root);
 	}
 }
+void freeEveryThing(char * word, struct node *tree, struct node *array)                                
+{                                                                                                      
+	free(word);                                                                                        
+	freeTree(tree);                                                                                    
+	free(arry);                                                                                        
+}   
 
 struct node *newNode(char *word)
 {
