@@ -10,12 +10,11 @@
 void readOutWords(int amount, int numnodes, struct node arr[])
 {
 	int n = 0;
-	if (amount > numnodes)
-	{
-		amount = numnodes;
-	}
 	printf("The top %d words (out of %d) are:\n", amount, numnodes);
-	
+	if(numnodes<amount){
+	    amount = numnodes;
+	}
+
 	for (n = 0; n < amount; n++)
 	{
 		printf("    %d %s \n", arr->wCount, arr->word);
@@ -42,7 +41,7 @@ int bufferinput(FILE *fp, char **word, int *arraylength)
 			return -5;
 		}
 		a = tolower(a);
-		if ( (65 <= (int)a && (int)a <= 90)  || (97 <= (int)a && (int)a <= 122) )
+		if ((65 <= (int)a && (int)a <= 90) || (97 <= (int)a && (int)a <= 122))
 		{
 			/*;printable characters brah*/
 			word[0][size++] = a;
@@ -53,7 +52,7 @@ int bufferinput(FILE *fp, char **word, int *arraylength)
 		}
 
 		if (size == *arraylength)
-		{ 
+		{
 			*arraylength += CHUNK;
 			*word = (char *)realloc(*word, *arraylength * sizeof(char));
 			if (!*word)
@@ -67,7 +66,7 @@ int bufferinput(FILE *fp, char **word, int *arraylength)
 	/*trim words*/
 	/*
 	if(size){
-		word = (char *)realloc(word, size* sizeof(char)); 
+		word = (char *)realloc(word, size* sizeof(char));
 	}
 */
 	return size;
@@ -122,8 +121,8 @@ void inOrder(struct node *root)
 	printf("word: %s, wordCount: %d\n", root->word, root->wCount);
 	inOrder(root->right_child);
 }
-void freeArray(struct node *array){
-	while(array++){
+void freeArray(struct node *array) {
+	while (array++) {
 		free(array);
 	}
 }
@@ -237,14 +236,14 @@ int main(int argc, char *argv[])
 			}
 			/*printf("word: %s \n", word);*/
 		}
-		ptrArry = addToAddrNodeArr(root, numOfNodes);
-
-		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-
-		readOutWords(TopWords, numOfNodes, ptrArry);
-		freeTree(root);
-		free(word);
-		free(ptrArry);
+		if (numOfNodes > 0) {
+			ptrArry = addToAddrNodeArr(root, numOfNodes);
+			qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+			readOutWords(TopWords, numOfNodes, ptrArry);
+			freeTree(root);
+			free(word);
+			free(ptrArry);
+		}
 
 		break;
 		/*==============================================================================*/
@@ -257,35 +256,32 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		/*case 2.2: if the argv[1] is anything other than -n treat it as a file**/
-		else
+
+		fp = fopen(argv[1], "r");
+
+		if (fp != NULL)
 		{
-			fp = fopen(argv[1], "r");
-
-			if (fp != NULL)
+			fprintf(stderr, "usage unable to open file error %s\n", argv[1]);
+			return -1;
+		}
+		while (wordsize != -1)
+		{
+			wordsize = bufferinput(fp, &word, &arraysize);
+			if (wordsize != EOF && wordsize != 0)
 			{
-				while (wordsize != -1)
-				{
-					wordsize = bufferinput(fp, &word, &arraysize);
-					if (wordsize != EOF && wordsize != 0)
-					{
-						root = insertNode(root, word);
-					}
-				}
-				ptrArry = addToAddrNodeArr(root, numOfNodes);
-				qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
-
-				readOutWords(TopWords, numOfNodes, ptrArry);
-				freeTree(root);
-				free(word);
-				free(ptrArry);
-				break;
-			}
-			else
-			{ /*else file ptr null - something wrong with the file*/
-				fprintf(stderr, "usage unable to open file error %s\n", argv[1]);
-				return -1;
+				root = insertNode(root, word);
 			}
 		}
+		ptrArry = addToAddrNodeArr(root, numOfNodes);
+		qsort(ptrArry, numOfNodes, sizeof(ptrArry[0]), comparator);
+
+		readOutWords(TopWords, numOfNodes, ptrArry);
+		freeTree(root);
+		fclose(fp);
+		free(word);
+		free(ptrArry);
+		break;
+
 
 		/*==============================================================================*/
 	case 3: /*case 3: could be -n option and number, or just files or combination*/
