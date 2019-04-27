@@ -142,7 +142,7 @@ void freeEveryThing(char * word, struct node *tree, struct node *array)
 {                                                                                                      
 	free(word);                                                                                        
 	freeTree(tree);                                                                                    
-	free(arry);                                                                                        
+	free(array);                                                                                        
 }   
 
 struct node *newNode(char *word)
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
 
 		fp = fopen(argv[1], "r");
 
-		if (fp != NULL)
+		if (fp == NULL)
 		{
 			fprintf(stderr, "usage unable to open file error %s\n", argv[1]);
 			return -1;
