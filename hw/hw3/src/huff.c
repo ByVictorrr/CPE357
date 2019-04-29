@@ -38,32 +38,46 @@ int *buildFreqeuncyTable(char *data)
 
 Node *buildHuffTree(int *freqTable)
 {
-    listNode *priorityQ = (pQueue)malloc(sizeof(qQueue));
+    listNode *priorityQ = (listNode*)malloc(sizeof(listNode));
 
     int i;
 
     for (i = 0; i<ALPHABET_SIZE; i++)
-        if(freq[i] > 0)
+        if(freqTable[i] > 0)
         {
             /*creat a new head to pqueue*/
-            pushNew(&priorityQ,c,freqTable[i]);
+            pushNew(&priorityQ, i ,freqTable[i]);
         }
 
-        if (priorityQ.size() == 1)
+        /*if there is only one character in the table*/
+        if (size(priorityQ) == 1)
         {
-
+            pushNew(&priorityQ, '\0',1);
 
         }
-        while(priority->size() > 1)
+        /*while there is more than one character in the pque*/
+        while(size(priorityQ) > 1)
         {
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode parent = newListNode('\0', right->freq+left->freq,left,right);
+           listNode *parent = newListNode('\0', right->freq+left->freq,left,right);
 
            pushNode(&priorityQ, parent);
 
         }
+}
+
+
+void inorder(Node *root)
+{
+
+   if(root == NULL)
+       return;
+
+   inorder(root->left_child);
+   printf("node with value char %c and data %d", root->c, root->freq);
+   inorder(root->right_child);
 }
 
  /*
@@ -78,26 +92,33 @@ int main(int argc, char *argv[])
 {
 
     int fd, n;
-    char buf[BUFSIZE];
+    char buf[BUFSIZE], c;
     int *ft;
+    int i = 0;
 
-   if((fd = open(argv[1], O_RDONLY | O_WRONLY, 0777)) == -1)
-   {
-       exit(-1);
-   }
-    /*read from ft*/
-   while((n=read(fd, buf, BUFSIZE)) > 0) {
 
-       ft = buildFreqeuncyTable(buf);
-       printf("%s",buf);
+    /*===========Test 1- test read=====================*/
+    n=read(0,buf,sizeof(buf));
 
-   }
+    ft = buildFreqeuncyTable(buf);
+
     printf(" size of f['a'] is %d\n",ft['a']);
 
     printf(" size of ft['d'] is %d\n",ft['d']);
 
     printf(" size of ft['f'] is %d\n",ft['f']);
+
+
+   /*==============Test 2- build huffman tree============*/
+
+   Node *head = buildHuffTree(ft);
+
+   inorder(head);
+
+
+  free(head);
     free(ft);
+
 
     return 0;
 }

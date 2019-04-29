@@ -23,8 +23,23 @@ listNode *newListNode(char c, int freq, Node *left , Node *right)
     return new;
 }
 
+int size(listNode *head)
+{
+   /*single case return empty*/
+   if(head == NULL)
+       return 0;
+   else if( head->next != NULL)
+       return 1;
 
-
+   /*count  has to be at least 1 by time to get here*/
+   int count =1;
+   while (head->next)
+   {
+       head=head->next;
+       count++;
+   }
+   return count;
+}
 
 void *pushNew(listNode **head, char c, int freq)
 {
@@ -55,7 +70,7 @@ void *pushNew(listNode **head, char c, int freq)
     }
 
 }
-void *pushNode(listNode **head, listNode *parent)
+void pushNode(listNode **head, listNode *parent)
 {
     listNode *beg = *head; /*get address of first head*/
 
@@ -116,7 +131,7 @@ int isEmpty(listNode **head)
 /*=========================================================================*/
 
 
-
+/*
 
 int main()
 {
@@ -135,4 +150,4 @@ int main()
 }
 
 
-
+*/
