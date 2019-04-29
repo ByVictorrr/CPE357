@@ -1,70 +1,109 @@
-#include "node.h"
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include "node.c"
 
-enum boolean {TRUE, FALSE};
+/*=========================================================================*/
 
+/*=======================NodeList which is just node with a next==========*/
 
-typedef struct nodeList {
-    Node *next;
+typedef struct nodeList{
+    Node *curr;
+    struct  nodeList *next;
 }listNode;
 
 
-typedef struct Queue{
-	listNode *head;
-	listNode *tail;
-}*pQueue;
-
-
-listNode *newListNode(char )
-
-/*making a queue*/
-pQueue *initQueue()
+listNode *newListNode(char c, int freq)
 {
-    if((pQueue * q = (pQueue*)malloc(sizeof(pQueue))) ==NULL)
-        return NULL;
+    listNode *new = (listNode*)malloc(sizeof(listNode));
 
-    q->head = NULL;
-    q->tail = NULL;
-    return q;
-}
-/*check if q is empty*/
-int isEmpty(pQueue q)
-{
-   if(q.head==NULL)
-    return TRUE;
-
-   return FALSE
+    new->curr = newNode(c,freq);
+    new->next=NULL;
+    return new;
 }
 
-
-
-/*add in queue*/
-pQueue* pEndQueue(pQueue q, char character, int freq)
+listNode *push(listNode **head, char c, int freq)
 {
-    listNode *new;
+    listNode *beg = *head; /*get address of first head*/
 
-    if ((new = newListNode(character, freq, NULL, NULL)) == NULL)
-        return NULL;
+    /*new node*/
+    listNode *tempNode;
 
-    if(!isEmpty(q))
+    tempNode = newListNode(c, freq);
+
+    /*if freq is less insert at the head*/
+    if(beg->curr->freq < freq)
     {
-        /*check where to insert in the pQueue*/
-        if(new->freq < q->head->freq )
-        {
-           new->next = q->head;
-           q->head = new;
+        tempNode->next= *head;
+        *head = tempNode;
 
+    }
+    else
+    {
+        /*find position where it belongs*/
+        while ( beg->next != NULL && beg->next->curr->freq > freq)
+        {
+            beg = beg->next;
         }
+        tempNode->next = beg->next;
+        beg->next = tempNode;
+
     }
 
-
-
 }
 
+void pop(listNode ** head)
+{
+    listNode *temp = *head;
+    (*head) = (*head)->next;
+    free(temp);
+}
+
+Node *peek(listNode ** head)
+{
+    return (*head)->curr;
+}
+
+/*removes head and retreives it*/
+Node *poll(listNode **head)
+{
+    Node *temp = (Node*)malloc(sizeof(Node));
+
+    if (*head == NULL)
+        return NULL;
+    else {
+        /*copy contents of what is head before pop*/
+        temp = peek(head);
+        pop(head);
+    }
+    return temp;
+}
+
+int isEmpty(listNode **head)
+{
+    return (*head) == NULL;
+}
+/*=========================================================================*/
 
 
-/*deletion operation*/
-int deQueue()
+
+
+int main()
 {
 
+    listNode *head = newListNode('a', 1);
+    push(&head, 'a', 2);
+    push(&head, 'b', 2);
+    printf("list");
+
+    while(!isEmpty(&head))
+    {
+        printf("%d \n", poll(&head));
+    }
+
+    return 0;
 }
+
+
 
