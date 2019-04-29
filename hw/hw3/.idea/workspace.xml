@@ -10,10 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/bst.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bst.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/bst.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/huff.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pQueue.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bst.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bst.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/node.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/node.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pQueue.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/pQueue.c" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,29 +25,48 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/huff.c">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="-428">
+                    <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/huff.c">
+        <entry file="file://$PROJECT_DIR$/src/pQueue.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-10" />
+            <state relative-caret-position="180">
+              <caret line="9" selection-start-line="9" selection-end-line="9" />
+            </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/bst.c">
+        <entry file="file://$PROJECT_DIR$/src/node.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="35" column="40" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
+            <state relative-caret-position="200">
+              <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/bst.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-18" />
-          </provider>
+        <entry file="file://$PROJECT_DIR$/src/node.h">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -58,6 +78,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/bst.c" />
+        <option value="$PROJECT_DIR$/src/bst.h" />
+        <option value="$PROJECT_DIR$/src/pQueue.c" />
+        <option value="$PROJECT_DIR$/src/node.h" />
+        <option value="$PROJECT_DIR$/src/node.c" />
       </list>
     </option>
   </component>
@@ -103,7 +127,11 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.C/C++" />
@@ -135,18 +163,19 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1556501696608</updated>
-      <workItem from="1556501697755" duration="531000" />
+      <workItem from="1556501697755" duration="4610000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="531000" />
+    <option name="totallyTimeSpent" value="4610000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="845" y="77" width="808" height="946" extended-state="0" />
+    <frame x="-2" y="-22" width="1684" height="1074" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.53825855" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.249694" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Version Control" />
@@ -169,20 +198,41 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/huff.c">
+    <entry file="file://$PROJECT_DIR$/src/bst.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-10" />
+        <state relative-caret-position="-60">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bst.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-18" />
+        <state relative-caret-position="40">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bst.c">
+    <entry file="file://$PROJECT_DIR$/src/huff.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="35" column="40" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
+        <state relative-caret-position="-428">
+          <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/node.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pQueue.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/node.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
         </state>
       </provider>
     </entry>

@@ -2,12 +2,19 @@
 
 enum boolean {TRUE, FALSE};
 
+
+typedef struct nodeList {
+    Node *next;
+}listNode;
+
+
 typedef struct Queue{
-	Node *head;
-	Node *tail;
+	listNode *head;
+	listNode *tail;
+}*pQueue;
 
-}pQueue;
 
+listNode *newListNode(char )
 
 /*making a queue*/
 pQueue *initQueue()
@@ -27,16 +34,37 @@ int isEmpty(pQueue q)
 
    return FALSE
 }
+
+
+
 /*add in queue*/
-pQueue* pEndQueue()
+pQueue* pEndQueue(pQueue q, char character, int freq)
 {
+    listNode *new;
+
+    if ((new = newListNode(character, freq, NULL, NULL)) == NULL)
+        return NULL;
+
+    if(!isEmpty(q))
+    {
+        /*check where to insert in the pQueue*/
+        if(new->freq < q->head->freq )
+        {
+           new->next = q->head;
+           q->head = new;
+
+        }
+    }
+
 
 
 }
+
+
+
 /*deletion operation*/
 int deQueue()
 {
 
 }
-k
 
