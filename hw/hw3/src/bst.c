@@ -2,50 +2,9 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "fw.h"
 
 
 
-
-
-
-
-struct node *addToAddrNodeArr(struct node *root, int numNodes)
-{
-	struct node **stack = (struct node**)malloc(sizeof(struct node)*numNodes);
-	struct node *current=root;
-	struct node *nodeArry = (struct node*)malloc(sizeof(struct node)*numNodes);
-	struct node *baseAddrArr = nodeArry;
-
-	int j; //count num of nodes
-	
-	//Step 2 - check if root isnt null
-	if(!root) return NULL;
-	j=-1;
-	/*Step 3 - while numnodes not equal to i */
-	while(1)
-	{
-		/*INORDER*/
-
-		//Step 4.1  - is current null? if it isnt add it to the stack
-		if (current !=NULL)
-		{
-			stack[++j] = current;  //push into stack
-			current = current->left_child;
-		}
-		//step 4.2 - go right if current == NULL
-		else
-		{
-			if (j==-1)
-				break;
-			current = stack[j--];
-			*nodeArry++ = *current;
-			current = current->right_child;
-		}
-
-	}
-	return baseAddrArr;
-}
 void inOrder(struct node *root)
 {
 	//Base case when reached a leaf
