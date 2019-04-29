@@ -14,23 +14,26 @@ typedef struct nodeList{
 }listNode;
 
 
-listNode *newListNode(char c, int freq)
+listNode *newListNode(char c, int freq, Node *left , Node *right)
 {
     listNode *new = (listNode*)malloc(sizeof(listNode));
 
-    new->curr = newNode(c,freq);
+    new->curr = newNode(c,freq, left, right);
     new->next=NULL;
     return new;
 }
 
-listNode *push(listNode **head, char c, int freq)
+
+
+
+void *pushNew(listNode **head, char c, int freq)
 {
     listNode *beg = *head; /*get address of first head*/
 
     /*new node*/
     listNode *tempNode;
 
-    tempNode = newListNode(c, freq);
+    tempNode = newListNode(c, freq,NULL,NULL);
 
     /*if freq is less insert at the head*/
     if(beg->curr->freq < freq)
@@ -51,6 +54,32 @@ listNode *push(listNode **head, char c, int freq)
 
     }
 
+}
+void *pushNode(listNode **head, listNode *parent)
+{
+    listNode *beg = *head; /*get address of first head*/
+
+    /*new node*/
+    listNode *tempNode;
+
+    /*if freq is less insert at the head*/
+    if(beg->curr->freq > parent->curr->freq)
+    {
+        parent->next= *head;
+        *head = parent;
+
+    }
+    else
+    {
+        /*find position where it belongs*/
+        while ( beg->next != NULL && beg->next->curr->freq < parent->curr->freq )
+        {
+            beg = beg->next;
+        }
+        parent->next = beg->next;
+        beg->next = parent;
+
+    }
 }
 
 void pop(listNode ** head)

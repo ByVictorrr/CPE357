@@ -15,7 +15,7 @@ typedef struct node{
 }Node;
 
 
-Node *newNode(char c, int freq)
+Node *newNode(char c, int freq, Node *left, Node *right)
 {
 	 Node *new;
 	 if ((new = (Node*)malloc(sizeof(Node))) == NULL)
@@ -24,9 +24,8 @@ Node *newNode(char c, int freq)
 	 new->freq = freq;
 	 new->c = c;
 
-	new->left_child = NULL;
-	new->right_child = NULL;
+	new->left_child = left;
+	new->right_child = right;
 
 	return new;
 }
-/
