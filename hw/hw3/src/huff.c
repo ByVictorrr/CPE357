@@ -25,6 +25,11 @@ int *buildFreqeuncyTable(char *data)
 	/*make a freq table for each character that we are encoding*/
 	int *freq = (int *)calloc(ALPHABET_SIZE,sizeof(int));
 	int i;
+
+	for(i = 0; i<ALPHABET_SIZE; i++)
+    {
+	    freq[i] = 0;
+    }
 	/*go until EOF*/
 	for (;*data != EOF; data++)
 	{
@@ -66,6 +71,9 @@ Node *buildHuffTree(int *freqTable)
            pushNode(&priorityQ, parent);
 
         }
+        transverse(&priorityQ);
+
+        return poll(&priorityQ);
 }
 
 
@@ -114,6 +122,7 @@ int main(int argc, char *argv[])
    Node *head = buildHuffTree(ft);
 
    inorder(head);
+
 
 
   free(head);

@@ -41,17 +41,23 @@ int size(listNode *head)
    return count;
 }
 
-void *pushNew(listNode **head, char c, int freq)
-{
+void pushNew(listNode **head, char c, int freq) {
     listNode *beg = *head; /*get address of first head*/
 
     /*new node*/
     listNode *tempNode;
 
-    tempNode = newListNode(c, freq,NULL,NULL);
+    tempNode = newListNode(c, freq, NULL, NULL);
+
+    /*case 1 - list is emtpy*/
+    if (!beg->curr)
+    {
+        *head = tempNode;
+        return;
+    }
 
     /*if freq is less insert at the head*/
-    if(beg->curr->freq < freq)
+    if(beg->curr->freq > freq)
     {
         tempNode->next= *head;
         *head = tempNode;
@@ -60,7 +66,7 @@ void *pushNew(listNode **head, char c, int freq)
     else
     {
         /*find position where it belongs*/
-        while ( beg->next != NULL && beg->next->curr->freq > freq)
+        while ( beg->next != NULL && beg->next->curr->freq < freq)
         {
             beg = beg->next;
         }
@@ -130,7 +136,16 @@ int isEmpty(listNode **head)
 }
 /*=========================================================================*/
 
+void transverse(listNode *head)
+{
 
+    int count =0;
+    while(!head)
+    {
+        printf("node chacter, %c", head->curr->freq);
+        head=head->next;
+    }
+}
 /*
 
 int main()

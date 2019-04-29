@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/inputs/test1" beforeDir="false" afterPath="$PROJECT_DIR$/inputs/test1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/src/a.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/huff.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/huff.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pQueue.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/pQueue.c" afterDir="false" />
@@ -32,8 +31,8 @@
             <file pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/pQueue.c">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-160">
-                    <caret line="16" column="19" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+                  <state relative-caret-position="2130">
+                    <caret line="143" column="4" selection-start-line="143" selection-start-column="4" selection-end-line="143" selection-end-column="4" />
                   </state>
                 </provider>
               </entry>
@@ -57,8 +56,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/huff.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="48" column="33" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
+            <state relative-caret-position="308">
+              <caret line="114" column="46" selection-start-line="114" selection-start-column="46" selection-end-line="114" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -73,19 +72,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/a.out">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="26" column="33" lean-forward="true" selection-start-line="26" selection-start-column="33" selection-end-line="26" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pQueue.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="860">
-              <caret line="52" column="39" lean-forward="true" selection-start-line="52" selection-start-column="39" selection-end-line="52" selection-end-column="39" />
+            <state relative-caret-position="508">
+              <caret line="141" column="14" lean-forward="true" selection-start-line="141" selection-start-column="14" selection-end-line="141" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -107,9 +97,9 @@
         <option value="$PROJECT_DIR$/src/bst.h" />
         <option value="$PROJECT_DIR$/src/node.h" />
         <option value="$PROJECT_DIR$/src/node.c" />
-        <option value="$PROJECT_DIR$/src/pQueue.c" />
         <option value="$PROJECT_DIR$/inputs/test1" />
         <option value="$PROJECT_DIR$/src/huff.c" />
+        <option value="$PROJECT_DIR$/src/pQueue.c" />
       </list>
     </option>
   </component>
@@ -197,12 +187,12 @@
       <option name="presentableId" value="Default" />
       <updated>1556501696608</updated>
       <workItem from="1556501697755" duration="4610000" />
-      <workItem from="1556506677011" duration="10900000" />
+      <workItem from="1556506677011" duration="14366000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15510000" />
+    <option name="totallyTimeSpent" value="18976000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1707" y="7" width="1626" height="1016" extended-state="0" />
@@ -236,7 +226,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/huff.c</url>
-          <line>92</line>
+          <line>100</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -250,8 +240,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/a.out">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="26" column="33" lean-forward="true" selection-start-line="26" selection-start-column="33" selection-end-line="26" selection-end-column="33" />
+        <state relative-caret-position="540">
+          <caret line="27" column="33" lean-forward="true" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -271,15 +261,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/huff.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="48" column="33" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
+        <state relative-caret-position="308">
+          <caret line="114" column="46" selection-start-line="114" selection-start-column="46" selection-end-line="114" selection-end-column="46" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pQueue.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-160">
-          <caret line="16" column="19" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+        <state relative-caret-position="2130">
+          <caret line="143" column="4" selection-start-line="143" selection-start-column="4" selection-end-line="143" selection-end-column="4" />
         </state>
       </provider>
     </entry>
