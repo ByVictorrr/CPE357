@@ -10,12 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/src/a.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/huff.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lookUpTable.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/node.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/node.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pQueue.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/a.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/huff.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/huff.c" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,8 +36,32 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="176" column="17" selection-start-line="176" selection-start-column="17" selection-end-line="176" selection-end-column="17" />
+            <state relative-caret-position="476">
+              <caret line="178" selection-start-line="178" selection-end-line="178" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.c">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hencode/a.out">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/bst.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="293">
+              <caret line="15" column="16" lean-forward="true" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -77,10 +97,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1678" />
-    <option name="y" value="-22" />
-    <option name="width" value="1684" />
-    <option name="height" value="1074" />
+    <option name="x" value="27" />
+    <option name="y" value="77" />
+    <option name="width" value="1626" />
+    <option name="height" value="946" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -161,24 +181,24 @@
       <option name="presentableId" value="Default" />
       <updated>1556501696608</updated>
       <workItem from="1556501697755" duration="4610000" />
-      <workItem from="1556506677011" duration="32431000" />
+      <workItem from="1556506677011" duration="35273000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37041000" />
+    <option name="totallyTimeSpent" value="39883000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1678" y="-22" width="1684" height="1074" extended-state="0" />
+    <frame x="27" y="77" width="1626" height="946" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8105263" visible="true" weight="0.24418604" />
-      <window_info id="Structure" order="1" sideWeight="0.18947369" side_tool="true" visible="true" weight="0.24418604" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.81060606" visible="true" weight="0.25317258" />
+      <window_info id="Structure" order="1" sideWeight="0.18939394" side_tool="true" visible="true" weight="0.25317258" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.03649635" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -196,7 +216,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/bst.c" />
     <entry file="file://$PROJECT_DIR$/src/bst.h" />
     <entry file="file://$PROJECT_DIR$/src/node.h">
       <provider selected="true" editor-type-id="text-editor" />
@@ -243,10 +262,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/bst.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="15" column="16" lean-forward="true" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/a.out">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="176" column="17" selection-start-line="176" selection-start-column="17" selection-end-line="176" selection-end-column="17" />
+        <state relative-caret-position="476">
+          <caret line="178" selection-start-line="178" selection-end-line="178" />
         </state>
       </provider>
     </entry>

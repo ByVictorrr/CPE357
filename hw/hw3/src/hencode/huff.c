@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include "pQueue.c"
 #include "lookUpTable.c"
-
+#include <string.h>
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
 
@@ -15,8 +15,8 @@ typedef struct huffmanEncoder{
 
 }HuffmanEncoder;
 
-static char one = '1';
-static char zero = '0';
+const char * one = "1";
+const char *zero = "0";
 
 
 
@@ -123,28 +123,28 @@ int isLeaf(Node *n)
 
 void initLookUpTable(Node *root, char *s, struct lookUpTable **table)
  {
-
     if(!isLeaf(root))
     {
-        initLookUpTable(root->left_child, s=&zero+1, table);
-        initLookUpTable(root->right_child, s=&one+1, table);
+
+        initLookUpTable(root->left_child, strcat(s,one), table);
+        initLookUpTable(root->right_child, strcat(s,zero), table);
     }else{
 
-        printf("hi %c\n", root->c);
         printf("hi %s\n", s);
-        table[root->c]->code = (char *)malloc(sizeof(char)*strlen(s));
-        table[root->c]->code = s;
+        (*table)[root->c].code = (char *)malloc(sizeof(char)*strlen(s));
+        (*table)[root->c].code = s;
     }
  }
+
 
 struct lookUpTable *buildLookUpTable(Node *root)
 {
     struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
-
-    initLookUpTable(root, "", &table);
+    char *s = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
+    *s='\0';
+    initLookUpTable(root,s, &table);
     return table;
 }
-
 
 
 int main(int argc, char *argv[])
@@ -173,7 +173,8 @@ int main(int argc, char *argv[])
 
 struct lookUpTable *table = buildLookUpTable(head);
 
-printf("table %s", table->code);
+printf("table %s\n", (table+'z')->code);
+
     for (int j = 0; j < ALPHABET_SIZE; ++j) {
         if(table[j].code != NULL)
        printf("table[ %c ] = %s\n",(char)j ,table[j].code);
