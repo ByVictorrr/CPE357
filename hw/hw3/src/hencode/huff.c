@@ -11,20 +11,20 @@
 enum boolean{FALSE,TRUE};
 
 typedef struct huffmanEncoder{
-
-
+        int *ft;
+        char *encodedData;
+        struct lookUpTable * table;
+        Node *root;
 }HuffmanEncoder;
 
-const char * one = "1";
-const char *zero = "0";
 
 
 
-
+/*This method gives the string wit the codes*/
 char *generateEncodedData(char *data, struct lookUpTable * table )
 {
-   char *encoded = (char *)malloc(sizeof(char)*ALPHABET_SIZE);
    int i;
+   char *encoded;
     for (i=0; *data; data++, encoded++) {
         encoded = table[*data].code;
 
@@ -87,7 +87,6 @@ Node *buildHuffTree(int *freqTable)
 
         }
 
-
         return poll(&priorityQ);
 }
 
@@ -133,6 +132,7 @@ void initLookUpTable(Node *node, char *s, struct lookUpTable **table)
             strcpy((*table)[node->c].code,s);
             free(s);
             s=(char*)malloc(sizeof(char)*ALPHABET_SIZE);
+            s="\0";
      }
 
  }
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     /*===========Test 1- test read=====================*/
     /*n=read(0,buf,sizeof(buf));*/
 
-char string[] = "aaaaaaaabcccccmmmtttttt";
+char string[] = "fucadfadfdafadfdfdkkaasde";
     ft = buildFreqeuncyTable(string);
 
     printFreqTable(ft);
@@ -166,7 +166,7 @@ char string[] = "aaaaaaaabcccccmmmtttttt";
    /*==============Test 2- build huffman tree============*/
 
    Node *head = buildHuffTree(ft);
-  inorder(head);
+ /* inorder(head);*/
 
 /*=====================test 3 - Build look up character -> codes table===========*/
 
@@ -179,7 +179,11 @@ printf("table %s\n", (table+'z')->code);
        printf("table[ %c ] = %s\n",(char)j ,table[j].code);
     }
 
+    char *encodedData = generateEncodedData(string,table);
 
+
+
+    printf("encodedData %c\n", *encodedData);
 
   free(head);
     free(ft);

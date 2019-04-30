@@ -84,7 +84,7 @@ void pushNewNode(listNode **head, char c, int freq) {
 			    /* we need to insert based upon character */
 
 			    /*Tranverse the list until a node is found where they are not equal*/
-			while(beg->next !=NULL &&  beg->next->curr->c < c && beg->next->curr->freq == freq)
+			while(beg->next !=NULL && beg->next->curr->freq == freq && beg->next->curr->c < c )
 			{
 			    /*If the soon to be entered character is less than c next*/
 			    /*we found the location for new node to be inserted*/
@@ -143,14 +143,10 @@ void pushNode(listNode **head, listNode *parent) {
 			    /* we need to insert based upon character */
 
 			    /*Tranverse the list until a node is found where they are not equal*/
-			while(beg->next !=NULL &&  beg->next->curr->c == parent->curr->c)
+			while(beg->next !=NULL && beg->next->curr->freq == parent->curr->freq && beg->next->curr->c < parent->curr->c )
 			{
 			    /*If the soon to be entered character is less than c next*/
-			    if(beg->next->curr->c < parent->curr->c)
-                {
 			        /*we found the location for new node to be inserted*/
-			       break;
-                }
 			   beg = beg->next;
 
 			}
