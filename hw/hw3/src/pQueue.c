@@ -41,7 +41,8 @@ int size(listNode *head)
    return count;
 }
 
-void pushNew(listNode **head, char c, int freq) {
+void pushNode(listNode **head, char c, int freq) {
+
     listNode *beg = *head; /*get address of first head*/
 
     /*new node*/
@@ -50,7 +51,7 @@ void pushNew(listNode **head, char c, int freq) {
     tempNode = newListNode(c, freq, NULL, NULL);
 
     /*case 1 - list is emtpy*/
-    if (!beg->curr)
+    if (!*head)
     {
         *head = tempNode;
         return;
@@ -65,19 +66,36 @@ void pushNew(listNode **head, char c, int freq) {
 	/*case 3 - general case (it goes through the list and finds a spot)*/
     else
     {
-        /*find position where it belongs*/
+        /*Transverse till the tend of the list and on the way look for a node in
+         * the list that has a frequency greater than that to be inserted*/
+
         while ( beg->next != NULL && beg->next->curr->freq < freq)
         {
 		   	beg = beg->next;
         }
+        /* At this point beg should be holding a lnode where its next is equal or greater
+         * than the frequency node to be inserted*/
 
-		/* there could be equal freq, so prioritze it by 2nd field*/
+        /* case 3.1 - could be at the end of the list*/
+
+        /* case 3.2 - that next node could possibly be equal to the one node to be inserted*/
+
 		if( beg->next !=NULL &&  beg->next->curr->freq == freq)
 		{
-			/*case 3.1 - sort by character ascii code if have equal freq*/
-			while(beg->next !=NULL &&  beg->next->curr->freq == freq)
+			/*case 3.2.1 - because beg->next->curr->freq == freq */
+			    /* we need to insert based upon character */
+
+			    /*Tranverse the list until a node is found where they are not equal*/
+			while(beg->next !=NULL &&  beg->next->curr->c == c)
 			{
-				
+			    /*If the soon to be entered character is less than c next*/
+			    if(beg->next->curr->c < c)
+                {
+			        /*we found the location for new node to be inserted*/
+			       break;
+                }
+			   beg = beg->next;
+
 			}
 
 		}
@@ -89,34 +107,73 @@ void pushNew(listNode **head, char c, int freq) {
     }
 
 }
-void pushNode(listNode **head, listNode *parent)
-{
+
+
+
+void pushNode(listNode **head, listNode *parent) {
+
     listNode *beg = *head; /*get address of first head*/
 
-    /*new node*/
-    listNode *tempNode;
 
-	/*check to see if we can insert at the head*/
+    /*case 1 - list is emtpy*/
+    if (!*head)
+    {
+        *head = tempNode;
+        return;
+    }
+
+	/*case 2 - the data to be inserted has less freq than the head*/
     if(beg->curr->freq > parent->curr->freq)
     {
         parent->next= *head;
-        *head = parent;
-
+        *head = tempNode;
     }
-    
-	/*else if its frequenc isnt less than the head*/
-        /*find position where it belongs*/
-        while ( beg->next != NULL && beg->next->curr->freq < parent->curr->freq )
+	/*case 3 - general case (it goes through the list and finds a spot)*/
+    else
+    {
+        /*Transverse till the tend of the list and on the way look for a node in
+         * the list that has a frequency greater than that to be inserted*/
+
+        while ( beg->next != NULL && beg->next->curr->freq < parent->curr->freq)
         {
-            beg = beg->next;
+		   	beg = beg->next;
         }
-		/*At this point parent-curr->freq is less than beg->next-curr->breq or equal to*/
-		if (beg->curr->
+        /* At this point beg should be holding a lnode where its next is equal or greater
+         * than the frequency node to be inserted*/
+
+        /* case 3.1 - could be at the end of the list*/
+
+        /* case 3.2 - that next node could possibly be equal to the one node to be inserted*/
+
+		if( beg->next !=NULL &&  beg->next->curr->freq == parent->curr->freq)
+		{
+			/*case 3.2.1 - because beg->next->curr->freq == freq */
+			    /* we need to insert based upon character */
+
+			    /*Tranverse the list until a node is found where they are not equal*/
+			while(beg->next !=NULL &&  beg->next->curr->c == parent->curr->c)
+			{
+			    /*If the soon to be entered character is less than c next*/
+			    if(beg->next->curr->c < parent->curr->c)
+                {
+			        /*we found the location for new node to be inserted*/
+			       break;
+                }
+			   beg = beg->next;
+
+			}
+
+		}
+
+		/*At this poostion soon to inserted freq should be less than or equal to beg*/
         parent->next = beg->next;
         beg->next = parent;
 
     }
+
 }
+
+
 
 void pop(listNode ** head)
 {
@@ -166,18 +223,30 @@ void transverse(listNode *head)
 int main()
 {
 
-    listNode *head = newListNode('a', 1);
-    push(&head, 'a', 2);
-    push(&head, 'b', 1);
-    printf("list");
+    listNode *head = newListNode('\0', 1,NULL,NULL);
+    pushNode(&head, 'h', 2);
+    pushNode(&head, 'b', 1);
+    pushNode(&head, 'f', 3);
+    pushNode(&head, 'a', 1);
 
+    listNode *add = newListNode('h',2,NULL,NULL);
+
+
+
+    pushNode(&head, add);
+
+
+    printf("list\n");
+
+    Node *temp ;
     while(!isEmpty(&head))
     {
-        printf("%d \n", poll(&head));
+
+        temp = poll(&head);
+        printf("character %c and frequency found: %d \n", temp->c, temp->freq);
     }
 
     return 0;
 }
 
 
-*/
