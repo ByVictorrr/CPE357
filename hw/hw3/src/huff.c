@@ -109,25 +109,31 @@ int isLeaf(Node *n)
 }
 
 
-struct lookUpTable *buildLookUpTable(Node *root)
-{
-    struct lookUpTable *table =
-            (struct lookUpTable*)malloc(sizeof(struct lookUpTable));
 
-    initLookUpTable(root, "", table);
-
-    return table;
-}
-
-void initLookUpTable(Node *root, char *s, struct lookUpTable **table)
+void initLookUpTable(Node *root, char *s, struct lookUpTable table[])
  {
 
     if(!isLeaf(root))
     {
-        buildHuffTree(root->left_child, s+'0', table)
-        buildHuffTree(root->left_child, s+'1', table);
+        initLookUpTable(root->left_child, *s++='0', table);
+        initLookUpTable(root->right_child, *s++='1', table);
+    }else{
+
+        printf("hi %c\n", root->c);
+        printf("hi %s\n", s);
+        table[root->c].code = malloc(sizeof(char)*strlen(s));
+        table[root->c].code = s;
     }
  }
+
+struct lookUpTable *buildLookUpTable(Node *root)
+{
+    struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
+
+    initLookUpTable(root, "", table);
+    return table;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -151,6 +157,14 @@ int main(int argc, char *argv[])
    Node *head = buildHuffTree(ft);
   inorder(head);
 
+/*=====================test 3 - Build look up character -> codes table===========*/
+
+struct lookUpTable *table = buildLookUpTable(head);
+
+    for (int j = 0; j < ALPHABET_SIZE; ++j) {
+        if(table->code != NULL)
+       printf("table[ %c ] = %s\n",(char)j ,table[j].code);
+    }
 
 
 

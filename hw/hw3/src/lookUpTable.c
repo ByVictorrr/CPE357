@@ -7,4 +7,6 @@ struct lookUpTable{
 
 };
 
-struct lookUpTable lookUp[ALPHABET_SIZE];
+
+
+
