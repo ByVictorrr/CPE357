@@ -43,7 +43,7 @@ int *buildFreqeuncyTable(char *data)
 
 Node *buildHuffTree(int *freqTable)
 {
-    listNode *priorityQ = (listNode*)malloc(sizeof(listNode));
+    listNode *priorityQ = NULL;
 
     int i;
 
@@ -51,13 +51,17 @@ Node *buildHuffTree(int *freqTable)
         if(freqTable[i] > 0)
         {
             /*creat a new head to pqueue*/
-            pushNew(&priorityQ, i ,freqTable[i]);
+            pushNewNode(&priorityQ, i ,freqTable[i]);
         }
+
+        printf("before human buildtre\n");
+        transverse(priorityQ);
+
 
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
         {
-            pushNew(&priorityQ, '\0',1);
+            pushNewNode(&priorityQ, '\0',1);
 
         }
         /*while there is more than one character in the pque*/
@@ -71,7 +75,8 @@ Node *buildHuffTree(int *freqTable)
            pushNode(&priorityQ, parent);
 
         }
-        transverse(&priorityQ);
+
+        transverse(priorityQ);
 
         return poll(&priorityQ);
 }
@@ -84,10 +89,17 @@ void inorder(Node *root)
        return;
 
    inorder(root->left_child);
-   printf("node with value char %c and data %d", root->c, root->freq);
+   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
    inorder(root->right_child);
 }
 
+
+void printFreqTable(int *freqTable)
+{
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
+    }
+}
  /*
 int isLeaf(Node *n)
 {
@@ -110,18 +122,14 @@ int main(int argc, char *argv[])
 
     ft = buildFreqeuncyTable(buf);
 
-    printf(" size of f['a'] is %d\n",ft['a']);
-
-    printf(" size of ft['d'] is %d\n",ft['d']);
-
-    printf(" size of ft['f'] is %d\n",ft['f']);
-
+    printFreqTable(ft);
 
    /*==============Test 2- build huffman tree============*/
 
    Node *head = buildHuffTree(ft);
 
-   inorder(head);
+
+  inorder(head);
 
 
 

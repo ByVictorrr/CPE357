@@ -41,7 +41,7 @@ int size(listNode *head)
    return count;
 }
 
-void pushNode(listNode **head, char c, int freq) {
+void pushNewNode(listNode **head, char c, int freq) {
 
     listNode *beg = *head; /*get address of first head*/
 
@@ -114,11 +114,10 @@ void pushNode(listNode **head, listNode *parent) {
 
     listNode *beg = *head; /*get address of first head*/
 
-
     /*case 1 - list is emtpy*/
     if (!*head)
     {
-        *head = tempNode;
+        *head = parent;
         return;
     }
 
@@ -126,7 +125,7 @@ void pushNode(listNode **head, listNode *parent) {
     if(beg->curr->freq > parent->curr->freq)
     {
         parent->next= *head;
-        *head = tempNode;
+        *head = parent;
     }
 	/*case 3 - general case (it goes through the list and finds a spot)*/
     else
@@ -172,13 +171,11 @@ void pushNode(listNode **head, listNode *parent) {
     }
 
 }
-
-
-
 void pop(listNode ** head)
 {
     listNode *temp = *head;
     (*head) = (*head)->next;
+    free(temp->curr);
     free(temp);
 }
 
@@ -196,7 +193,11 @@ Node *poll(listNode **head)
         return NULL;
     else {
         /*copy contents of what is head before pop*/
-        temp = peek(head);
+        temp->c = peek(head)->c;
+        temp->freq = peek(head)->freq;
+        temp->right_child = peek(head)->right_child;
+        temp->left_child = peek(head)->left_child;
+
         pop(head);
     }
     return temp;
@@ -210,24 +211,21 @@ int isEmpty(listNode **head)
 
 void transverse(listNode *head)
 {
-
-    int count =0;
-    while(!head)
+    while(head->next != NULL)
     {
-        printf("node chacter, %c", head->curr->freq);
+        printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
         head=head->next;
     }
 }
-
-
+/*
 int main()
 {
 
-    listNode *head = newListNode('\0', 1,NULL,NULL);
-    pushNode(&head, 'h', 2);
-    pushNode(&head, 'b', 1);
-    pushNode(&head, 'f', 3);
-    pushNode(&head, 'a', 1);
+    listNode *head = NULL;
+    pushNewNode(&head, 'h', 2);
+    pushNewNode(&head, 'b', 1);
+    pushNewNode(&head, 'f', 3);
+    pushNewNode(&head, 'a', 1);
 
     listNode *add = newListNode('h',2,NULL,NULL);
 
@@ -239,14 +237,20 @@ int main()
     printf("list\n");
 
     Node *temp ;
+
+
+    transverse(head);
+
     while(!isEmpty(&head))
     {
 
         temp = poll(&head);
         printf("character %c and frequency found: %d \n", temp->c, temp->freq);
+        free(temp);
     }
+
+
 
     return 0;
 }
-
-
+ */
