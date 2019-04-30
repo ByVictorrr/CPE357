@@ -82,7 +82,7 @@ Node *buildHuffTree(int *freqTable)
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq + left->freq, left , right );
+           listNode *parent = newListNode('q', right->freq + left->freq, left , right );
            pushNode(&priorityQ, parent);
 
         }
@@ -134,9 +134,7 @@ void initLookUpTable(Node *node, char *s, struct lookUpTable **table)
         printf("fuck %c \n,", node->c);
             (*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
             strcpy((*table)[node->c].code,s);
-            free(s);
-            s=(char*)malloc(sizeof(char)*ALPHABET_SIZE);
-            s="\0";
+            *s="\0";
      }
 
  }
@@ -171,7 +169,6 @@ char string[] = "victor";
 
    Node *head = buildHuffTree(ft);
 
-        structure ( head, 0 );
 
 /*=====================test 3 - Build look up character -> codes table===========*/
 
