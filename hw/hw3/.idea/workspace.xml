@@ -11,8 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/src/a.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/huff.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/huff.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lookUpTable.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lookUpTable.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/huff.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lookUpTable.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/node.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/node.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pQueue.c" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,43 +25,6 @@
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
-  </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/pQueue.c">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="860">
-                    <caret line="53" column="9" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/node.c">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="220">
-                    <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/src/huff.c">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="150">
-                    <caret line="118" column="47" selection-start-line="118" selection-start-column="47" selection-end-line="118" selection-end-column="47" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -71,27 +37,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pQueue.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/lookUpTable.c">
+        <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="366">
+              <caret line="176" column="17" selection-start-line="176" selection-start-column="17" selection-end-line="176" selection-end-column="17" />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/node.h">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -110,6 +62,7 @@
         <option value="$PROJECT_DIR$/src/pQueue.c" />
         <option value="$PROJECT_DIR$/src/lookUpTable.c" />
         <option value="$PROJECT_DIR$/src/huff.c" />
+        <option value="$PROJECT_DIR$/src/hencode/huff.c" />
       </list>
     </option>
   </component>
@@ -152,6 +105,12 @@
               <item name="hw3" type="b2602c69:ProjectViewProjectNode" />
               <item name="hw3" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hw3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hw3" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="hencode" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -202,19 +161,19 @@
       <option name="presentableId" value="Default" />
       <updated>1556501696608</updated>
       <workItem from="1556501697755" duration="4610000" />
-      <workItem from="1556506677011" duration="28844000" />
+      <workItem from="1556506677011" duration="32431000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33454000" />
+    <option name="totallyTimeSpent" value="37041000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1678" y="-22" width="1684" height="1074" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49824563" visible="true" weight="0.24418604" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.5017544" side_tool="true" visible="true" weight="0.24418604" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8105263" visible="true" weight="0.24418604" />
+      <window_info id="Structure" order="1" sideWeight="0.18947369" side_tool="true" visible="true" weight="0.24418604" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -242,13 +201,6 @@
     <entry file="file://$PROJECT_DIR$/src/node.h">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/inputs/test1">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="1" selection-start-column="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/a.out">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="460">
@@ -263,13 +215,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pQueue.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="860">
-          <caret line="53" column="9" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lookUpTable.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -279,8 +224,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/huff.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="118" column="47" selection-start-line="118" selection-start-column="47" selection-end-line="118" selection-end-column="47" />
+        <state relative-caret-position="360">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pQueue.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="860">
+          <caret line="53" column="9" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inputs/test1">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="1" selection-start-column="1" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="176" column="17" selection-start-line="176" selection-start-column="17" selection-end-line="176" selection-end-column="17" />
         </state>
       </provider>
     </entry>

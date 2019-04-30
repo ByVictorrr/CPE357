@@ -15,9 +15,22 @@ typedef struct huffmanEncoder{
 
 }HuffmanEncoder;
 
+static char one = '1';
+static char zero = '0';
 
 
 
+
+char *generateEncodedData(char *data, struct lookUpTable * table )
+{
+   char *encoded = (char *)malloc(sizeof(char)*ALPHABET_SIZE);
+   int i;
+    for (i=0; *data; data++, encoded++) {
+        encoded = table[*data].code;
+
+    }
+    return encoded;
+}
 /*buildFrequencyTable: takes in a string and relates
  *
  */
@@ -108,21 +121,19 @@ int isLeaf(Node *n)
 	return FALSE;
 }
 
-
-
-void initLookUpTable(Node *root, char *s, struct lookUpTable table[])
+void initLookUpTable(Node *root, char *s, struct lookUpTable **table)
  {
 
     if(!isLeaf(root))
     {
-        initLookUpTable(root->left_child, *s++='0', table);
-        initLookUpTable(root->right_child, *s++='1', table);
+        initLookUpTable(root->left_child, s=&zero+1, table);
+        initLookUpTable(root->right_child, s=&one+1, table);
     }else{
 
         printf("hi %c\n", root->c);
         printf("hi %s\n", s);
-        table[root->c].code = malloc(sizeof(char)*strlen(s));
-        table[root->c].code = s;
+        table[root->c]->code = (char *)malloc(sizeof(char)*strlen(s));
+        table[root->c]->code = s;
     }
  }
 
@@ -130,9 +141,10 @@ struct lookUpTable *buildLookUpTable(Node *root)
 {
     struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
 
-    initLookUpTable(root, "", table);
+    initLookUpTable(root, "", &table);
     return table;
 }
+
 
 
 int main(int argc, char *argv[])
@@ -161,8 +173,9 @@ int main(int argc, char *argv[])
 
 struct lookUpTable *table = buildLookUpTable(head);
 
+printf("table %s", table->code);
     for (int j = 0; j < ALPHABET_SIZE; ++j) {
-        if(table->code != NULL)
+        if(table[j].code != NULL)
        printf("table[ %c ] = %s\n",(char)j ,table[j].code);
     }
 
