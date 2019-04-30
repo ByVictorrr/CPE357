@@ -78,16 +78,20 @@ Node *buildHuffTree(int *freqTable)
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
+            printf("transversing\n");
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq+left->freq,left,right);
-
+           listNode *parent = newListNode('\0', right->freq + left->freq, left , right );
            pushNode(&priorityQ, parent);
 
         }
 
-        return poll(&priorityQ);
+        Node *root = poll(&priorityQ);
+
+        structure(root,0);
+
+        return root;
 }
 
 
@@ -98,7 +102,7 @@ void inorder(Node *root)
        return;
 
    inorder(root->left_child);
-   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
+   printf("binary tree node with value char %c and freq %d\n", root->c, root->freq);
    inorder(root->right_child);
 }
 
@@ -158,7 +162,7 @@ int main(int argc, char *argv[])
     /*===========Test 1- test read=====================*/
     /*n=read(0,buf,sizeof(buf));*/
 
-char string[] = "fucadfadfdafadfdfdkkaasde";
+char string[] = "victor";
     ft = buildFreqeuncyTable(string);
 
     printFreqTable(ft);
@@ -166,7 +170,8 @@ char string[] = "fucadfadfdafadfdfdkkaasde";
    /*==============Test 2- build huffman tree============*/
 
    Node *head = buildHuffTree(ft);
- /* inorder(head);*/
+
+        structure ( head, 0 );
 
 /*=====================test 3 - Build look up character -> codes table===========*/
 
@@ -176,11 +181,12 @@ printf("table %s\n", (table+'z')->code);
 
     for (int j = 0; j < ALPHABET_SIZE; ++j) {
         if(table[j].code != NULL)
-       printf("table[ %c ] = %s\n",(char)j ,table[j].code);
+       printf(" code table[ %c ] = %s\n",(char)j ,table[j].code);
     }
 
-    char *encodedData = generateEncodedData(string,table);
 
+
+    char *encodedData = generateEncodedData(string,table);
 
 
     printf("encodedData %c\n", *encodedData);

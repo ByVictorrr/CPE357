@@ -11,10 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/a.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/huff" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/huff" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/huff.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/huff.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/pQueue.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/pQueue.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/node.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/node.c" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,8 +43,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="179" selection-start-line="179" selection-end-line="179" />
+            <state relative-caret-position="136">
+              <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -70,7 +69,11 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="940">
+              <caret line="47" column="19" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="19" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -99,6 +102,7 @@
         <option value="$PROJECT_DIR$/src/lookUpTable.c" />
         <option value="$PROJECT_DIR$/src/huff.c" />
         <option value="$PROJECT_DIR$/src/hencode/pQueue.c" />
+        <option value="$PROJECT_DIR$/src/hencode/node.c" />
         <option value="$PROJECT_DIR$/src/hencode/huff.c" />
       </list>
     </option>
@@ -204,12 +208,12 @@
       <option name="presentableId" value="Default" />
       <updated>1556501696608</updated>
       <workItem from="1556501697755" duration="4610000" />
-      <workItem from="1556506677011" duration="41252000" />
+      <workItem from="1556506677011" duration="44545000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45862000" />
+    <option name="totallyTimeSpent" value="49155000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -304,9 +308,6 @@
     <entry file="file://$PROJECT_DIR$/src/hencode/a.out">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hdecode/dhuff.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -324,10 +325,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="940">
+          <caret line="47" column="19" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/huff.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="179" selection-start-line="179" selection-end-line="179" />
+        <state relative-caret-position="136">
+          <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
         </state>
       </provider>
     </entry>

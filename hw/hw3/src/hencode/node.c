@@ -29,3 +29,25 @@ Node *newNode(char c, int freq, Node *left, Node *right)
 
 	return new;
 }
+void padding ( char ch, int n ){
+    int i;
+
+    for ( i = 0; i < n; i++ )
+        putchar ( ch );
+}
+
+void structure ( struct node *root, int level ){
+    int i;
+
+    if ( root == NULL ) {
+        padding ( '\t', level );
+        puts ( "~" );
+    } else {
+        structure ( root->right_child, level + 1 );
+        padding ( '\t', level );
+        printf ( "%c\n", root->c);
+        structure ( root->left_child, level + 1 );
+    }
+}
+
+
