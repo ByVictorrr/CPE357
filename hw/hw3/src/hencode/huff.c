@@ -98,9 +98,9 @@ void inorder(Node *root)
    if(root == NULL)
        return;
 
-   inorder(root->right_child);
-   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
    inorder(root->left_child);
+   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
+   inorder(root->right_child);
 }
 
 
@@ -121,22 +121,21 @@ int isLeaf(Node *n)
 	return FALSE;
 }
 
-void initLookUpTable(Node *root, char *s, struct lookUpTable **table)
+void initLookUpTable(Node *node, char *s, struct lookUpTable **table)
  {
-    if(!isLeaf(root))
+    if(!isLeaf(node))
     {
-
-        initLookUpTable(root->left_child, strcat(s,one), table);
-        initLookUpTable(root->right_child, strcat(s,zero), table);
+        initLookUpTable(node->left_child, strcat(s,"0"), table);
+        initLookUpTable(node->right_child, strcat(s,"1"), table);
     }else{
+        printf("fuck %c \n,", node->c);
+            (*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
+            strcpy((*table)[node->c].code,s);
+            free(s);
+            s=(char*)malloc(sizeof(char)*ALPHABET_SIZE);
+     }
 
-        printf("hi %s\n", s);
-        (*table)[root->c].code = (char *)malloc(sizeof(char)*strlen(s));
-        (*table)[root->c].code = s;
-    }
  }
-
-
 struct lookUpTable *buildLookUpTable(Node *root)
 {
     struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
@@ -159,7 +158,7 @@ int main(int argc, char *argv[])
     /*===========Test 1- test read=====================*/
     /*n=read(0,buf,sizeof(buf));*/
 
-    char string[] = "fuckmezzfluukad";
+char string[] = "aaaaaaaabcccccmmmtttttt";
     ft = buildFreqeuncyTable(string);
 
     printFreqTable(ft);
@@ -187,4 +186,4 @@ printf("table %s\n", (table+'z')->code);
 
 
     return 0;
-}
+ }
