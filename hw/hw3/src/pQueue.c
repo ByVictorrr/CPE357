@@ -28,7 +28,7 @@ int size(listNode *head)
    /*single case return empty*/
    if(head == NULL)
        return 0;
-   else if( head->next != NULL)
+   else if( head->next == NULL)
        return 1;
 
    /*count  has to be at least 1 by time to get here*/
@@ -80,25 +80,18 @@ void pushNewNode(listNode **head, char c, int freq) {
 
         /* case 3.2 - that next node could possibly be equal to the one node to be inserted*/
 
-		if( beg->next !=NULL &&  beg->next->curr->freq == freq)
-		{
 			/*case 3.2.1 - because beg->next->curr->freq == freq */
 			    /* we need to insert based upon character */
 
 			    /*Tranverse the list until a node is found where they are not equal*/
-			while(beg->next !=NULL &&  beg->next->curr->c == c)
+			while(beg->next !=NULL &&  beg->next->curr->c < c && beg->next->curr->freq == freq)
 			{
 			    /*If the soon to be entered character is less than c next*/
-			    if(beg->next->curr->c < c)
-                {
-			        /*we found the location for new node to be inserted*/
-			       break;
-                }
+			    /*we found the location for new node to be inserted*/
 			   beg = beg->next;
 
 			}
 
-		}
 
 		/*At this poostion soon to inserted freq should be less than or equal to beg*/
         tempNode->next = beg->next;
@@ -216,6 +209,7 @@ void transverse(listNode *head)
         printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
         head=head->next;
     }
+        printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
 }
 /*
 int main()

@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "pQueue.c"
+#include "lookUpTable.c"
 
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
@@ -47,16 +48,13 @@ Node *buildHuffTree(int *freqTable)
 
     int i;
 
-    for (i = 0; i<ALPHABET_SIZE; i++)
+    for (i = 1; i<ALPHABET_SIZE; i++)
         if(freqTable[i] > 0)
         {
             /*creat a new head to pqueue*/
             pushNewNode(&priorityQ, i ,freqTable[i]);
+
         }
-
-        printf("before human buildtre\n");
-        transverse(priorityQ);
-
 
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
@@ -76,7 +74,6 @@ Node *buildHuffTree(int *freqTable)
 
         }
 
-        transverse(priorityQ);
 
         return poll(&priorityQ);
 }
@@ -88,26 +85,50 @@ void inorder(Node *root)
    if(root == NULL)
        return;
 
-   inorder(root->left_child);
-   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
    inorder(root->right_child);
+   printf("binary tree node with value char %c and data %d\n", root->c, root->freq);
+   inorder(root->left_child);
 }
 
 
 void printFreqTable(int *freqTable)
 {
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
-        printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
+    for (int i = 1; i < ALPHABET_SIZE; i++)
+    {
+        if (freqTable[i] >0)
+            printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
     }
 }
- /*
+
+
 int isLeaf(Node *n)
 {
 	if (n->left_child == NULL && n->right_child == NULL)
 		return TRUE;
 	return FALSE;
 }
-*/
+
+
+struct lookUpTable *buildLookUpTable(Node *root)
+{
+    struct lookUpTable *table =
+            (struct lookUpTable*)malloc(sizeof(struct lookUpTable));
+
+    initLookUpTable(root, "", table);
+
+    return table;
+}
+
+void initLookUpTable(Node *root, char *s, struct lookUpTable **table)
+ {
+
+    if(!isLeaf(root))
+    {
+        buildHuffTree(root->left_child, s+'0', table)
+        buildHuffTree(root->left_child, s+'1', table);
+    }
+ }
+
 int main(int argc, char *argv[])
 {
 
@@ -118,18 +139,18 @@ int main(int argc, char *argv[])
 
 
     /*===========Test 1- test read=====================*/
-    n=read(0,buf,sizeof(buf));
+    /*n=read(0,buf,sizeof(buf));*/
 
-    ft = buildFreqeuncyTable(buf);
+    char string[] = "fuckmezzfluukad";
+    ft = buildFreqeuncyTable(string);
 
     printFreqTable(ft);
 
    /*==============Test 2- build huffman tree============*/
 
    Node *head = buildHuffTree(ft);
-
-
   inorder(head);
+
 
 
 
