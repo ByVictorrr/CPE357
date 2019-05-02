@@ -10,14 +10,10 @@
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
 int numUniqueChar = 0;
-
+int codeLength;
 enum boolean{FALSE,TRUE};
 
 /*========================Encoded data===================================*/
-typedef struct huffmanEncoder{
-		char *header;
-		char *body;
-}HuffmanEncoder;
 
 /*Should be 5 bytes*/
 typedef struct charEncodeFormat
@@ -26,6 +22,27 @@ typedef struct charEncodeFormat
 	uint32_t frequency; /*number of chars in freq table*/
 }fieldHeader;
 
+typedef struct huffmanEncoder{
+		fieldHeader *header;
+		uint32_t header_size;  /*its fixed */
+		uint32_t *body;
+}HuffmanEncoder;
+
+/*returning the body of the string encodded*/
+uint32_t *generateBody(char *string, int numChars)
+{
+  uint32_t *encoded = (uint32_t*)malloc(sizeof(uint32_t)*numChars);
+
+}
+int getCodeLength(struct lookUpTable *table)
+{
+    int i, count = 0;
+    for (i = 0 ; i<numUniqueChar; i++)
+    {
+        count = strlen(table[i].code) + count;
+    }
+    return count;
+}
 
 /*This method gives the string wit the codes*/
 fieldHeader *generateHeader(int *ft, int numUniqueChars)
@@ -115,7 +132,7 @@ Node *buildHuffTree(int *freqTable)
 
         Node *root = poll(&priorityQ);
 
-        structure(root,0);
+        codeLength = root->freq;
 
         return root;
 }
@@ -221,6 +238,8 @@ printf("table %s\n", (table)->code);
     fieldHeader *header = generateHeader(ft, numUniqueChar);
 	printFieldHeader(header,numUniqueChar);
 
+
+	printf("get codes : %d\n", codeLength);
 
 /*=================================================*/
   free(header);

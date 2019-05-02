@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include "../hencode/node.c"
 
 char *decompess(HuffmanEnodded results)
 {
-	Node *curr = 
+	Node *curr;
 	int i=0;
 	while(i < encodedDatat.lengh())
 	{
