@@ -33,23 +33,25 @@ typedef struct huffmanEncoder{
 /*returning the body of the string encodded*/
 uint8_t *generateBody(struct lookUpTable *table, int codeLength)
 {
-  uint8_t *encoded = (uint8_t*)malloc(sizeof(uint8_t)*codeLength/8);
+
+  uint8_t *encoded = (uint8_t*)malloc(codeLength*sizeof(uint8_t));
   /*mask 1's an 0's from char to int*/
   int i;
-  unsigned long temp = 0;
-  int bit = 0;
+  uint8_t temp = 0;
   char *conv;
   for(i = 0; i<ALPHABET_SIZE; i++)
   {
       if((conv = table[i].code) != NULL) {
           for (int j = 0; j < strlen(table[i].code); ++j) {
-              bit = conv[j] & MASK;
+                if(j==7)
+                {
+                   encoded++; /* go get more data*/
+                }
+                *encoded = *encoded << (conv[j] & MASK);
+              printf("shift left for %c, %d\n", (char)i, *encoded );
 
-              temp = temp >> bit;
-              printf("shift left for %c, %lu\n", (char)i, temp);
           }
 
-          printf("temp shift : %d\n", temp);
           printf("new char\n");
 
       }
