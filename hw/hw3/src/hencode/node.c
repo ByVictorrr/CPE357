@@ -29,6 +29,7 @@ Node *newNode(char c, int freq, Node *left, Node *right)
 
 	return new;
 }
+
 void padding ( char ch, int n ){
     int i;
 
