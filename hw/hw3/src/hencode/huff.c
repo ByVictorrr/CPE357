@@ -1,36 +1,60 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "pQueue.c"
 #include "lookUpTable.c"
 #include <string.h>
+
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
+int numUniqueChar = 0;
 
 enum boolean{FALSE,TRUE};
 
+/*========================Encoded data===================================*/
 typedef struct huffmanEncoder{
-        int *ft;
-        char *encodedData;
-        struct lookUpTable * table;
-        Node *root;
+		char *header;
+		char *body;
 }HuffmanEncoder;
 
-
+/*Should be 5 bytes*/
+typedef struct charEncodeFormat
+{
+	uint8_t character; 
+	uint32_t frequency; /*number of chars in freq table*/
+}fieldHeader;
 
 
 /*This method gives the string wit the codes*/
-char *generateEncodedData(char *data, struct lookUpTable * table )
-{
-   int i;
-   char *encoded;
-    for (i=0; *data; data++, encoded++) {
-        encoded = table[*data].code;
-
-    }
-    return encoded;
+fieldHeader *generateHeader(int *ft, int numUniqueChars)
+{ 
+	/*allocating for header*/
+   fieldHeader *header = (fieldHeader*)malloc(sizeof(fieldHeader)*numUniqueChars);
+	int i;
+	int header_inc = 0;
+   for ( i=0; i<ALPHABET_SIZE; i++)
+   {
+		if(ft[i] != 0);
+		{
+			/*insert into header*/
+			header[header_inc].frequency = ft[i];
+			header[header_inc].character = (char)i;
+			header_inc++;
+		}
+   }
+   return header;
 }
+
+
+/*=================================================================*/
+
+
+
+
+
+
 /*buildFrequencyTable: takes in a string and relates
  *
  */
@@ -53,8 +77,6 @@ int *buildFreqeuncyTable(char *data)
 	return freq;
 }
 
-
-
 Node *buildHuffTree(int *freqTable)
 {
     listNode *priorityQ = NULL;
@@ -64,11 +86,11 @@ Node *buildHuffTree(int *freqTable)
     for (i = 1; i<ALPHABET_SIZE; i++)
         if(freqTable[i] > 0)
         {
+			numUniqueChar++;
             /*creat a new head to pqueue*/
             pushNewNode(&priorityQ, i ,freqTable[i]);
 
         }
-
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
         {
@@ -82,7 +104,7 @@ Node *buildHuffTree(int *freqTable)
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('q', right->freq + left->freq, left , right );
+           listNode *parent = newListNode('\0', right->freq + left->freq, left , right );
            pushNode(&priorityQ, parent);
 
         }
@@ -93,7 +115,6 @@ Node *buildHuffTree(int *freqTable)
 
         return root;
 }
-
 
 void inorder(Node *root)
 {
@@ -106,7 +127,6 @@ void inorder(Node *root)
    inorder(root->right_child);
 }
 
-
 void printFreqTable(int *freqTable)
 {
     for (int i = 1; i < ALPHABET_SIZE; i++)
@@ -116,7 +136,6 @@ void printFreqTable(int *freqTable)
     }
 }
 
-
 int isLeaf(Node *n)
 {
 	if (n->left_child == NULL && n->right_child == NULL)
@@ -124,28 +143,39 @@ int isLeaf(Node *n)
 	return FALSE;
 }
 
-void initLookUpTable(Node *node, char *s, struct lookUpTable **table)
+void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
  {
-    if(!isLeaf(node))
+    if(isLeaf(node))
     {
-        initLookUpTable(node->left_child, strcat(s,"0"), table);
-        initLookUpTable(node->right_child, strcat(s,"1"), table);
-    }else{
-        printf("fuck %c \n,", node->c);
-            (*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
-            strcpy((*table)[node->c].code,s);
-            *s="\0";
-     }
+	
+		printf("fuck %c \n,", node->c);
+
+		(*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
+
+		strcpy((*table)[node->c].code,s);
+	
+	}else{
+			printf("hi\n");
+			
+				s[top] = '0';
+				initLookUpTable(node->left_child, s, top+1, table);
+				s[top] = '1';
+				initLookUpTable(node->right_child,s, top+1, table);
+			}
+
 
  }
+
 struct lookUpTable *buildLookUpTable(Node *root)
 {
     struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
-    char *s = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
-    *s='\0';
-    initLookUpTable(root,s, &table);
+    char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
+    *s = EOF;
+    initLookUpTable(root,s, 0 ,&table);
     return table;
 }
+
+
 
 
 int main(int argc, char *argv[])
@@ -160,7 +190,7 @@ int main(int argc, char *argv[])
     /*===========Test 1- test read=====================*/
     /*n=read(0,buf,sizeof(buf));*/
 
-char string[] = "victor";
+	char string[] = "vvica";
     ft = buildFreqeuncyTable(string);
 
     printFreqTable(ft);
@@ -168,26 +198,27 @@ char string[] = "victor";
    /*==============Test 2- build huffman tree============*/
 
    Node *head = buildHuffTree(ft);
-
+	structure(head,0);
 
 /*=====================test 3 - Build look up character -> codes table===========*/
 
 struct lookUpTable *table = buildLookUpTable(head);
 
-printf("table %s\n", (table+'z')->code);
+printf("table %s\n", (table)->code);
 
     for (int j = 0; j < ALPHABET_SIZE; ++j) {
         if(table[j].code != NULL)
        printf(" code table[ %c ] = %s\n",(char)j ,table[j].code);
     }
 
+/*=======================test 4 - print header=========*/
+
+	freq
+	printf("", );
+	
 
 
-    char *encodedData = generateEncodedData(string,table);
-
-
-    printf("encodedData %c\n", *encodedData);
-
+/*=================================================*/
   free(head);
     free(ft);
 
