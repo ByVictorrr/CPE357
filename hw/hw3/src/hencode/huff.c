@@ -36,18 +36,23 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
 	int header_inc = 0;
    for ( i=0; i<ALPHABET_SIZE; i++)
    {
-		if(ft[i] != 0);
+		if(ft[i] != 0 && i != (int)'\0');
 		{
 			/*insert into header*/
-			header[header_inc].frequency = ft[i];
-			header[header_inc].character = (char)i;
+			header[header_inc].frequency = (uint32_t)ft[i];
+			header[header_inc].character = (uint8_t) i;
 			header_inc++;
 		}
    }
    return header;
 }
 
-
+void printFieldHeader(fieldHeader *header, int numUniqueChars)
+{
+    for (int i = 0; i < numUniqueChars; ++i) {
+       printf("| %u | %lu |", header[i].character, header[i].frequency) ;
+    }
+}
 /*=================================================================*/
 
 
@@ -213,12 +218,14 @@ printf("table %s\n", (table)->code);
 
 /*=======================test 4 - print header=========*/
 
-	freq
-	printf("", );
+
+    fieldHeader *header = generateHeader(ft, numUniqueChar);
+	printFieldHeader(header,numUniqueChar);
 	
 
 
 /*=================================================*/
+  free(header);
   free(head);
     free(ft);
 
