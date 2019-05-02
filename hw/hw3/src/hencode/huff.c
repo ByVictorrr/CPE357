@@ -9,7 +9,9 @@
 
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
+#define MASK 1
 int numUniqueChar = 0;
+
 int codeLength;
 enum boolean{FALSE,TRUE};
 
@@ -25,24 +27,40 @@ typedef struct charEncodeFormat
 typedef struct huffmanEncoder{
 		fieldHeader *header;
 		uint32_t header_size;  /*its fixed */
-		uint32_t *body;
+		uint8_t *body;
 }HuffmanEncoder;
 
 /*returning the body of the string encodded*/
-uint32_t *generateBody(char *string, int numChars)
+uint8_t *generateBody(struct lookUpTable *table, int codeLength)
 {
-  uint32_t *encoded = (uint32_t*)malloc(sizeof(uint32_t)*numChars);
+  uint8_t *encoded = (uint8_t*)malloc(sizeof(uint8_t)*codeLength/8);
+  /*mask 1's an 0's from char to int*/
+  int i;
+  unsigned long temp = 0;
+  int bit = 0;
+  char *conv;
+  for(i = 0; i<ALPHABET_SIZE; i++)
+  {
+      if((conv = table[i].code) != NULL) {
+          for (int j = 0; j < strlen(table[i].code); ++j) {
+              bit = conv[j] & MASK;
 
+              temp = temp >> bit;
+              printf("shift left for %c, %lu\n", (char)i, temp);
+          }
+
+          printf("temp shift : %d\n", temp);
+          printf("new char\n");
+
+      }
+
+        /*want to mask then shift each value to get conversion of char -> integer*/
+  }
+
+
+    return encoded;
 }
-int getCodeLength(struct lookUpTable *table)
-{
-    int i, count = 0;
-    for (i = 0 ; i<numUniqueChar; i++)
-    {
-        count = strlen(table[i].code) + count;
-    }
-    return count;
-}
+
 
 /*This method gives the string wit the codes*/
 fieldHeader *generateHeader(int *ft, int numUniqueChars)
@@ -63,12 +81,16 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
    }
    return header;
 }
+
+
+
 void printFieldHeader(fieldHeader *header, int numUniqueChars)
 {
     for (int i = 0; i < numUniqueChars; ++i) {
        printf("| %c | %lu |", (char)header[i].character, header[i].frequency) ;
     }
 }
+
 /*=================================================================*/
 
 
@@ -168,13 +190,11 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
  {
     if(isLeaf(node))
     {
-	
-		printf("fuck %c \n,", node->c);
 
 		(*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
 
 		strcpy((*table)[node->c].code,s);
-	
+
 	}else{
 			printf("hi\n");
 			
@@ -185,6 +205,16 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 			}
 
 
+ }
+
+ int getCodeLen(struct lookUpTable *table)
+ {
+    int codeLen = 0;
+    int j;
+    for ( j = 0; j < ALPHABET_SIZE; ++j)
+        if (table[j].code != NULL)
+            codeLen += strlen(table[j].code);
+        return codeLen;
  }
 
 struct lookUpTable *buildLookUpTable(Node *root)
@@ -234,12 +264,12 @@ printf("table %s\n", (table)->code);
 
 /*=======================test 4 - print header=========*/
 
-
+generateBody(table,getCodeLen(table));
     fieldHeader *header = generateHeader(ft, numUniqueChar);
-	printFieldHeader(header,numUniqueChar);
+	/*printFieldHeader(header,numUniqueChar);*/
 
 
-	printf("get codes : %d\n", codeLength);
+	/*printf("get codes : %d\n", codeLength);*/
 
 /*=================================================*/
   free(header);
