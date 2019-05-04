@@ -3,12 +3,11 @@
 
 #include "pQueue.h"
 
-int codeLength;
-
 #define ALPHABET_SIZE 256
 
 enum boolean{FALSE,TRUE};
 int numUniqueChar;
+int numCodes;
 
 Node *buildHuffTree(int *freqTable);
 void inorder(Node *root);

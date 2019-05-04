@@ -37,7 +37,7 @@ Node *buildHuffTree(int *freqTable)
 
         Node *root = poll(&priorityQ);
 
-        codeLength = root->freq;
+        numCodes = root->freq;
 
         return root;
 }

@@ -15,8 +15,10 @@ int *buildFreqTable(char *data)
 	/*go until EOF*/
 	for (;*data != EOF; data++)
 	{
+
 		/*every time come across that character incrment freq*/
-		freq[*data]++;
+		if(*data)
+		    freq[*data]++;
 	}
 	return freq;
 }
@@ -26,7 +28,7 @@ void printFreqTable(int *freqTable)
     int i;
     for (i = 1; i < ALPHABET_SIZE; i++)
     {
-        if (freqTable[i] >0)
+        if (freqTable[i] > 0 )
             printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
     }
 }

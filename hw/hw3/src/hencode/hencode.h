@@ -23,5 +23,5 @@
 
 extern int numUniqueChar;
 extern enum boolean;
-
+extern int numCodes;
 #endif

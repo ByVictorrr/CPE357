@@ -1,30 +1,86 @@
 #include "hencode.h"
 
-/*========================Encoded data===================================*/
+#define BYTE 8.0
+/*=================Beg of header===================================*/
 
-/*Should be 5 bytes*/
-typedef struct charEncodeFormat
+/*Should be 5 bytes {count | char| }*/
+typedef struct headerBits
 {
-	uint8_t character; 
-	uint32_t frequency; /*number of chars in freq table*/
+    uint8_t character;
+    uint32_t frequency; /*number of chars in freq table*/
+
 }fieldHeader;
 
-typedef struct huffmanEncoder{
-		fieldHeader *header;
-		uint32_t header_size;  /*its fixed */
-		uint8_t *body;
-}HuffmanEncoder;
+/*This method gives the string wit the codes*/
+fieldHeader *generateHeader(int *ft, int numUniqueChars)
+{
+    /*allocating for header*/
+    fieldHeader *header = (fieldHeader*)malloc(sizeof(fieldHeader)*numUniqueChars);
+    int i;
+    int header_inc = 0;
+    for ( i=1; i<ALPHABET_SIZE; i++)
+    {
+        if(ft[i] > 0) {
+            /*insert into header*/
+            header[header_inc].frequency = (uint32_t) ft[i];
+            header[header_inc].character = (uint8_t) i;
+            header_inc++;
+        }
+
+    }
+    return header;
+}
+
+void printFieldHeader(fieldHeader *header, int numUniqueChars)
+{
+    int i;
+    for (i = 0; i < numUniqueChars; ++i) {
+        printf("| %c | %lu |", (char)header[i].character, header[i].frequency) ;
+    }
+}
+
+/*========================End of Header============================*/
+
+
+
+/*========================Encoded data===================================*/
+
+struct huffmanEncoder {
+    fieldHeader *header; /*a single header is an array of field header*/
+    uint32_t header_size; /*num of unique chars*/
+    uint8_t *body;
+}packedCode = {
+
+        .header = NULL,
+        .body = NULL
+        /*.header_size = numUniqueChar*/
+};
+
+
+
+
+
 
 /*packing the body into a smaller */
-
-uint8_t *generateBody(struct lookUpTable *table, int codeLength)
+uint8_t *generateBody(struct lookUpTable *table, int numBitsCode)
 {
 
-  uint8_t *encoded = (uint8_t*)malloc(codeLength*sizeof(uint8_t));
+    int bytesToAllocate = (int)ceil((double)numBitsCode/BYTE);
+
+    printf("Bytes to allocate: %d", bytesToAllocate);
+
+
+
+  /*allocate n bytes*/
+  uint8_t *encoded = (uint8_t*)malloc(bytesToAllocate* sizeof(uint8_t));
+
+
   /*mask 1's an 0's from char to int*/
   int i;
   uint8_t temp = 0;
+
   char *conv;
+
   /*iterate through whole table*/
   for(i = 0; i<ALPHABET_SIZE; i++)
   {
@@ -61,56 +117,19 @@ uint8_t *generateBody(struct lookUpTable *table, int codeLength)
     return encoded;
 }
 
-
-/*This method gives the string wit the codes*/
-fieldHeader *generateHeader(int *ft, int numUniqueChars)
-{ 
-	/*allocating for header*/
-   fieldHeader *header = (fieldHeader*)malloc(sizeof(fieldHeader)*numUniqueChars);
-	int i;
-	int header_inc = 0;
-   for ( i=1; i<ALPHABET_SIZE; i++)
-   {
-       if(ft[i] > 0) {
-           /*insert into header*/
-           header[header_inc].frequency = (uint32_t) ft[i];
-           header[header_inc].character = (uint8_t) i;
-           header_inc++;
-       }
-
-   }
-   return header;
-}
-
-
-
-void printFieldHeader(fieldHeader *header, int numUniqueChars)
-{
-    int i;
-    for (i = 0; i < numUniqueChars; ++i) {
-       printf("| %c | %lu |", (char)header[i].character, header[i].frequency) ;
-    }
-}
-
-/*=================================================================*/
-
-
-
-
-
-
-
- int getCodeLen(struct lookUpTable *table)
+/*getCodeLen - returns the length of the code
+ * Example: if code (in char ) is 0110 10001
+ *             returns - 9 length
+ */
+int numBitsOfCode(struct lookUpTable *table)
  {
-    int codeLen = 0;
+    int numBits = 0;
     int j;
     for ( j = 0; j < ALPHABET_SIZE; ++j)
         if (table[j].code != NULL)
-            codeLen += strlen(table[j].code);
-        return codeLen;
+            numBits += strlen(table[j].code);
+        return numBits;
  }
-
-
 
 
 
@@ -150,17 +169,24 @@ int j;
 
 /*=======================test 4 - print header=========*/
 
-generateBody(table,getCodeLen(table));
+generateBody(table,numBitsOfCode(table));
+
     fieldHeader *header = generateHeader(ft, numUniqueChar);
+
 	printFieldHeader(header,numUniqueChar);
 
-
-	/*printf("get codes : %d\n", codeLength);*/
+	printf("get codes : %d\n", numCodes);
 
 /*=================================================*/
   free(header);
   free(head);
     free(ft);
+
+
+
+
+
+   /*read once and store in to an inputbuffer*/
 
 
     return 0;
