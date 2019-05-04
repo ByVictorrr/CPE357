@@ -1,18 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include "node.c"
-
-/*=========================================================================*/
-
-/*=======================NodeList which is just node with a next==========*/
-
-typedef struct nodeList{
-    Node *curr;
-    struct  nodeList *next;
-}listNode;
-
+#include "pQueue.h"
 
 listNode *newListNode(char c, int freq, Node *left , Node *right)
 {
@@ -32,7 +18,8 @@ int size(listNode *head)
        return 1;
 
    /*count  has to be at least 1 by time to get here*/
-   int count =1;
+   int count;
+   count =1;
    while (head->next)
    {
        head=head->next;

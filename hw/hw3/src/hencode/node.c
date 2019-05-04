@@ -2,16 +2,8 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "node.h"
 
-
-
-/*========================Node=======================================*/
-typedef struct node{
-    char c;
-    int freq;
-    struct node *left_child;
-    struct node *right_child;
-}Node;
 
 
 Node *newNode(char c, int freq, Node *left, Node *right)
@@ -37,7 +29,6 @@ void padding ( char ch, int n ){
 }
 
 void structure ( struct node *root, int level ){
-    int i;
 
     if ( root == NULL ) {
         padding ( '\t', level );

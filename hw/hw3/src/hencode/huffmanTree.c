@@ -1,8 +1,4 @@
-#include "pQueue.c"
-
-enum boolean{FALSE,TRUE};
-int numUniqueChar = 0;
-
+#include "huffmanTree.h"
 Node *buildHuffTree(int *freqTable)
 {
     listNode *priorityQ = NULL;

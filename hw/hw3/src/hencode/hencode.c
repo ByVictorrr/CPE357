@@ -6,20 +6,20 @@
 #include <math.h>
 #include <string.h>
 
-#include "pQueue.c"
-#include "lookUpTable.c"
-#include "huffmanTree.c"
-#include "freqTable.c"
+#include "pQueue.h"
+#include "lookUpTable.h"
+#include "huffmanTree.h"
+#include "freqTable.h"
 
 
 
 #define BUFSIZE 210
 #define ALPHABET_SIZE 256
 #define MASK 1
-extern int numUniqueChar = 0;
 
-int codeLength;
-extern enum boolean{FALSE,TRUE};
+
+extern int numUniqueChar;
+extern enum boolean;
 
 /*========================Encoded data===================================*/
 
@@ -36,43 +36,8 @@ typedef struct huffmanEncoder{
 		uint8_t *body;
 }HuffmanEncoder;
 
-uint8_t *8packBits(char code[])
-{
-
-   /*is strlen(code) div by 8 if not tack on extra zero char */
-
-   int i,j,k;
-
-   char *newCodeAddedZeros = code;
-   /*is strlen(code) div by 8?*/
-   if(strlen(code) % 8 != 0)
-   {
-       int addToMakeDiv8 = 8 - strlen(code)% 8 ;
-       newCodeAddedZeros = relloc(code, strlen(code)+addToMakeDiv8+1);
-       newCodeAddedZeros[strlen(code)+addToMakeDiv8] = '\0';
-
-       /*add zeros backwards for all added space*/
-       for (j = addToMakeDiv8; j>0 ; --j) {
-          newCodeAddedZeros[strlen(code)+addToMakeDiv8-j] = '0';
-
-       }
-   }
-
-   /*allocate an array of uints to pack bits*/
-   uint8_t *codePacked = (uint8_t *)malloc(sizeof(uint8_t)*strlen(newCodeAddedZeros));
-
-   /*go through a set of 8 characters */
-   for(k =0; k< strlen(addToMakeDiv8)/ sizeof(uint_8); k++, codePacked++)
-   {
-     /*this is just for 8bits*/
-     for(i = abs(k - sizeof(uint_8; i >= 0; i--)
-     {
-
-     }
-
-}
-
 /*packing the body into a smaller */
+
 uint8_t *generateBody(struct lookUpTable *table, int codeLength)
 {
 
@@ -89,7 +54,8 @@ uint8_t *generateBody(struct lookUpTable *table, int codeLength)
       if((conv = table[i].code) != NULL) {
 
           /*go through that strings chars -> integer*/
-          for (int j = 0; j < strlen(table[i].code); ++j) {
+          int j;
+          for (j = 0; j < strlen(table[i].code); ++j) {
 
                 /*if end of that string*/
                 *encoded += (int)pow(2,j) * (conv[0] & MASK) ;
@@ -141,7 +107,8 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
 
 void printFieldHeader(fieldHeader *header, int numUniqueChars)
 {
-    for (int i = 0; i < numUniqueChars; ++i) {
+    int i;
+    for (i = 0; i < numUniqueChars; ++i) {
        printf("| %c | %lu |", (char)header[i].character, header[i].frequency) ;
     }
 }
@@ -196,7 +163,8 @@ struct lookUpTable *table = buildLookUpTable(head);
 
 printf("table %s\n", (table)->code);
 
-    for (int j = 0; j < ALPHABET_SIZE; ++j) {
+int j;
+    for ( j = 0; j < ALPHABET_SIZE; ++j) {
         if(table[j].code != NULL)
        printf(" code table[ %c ] = %s\n",(char)j ,table[j].code);
     }

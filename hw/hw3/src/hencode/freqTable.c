@@ -1,7 +1,4 @@
-
-
-
-
+#include "freqTable.h"
 /*buildFrequencyTable: takes in a string and relates
  *
  */
@@ -26,7 +23,8 @@ int *buildFreqTable(char *data)
 
 void printFreqTable(int *freqTable)
 {
-    for (int i = 1; i < ALPHABET_SIZE; i++)
+    int i;
+    for (i = 1; i < ALPHABET_SIZE; i++)
     {
         if (freqTable[i] >0)
             printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
