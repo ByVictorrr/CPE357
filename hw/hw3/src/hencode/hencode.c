@@ -152,7 +152,7 @@ int j;
 
 generateBody(table,getCodeLen(table));
     fieldHeader *header = generateHeader(ft, numUniqueChar);
-	/*printFieldHeader(header,numUniqueChar);*/
+	printFieldHeader(header,numUniqueChar);
 
 
 	/*printf("get codes : %d\n", codeLength);*/

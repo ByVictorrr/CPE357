@@ -1,5 +1,7 @@
 #include "huffmanTree.h"
 
+numUniqueChar = 0;
+
 
 Node *buildHuffTree(int *freqTable)
 {

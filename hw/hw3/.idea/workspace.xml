@@ -10,15 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="275a8860-ae4e-4fb1-9853-de69e9a7b655" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/freqTable.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/freqTable.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/header.c" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/hencode.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/hencode.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/hencode.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/hencode.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/huffmanTree.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/huffmanTree.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/huffmanTree.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/huffmanTree.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hencode/lookUpTable.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/lookUpTable.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/node.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/node.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/node.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/node.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hencode/pQueue.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/pQueue.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hencode/lookUpTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/hencode/lookUpTable.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,8 +50,8 @@
             <file pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.c">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="220">
-                    <caret line="11" column="6" lean-forward="true" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
+                  <state relative-caret-position="20">
+                    <caret line="1" selection-start-line="1" selection-end-line="1" />
                   </state>
                 </provider>
               </entry>
@@ -65,15 +64,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hencode/pQueue.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/pQueue.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="540">
@@ -82,16 +72,30 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hencode/hencode.h">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/hencode.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+            <state relative-caret-position="660">
+              <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="135" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20">
+              <caret line="1" column="14" lean-forward="true" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/hencode/node.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="20">
@@ -112,34 +116,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
-              <folding>
-                <element signature="e#41#60#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="60">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/Makefile">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="12" column="36" selection-start-line="12" selection-start-column="36" selection-end-line="12" selection-end-column="36" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+            <state relative-caret-position="60">
+              <caret line="3" column="24" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -147,8 +143,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hencode/freqTable.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+            <state>
+              <caret column="20" selection-start-column="20" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -175,12 +171,13 @@
         <option value="$PROJECT_DIR$/src/hencode/node.h" />
         <option value="$PROJECT_DIR$/src/hencode/pQueue.c" />
         <option value="$PROJECT_DIR$/src/hencode/pQueue.h" />
-        <option value="$PROJECT_DIR$/src/hencode/lookUpTable.c" />
-        <option value="$PROJECT_DIR$/src/hencode/huffmanTree.c" />
-        <option value="$PROJECT_DIR$/src/hencode/huffmanTree.h" />
+        <option value="$PROJECT_DIR$/src/hencode/Makefile" />
         <option value="$PROJECT_DIR$/src/hencode/freqTable.c" />
         <option value="$PROJECT_DIR$/src/hencode/lookUpTable.h" />
+        <option value="$PROJECT_DIR$/src/hencode/lookUpTable.c" />
+        <option value="$PROJECT_DIR$/src/hencode/huffmanTree.c" />
         <option value="$PROJECT_DIR$/src/hencode/hencode.c" />
+        <option value="$PROJECT_DIR$/src/hencode/huffmanTree.h" />
       </list>
     </option>
   </component>
@@ -287,12 +284,12 @@
       <updated>1556501696608</updated>
       <workItem from="1556501697755" duration="4610000" />
       <workItem from="1556506677011" duration="44805000" />
-      <workItem from="1556940133338" duration="13913000" />
+      <workItem from="1556940133338" duration="16575000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80509000" />
+    <option name="totallyTimeSpent" value="83171000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -304,11 +301,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="27" y="77" width="808" height="946" extended-state="0" />
+    <frame x="-2" y="-22" width="1684" height="1074" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.80934346" visible="true" weight="0.54221636" />
-      <window_info id="Structure" order="1" sideWeight="0.19065657" side_tool="true" visible="true" weight="0.54221636" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8086957" visible="true" weight="0.25153" />
+      <window_info id="Structure" order="1" sideWeight="0.19130434" side_tool="true" visible="true" weight="0.25153" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -319,12 +316,12 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3296837" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.499388" weight="0.32947367" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49736148" visible="true" weight="0.03649635" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5026385" side_tool="true" visible="true" weight="0.03649635" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49736148" weight="0.03649635" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5026385" side_tool="true" visible="true" weight="0.031578947" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.039577838" />
+      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.018359853" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -386,13 +383,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/freqTable.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/pQueue.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
@@ -400,51 +390,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/Makefile">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/node.h">
+    <entry file="file://$PROJECT_DIR$/src/hencode/freqTable.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="1" column="4" selection-start-line="1" selection-start-column="4" selection-end-line="1" selection-end-column="4" />
+        <state>
+          <caret column="20" selection-start-column="20" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.c">
+    <entry file="file://$PROJECT_DIR$/src/hencode/Makefile">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="6" lean-forward="true" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
+        <state relative-caret-position="240">
+          <caret line="12" column="36" selection-start-line="12" selection-start-column="36" selection-end-line="12" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+        <state relative-caret-position="60">
+          <caret line="3" column="24" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/hencode.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/hencode.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="135" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-          <folding>
-            <element signature="e#41#60#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="20">
+          <caret line="1" column="14" lean-forward="true" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/huffmanTree.c">
+    <entry file="file://$PROJECT_DIR$/src/hencode/lookUpTable.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="20">
           <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hencode/hencode.c">
+    <entry file="file://$PROJECT_DIR$/src/hencode/node.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+        <state relative-caret-position="20">
+          <caret line="1" column="4" selection-start-line="1" selection-start-column="4" selection-end-line="1" selection-end-column="4" />
         </state>
       </provider>
     </entry>
