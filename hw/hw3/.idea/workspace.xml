@@ -74,8 +74,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="49" column="49" selection-start-line="49" selection-start-column="49" selection-end-line="49" selection-end-column="49" />
+            <state relative-caret-position="216">
+              <caret line="29" column="14" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -125,7 +125,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="27" />
     <option name="y" value="77" />
-    <option name="width" value="1626" />
+    <option name="width" value="808" />
     <option name="height" value="946" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -167,6 +167,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$USER_HOME$/cpe315/lab3/src" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -212,7 +213,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="66493000" />
+    <option name="totallyTimeSpent" value="66596000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -224,10 +225,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="27" y="77" width="1626" height="946" extended-state="0" />
+    <frame x="27" y="77" width="808" height="946" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.81060606" visible="true" weight="0.25317258" />
-      <window_info id="Structure" order="1" sideWeight="0.18939394" side_tool="true" visible="true" weight="0.25317258" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.81060606" visible="true" weight="0.52638525" />
+      <window_info id="Structure" order="1" sideWeight="0.18939394" side_tool="true" visible="true" weight="0.52638525" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -238,8 +239,8 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3296837" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.499388" weight="0.32947367" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49873096" visible="true" weight="0.03649635" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50126904" side_tool="true" visible="true" weight="0.03649635" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49868074" visible="true" weight="0.03649635" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5013193" side_tool="true" visible="true" weight="0.03649635" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -315,8 +316,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hencode/node.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="49" column="49" selection-start-line="49" selection-start-column="49" selection-end-line="49" selection-end-column="49" />
+        <state relative-caret-position="216">
+          <caret line="29" column="14" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
         </state>
       </provider>
     </entry>
