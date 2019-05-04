@@ -2,6 +2,7 @@
 #define LOOKUPTABLE
 
 #include "huffmanTree.h"
+
 #define ALPHABET_SIZE 256
 
 struct lookUpTable{

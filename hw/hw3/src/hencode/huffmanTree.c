@@ -1,4 +1,6 @@
 #include "huffmanTree.h"
+
+
 Node *buildHuffTree(int *freqTable)
 {
     listNode *priorityQ = NULL;
