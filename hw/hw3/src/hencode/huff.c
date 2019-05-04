@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <math.h>
 #include "pQueue.c"
 #include "lookUpTable.c"
 #include <string.h>
@@ -30,7 +31,9 @@ typedef struct huffmanEncoder{
 		uint8_t *body;
 }HuffmanEncoder;
 
-/*returning the body of the string encodded*/
+
+
+/*packing the body into a smaller */
 uint8_t *generateBody(struct lookUpTable *table, int codeLength)
 {
 
@@ -39,15 +42,26 @@ uint8_t *generateBody(struct lookUpTable *table, int codeLength)
   int i;
   uint8_t temp = 0;
   char *conv;
+  /*iterate through whole table*/
   for(i = 0; i<ALPHABET_SIZE; i++)
   {
+
+      /*conv = non null codes*/
       if((conv = table[i].code) != NULL) {
+
+          /*go through that strings chars -> integer*/
           for (int j = 0; j < strlen(table[i].code); ++j) {
-                if(j==7)
+
+                /*if end of that string*/
+                *encoded += (int)pow(2,j) * (conv[0] & MASK) ;
+                *conv = *conv >> 1;
+
+                /*if encoded reaches its maximum*/
+                if(*encoded==255)
                 {
-                   encoded++; /* go get more data*/
+                    encoded++;
                 }
-                *encoded = *encoded << (conv[j] & MASK);
+
               printf("shift left for %c, %d\n", (char)i, *encoded );
 
           }
