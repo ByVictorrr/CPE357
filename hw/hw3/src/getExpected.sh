@@ -11,9 +11,6 @@ for file in $( ls inputs/* ); do
 
 	 fi
 
-	 #test binary
-
-	 diff `xxd outputs/${BASE}.out` `xxd expected/${BASE}.expected` 
 
 done
 
