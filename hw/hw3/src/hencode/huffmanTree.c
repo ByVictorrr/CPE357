@@ -26,11 +26,11 @@ Node *buildHuffTree(int *freqTable)
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
-            printf("transversing\n");
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
            listNode *parent = newListNode('\0', right->freq + left->freq, left , right );
+
            pushNode(&priorityQ, parent);
 
         }

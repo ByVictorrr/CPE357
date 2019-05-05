@@ -107,7 +107,7 @@ int numBitsOfCode(struct lookUpTable *table)
             printf("num of bits: %d, for %s\n", strlen(table[j].code), table[j].code);
         }
 
-     printf("num of totalbits from code %d\n", numBits);
+     /*printf("num of totalbits from code %d\n", numBits);*/
         return numBits;
  }
 
@@ -125,7 +125,9 @@ int main(int argc, char *argv[])
     fieldHeader *header;
 
 
-    if(argc == 1 || argc > 3)
+    if(argc == 1 || argc > 3)de->c].code,s);
+                  ^
+
     {
         fprintf(stderr, "usage: hencode infile [ outfile ]\n");
         exit(-1);
@@ -149,7 +151,7 @@ int main(int argc, char *argv[])
     }
     /*Step 2 - build code huffman tree*/
     head = buildHuffTree(ft);
-    structure(head,0);
+    /*structure(head,0);*/
 
     /*Step 3 - build code look up table c->code*/
     codeTable = buildLookUpTable(head);
@@ -210,16 +212,17 @@ int main(int argc, char *argv[])
             /*codeTable[c].code - the code corresponding to char c*/ 
 			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
 		}
-       printf("num of codes: %d\n", numCodes);
+
+       printf("num of codes: %d\n", numBitsOfCode(codeTable));
 
         /*
 		/*Step 6 - check if final add output is div by 8*/
-	/*	if(divisablity_by_8 != 0)
+		if(divisablity_by_8 != 0)
 		{	
 			output = output << divisablity_by_8;
             write(1, &output, sizeof(uint8_t));
         }
-*/
+
         /*restore stdout*/
         if(argc == 3)
         {

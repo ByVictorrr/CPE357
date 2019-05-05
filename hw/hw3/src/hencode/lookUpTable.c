@@ -10,8 +10,7 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 		strcpy((*table)[node->c].code,s);
 
 	}else{
-			printf("hi\n");
-
+			/*printf("hi\n");*/
 				s[top] = '0';
 				initLookUpTable(node->left_child, s, top+1, table);
 				s[top] = '1';
