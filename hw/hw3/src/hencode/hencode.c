@@ -180,6 +180,9 @@ int j;
 
 generateBody(table,numBitsOfCode(table));
 
+
+
+
     fieldHeader *header = generateHeader(ft, numUniqueChar);
 
 	printFieldHeader(header,numUniqueChar);
@@ -190,62 +193,6 @@ generateBody(table,numBitsOfCode(table));
   free(header);
   free(head);
     free(ft);
-
-
-
-
-
-   /*read once and store in to an inputbuffer*/
-
-
-   int inFd, outFd;
-
-   if(argc == 1 || argc <= 3)
-   {
-       fprintf(stderr, "usage: hencode infile [ outfile ]\n");
-       exit(-1);
-   }
-
-
-   /*Therefor there is more than 1 argument and less than or equal to 3*/
-   if((inFd = open(argv[1], O_RDONLY)) == -1)
-   {
-       perror(argv[1]); /*1st argument permission denied*/
-       exit(-1);
-
-   }
-
-   /*could write to the screen or outfile*/
-
-
-        /*step 1 - write the header first to the file or stdout*/
-
-       /*if there is a outfile listed*/
-       if( argc == 3)
-       {
-          if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700) == -1)
-          {
-              perror(argv[2]); /*1st argument permission denied*/
-              exit(-1);
-          }
-
-          dup2(outFd, 1); /*outFile is now stdout if there is a file to out to*/
-
-       }else{ /*else write to std out*/
-
-       }
-
-       /*step 2 - write the body to file or stdout*/
-
-       /*step 2.1 - build tree*/
-       /*step 2.2 - get c->codes table*/
-       /*step 2.3 - free treee*/
-
-       
-       /*step 3 - write to the header (read from input once again - decode the body)*/
-
-
-
 
 
 
