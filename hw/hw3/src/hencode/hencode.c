@@ -68,6 +68,16 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
     /*Step 2 - go through each characters code and mask and shift save to byte*/
     while (i > 0) {
 
+        if(i != 1)
+            *byte = *byte << 1;
+
+        *byte = (*byte ^ *temp & MASK);
+
+
+        temp++;
+        i--;
+        bits_Left_to_write--;
+
         /*when numOfBits read in global call is div by 8 then write and clear byte*/
         if (bits_Left_to_write == 0) {
             /*When bytes has gone through 8 bytes write it*/
@@ -79,11 +89,6 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
         }
 
 
-        *byte = (*byte | *temp & MASK);
-        *byte = *byte << 1;
-        temp++;
-        i--;
-        bits_Left_to_write--;
     }
 
 	return bits_Left_to_write;
