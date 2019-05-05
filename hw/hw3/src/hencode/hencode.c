@@ -151,21 +151,25 @@ int main(int argc, char *argv[])
         }
 
 
+
+        lseek(inFd, 0,  0); /*start reading at the begging*/
+
+       /*Step 5 - build body (just read the file one more time and translate the code)*/
+        while(read(inFd, &c, sizeof(uint8_t))
+        {
+            /*codeTable[c].code*/
+            write(1, &codeTable[(int)c], )
+
+
+
+        }
+
         /*restore stdout*/
         if(argc == 3)
         {
            dup2(outSavedFd, 1);
            close(outFd);
         }
-
-       /*Step 5 - build body (just read the file one more time and translate the code)*/
-        while(read(inFd, &c, sizeof(char))
-        {
-
-            
-
-        }
-
 
 
 
