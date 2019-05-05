@@ -31,3 +31,6 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
     return table;
 }
 
+
+
+

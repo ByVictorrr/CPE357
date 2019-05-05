@@ -46,6 +46,48 @@ void printFieldHeader(fieldHeader *header, int numUniqueChars)
 /*========================Encoded data===================================*/
 
 
+/*WiteBits - writes the body (code to the outfile)
+ * c - character getting input to translate to its code
+ * lenCode - c's length its code
+ * byte - value being writen every 8 bits
+ * numcodeRead - keeps track of codes read
+*/
+
+int writeBits(char c, int lenCode, uint8_t *byte)
+{
+        /*just  declares and assigns once*/
+        int static bits_Left_to_write = BYTE;
+        char temp;
+
+        if ( lenCode == 0)
+            return 0;
+
+        int i;
+        /*Step 2 - go through each characters code and mask and shift save to byte*/
+        for (i = lenCode; i > 0 ; --i, temp = temp >> 1) {
+
+            /*when numOfBits read in global call is div by 8 then write and clear byte*/
+            if (bits_Left_to_write == 0)
+            {
+                /*When bytes has gone through 8 bytes write it*/
+                write(1, byte, sizeof(uint8_t));
+
+                /*reset the value to BYTE bits left to be written*/
+                bits_Left_to_write = BYTE;
+				*byte = 0;
+            }
+			*byte +=  temp & MASK;
+
+            bits_Left_to_write--;
+        }
+
+	return bits_Left_to_write;
+}
+
+
+
+
+
 
 /*getCodeLen - returns the length of the code
  * Example: if code (in char ) is 0110 10001
@@ -109,7 +151,6 @@ int main(int argc, char *argv[])
     codeTable = buildLookUpTable(head);
 
 
-
    /*if argc = 3  just switch file descriptors*/
 
 
@@ -150,18 +191,28 @@ int main(int argc, char *argv[])
 
         }
 
-
-
         lseek(inFd, 0,  0); /*start reading at the begging*/
 
+        int countNumBitsWR = 0;
+
+       /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
+
+		uint8_t output;
+		int divisablity_by_8;
+
        /*Step 5 - build body (just read the file one more time and translate the code)*/
-        while(read(inFd, &c, sizeof(uint8_t))
+        while(read(inFd, &c, sizeof(uint8_t)))
         {
-            /*codeTable[c].code*/
-            write(1, &codeTable[(int)c], )
+            /*codeTable[c].code - the code corresponding to char c*/ 
+			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output);
+        }
 
-
-
+		/*Step 6 - check if final add output is div by 8*/
+		if(divisablity_by_8 != 0)
+		{	
+			/*add this value to the left over output*/
+			output = output << divisablity_by_8;
+            write(1, &output, sizeof(uint8_t));
         }
 
         /*restore stdout*/
@@ -170,11 +221,6 @@ int main(int argc, char *argv[])
            dup2(outSavedFd, 1);
            close(outFd);
         }
-
-
-
-
-
 
 
 
