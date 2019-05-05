@@ -62,20 +62,16 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
         return 0;
 
     int i;
-    i = lenCode;
     temp = codeTable[c].code;
 
     /*Step 2 - go through each characters code and mask and shift save to byte*/
-    while (i > 0) {
+    for (i = 0; i < lenCode; i++) {
 
-        if(i != 1)
-            *byte = *byte << 1;
+        *byte = *byte << 1;
 
-        *byte = (*byte ^ *temp & MASK);
-
+        *byte = (*byte | *temp & MASK);
 
         temp++;
-        i--;
         bits_Left_to_write--;
 
         /*when numOfBits read in global call is div by 8 then write and clear byte*/
@@ -88,10 +84,8 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
             *byte = 0;
         }
 
-
     }
-
-	return bits_Left_to_write;
+    return bits_Left_to_write;
 }
 
 
@@ -215,16 +209,17 @@ int main(int argc, char *argv[])
         {
             /*codeTable[c].code - the code corresponding to char c*/ 
 			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
-        }
+		}
+       printf("num of codes: %d\n", numCodes);
 
+        /*
 		/*Step 6 - check if final add output is div by 8*/
-		if(divisablity_by_8 != 0)
+	/*	if(divisablity_by_8 != 0)
 		{	
-			/*add this value to the left over output*/
 			output = output << divisablity_by_8;
             write(1, &output, sizeof(uint8_t));
         }
-
+*/
         /*restore stdout*/
         if(argc == 3)
         {
