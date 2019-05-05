@@ -5,7 +5,7 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
     if(isLeaf(node))
     {
 
-		(*table)[node->c].code = (char*)malloc(sizeof(char)*ALPHABET_SIZE);
+		(*table)[node->c].code = (char*)calloc(ALPHABET_SIZE,sizeof(char));
 
 		strcpy((*table)[node->c].code,s);
 
