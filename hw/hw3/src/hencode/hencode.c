@@ -53,33 +53,38 @@ void printFieldHeader(fieldHeader *header, int numUniqueChars)
  * numcodeRead - keeps track of codes read
 */
 
-int writeBits(char c, int lenCode, uint8_t *byte)
-{
-        /*just  declares and assigns once*/
-        int static bits_Left_to_write = BYTE;
-        char temp;
+int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable) {
+    /*just  declares and assigns once*/
+    int static bits_Left_to_write = BYTE;
+    char *temp;
 
-        if ( lenCode == 0)
-            return 0;
+    if (lenCode == 0)
+        return 0;
 
-        int i;
-        /*Step 2 - go through each characters code and mask and shift save to byte*/
-        for (i = lenCode; i > 0 ; --i, temp = temp >> 1) {
+    int i;
+    i = lenCode;
+    temp = codeTable[c].code;
 
-            /*when numOfBits read in global call is div by 8 then write and clear byte*/
-            if (bits_Left_to_write == 0)
-            {
-                /*When bytes has gone through 8 bytes write it*/
-                write(1, byte, sizeof(uint8_t));
+    /*Step 2 - go through each characters code and mask and shift save to byte*/
+    while (i > 0) {
 
-                /*reset the value to BYTE bits left to be written*/
-                bits_Left_to_write = BYTE;
-				*byte = 0;
-            }
-			*byte +=  temp & MASK;
+        /*when numOfBits read in global call is div by 8 then write and clear byte*/
+        if (bits_Left_to_write == 0) {
+            /*When bytes has gone through 8 bytes write it*/
+            write(1, byte, sizeof(uint8_t));
 
-            bits_Left_to_write--;
+            /*reset the value to BYTE bits left to be written*/
+            bits_Left_to_write = BYTE;
+            *byte = 0;
         }
+
+
+        *byte = (*byte | *temp & MASK);
+        *byte = *byte << 1;
+        temp++;
+        i--;
+        bits_Left_to_write--;
+    }
 
 	return bits_Left_to_write;
 }
@@ -204,7 +209,7 @@ int main(int argc, char *argv[])
         while(read(inFd, &c, sizeof(uint8_t)))
         {
             /*codeTable[c].code - the code corresponding to char c*/ 
-			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output);
+			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
         }
 
 		/*Step 6 - check if final add output is div by 8*/
