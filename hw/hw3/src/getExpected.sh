@@ -10,7 +10,12 @@ for file in $( ls inputs/* ); do
 		 echo "succeeded"
 
 	 fi
-	 done
+
+	 #test binary
+
+	 diff `xxd outputs/${BASE}.out` `xxd expected/${BASE}.expected` 
+
+done
 
 
 
