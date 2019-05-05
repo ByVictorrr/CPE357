@@ -45,82 +45,7 @@ void printFieldHeader(fieldHeader *header, int numUniqueChars)
 
 /*========================Encoded data===================================*/
 
-struct huffmanEncoder {
-    fieldHeader *header; /*a single header is an array of field header*/
-    uint32_t header_size; /*num of unique chars*/
-    uint8_t *body;
-}packedCode = {
 
-        .header = NULL,
-        .body = NULL
-        /*.header_size = numUniqueChar*/
-};
-
-
-
-
-
-
-/*packing the body into a smaller */
-uint8_t *generateBody(struct lookUpTable *table, char *data ,int numBitsCode)
-{
-
-    int bytesToAllocate = (int)ceil((double)numBitsCode/BYTE);
-
-    printf("Bytes to allocate: %d\n", bytesToAllocate);
-
-
-  /*allocate n bytes*/
-  uint8_t *encoded = (uint8_t*)malloc(bytesToAllocate* sizeof(uint8_t));
-
-
-  while()
-  for(i = 0; i< strlen(data[i]) )
-
-
-
-  /*pack table[(*data++)].code into the body*/
-  /*mask 1's an 0's from char to int*/
-  int i;
-  uint8_t temp = 0;
-
-  char *conv;
-
-  /*iterate through whole table*/
-  for(i = 0; i<ALPHABET_SIZE; i++)
-  {
-
-      /*conv = non null codes*/
-      if((conv = table[i].code) != NULL) {
-
-          /*go through that strings chars -> integer*/
-          int j;
-          for (j = 0; j < strlen(table[i].code); ++j) {
-
-                /*if end of that string*/
-                *encoded += (int)pow(2,j) * (conv[0] & MASK) ;
-                *conv = *conv >> 1;
-
-                /*if encoded reaches its maximum*/
-                if(*encoded==255)
-                {
-                    encoded++;
-                }
-
-              printf("shift left for %c, %d\n", (char)i, *encoded );
-
-          }
-
-          printf("new char\n");
-
-      }
-
-        /*want to mask then shift each value to get conversion of char -> integer*/
-  }
-
-
-    return encoded;
-}
 
 /*getCodeLen - returns the length of the code
  * Example: if code (in char ) is 0110 10001
@@ -145,55 +70,94 @@ int numBitsOfCode(struct lookUpTable *table)
 int main(int argc, char *argv[])
 {
 
-    int fd, n;
-    char buf[BUFSIZE], c;
-    int *ft;
-    int i = 0;
+
+    int inFd, outFd, *ft;
+    char c;
+    Node *head;
+    struct lookUpTable *codeTable;
+    uint32_t numOfChars;
+    fieldHeader *header;
 
 
-    /*===========Test 1- test read=====================*/
-    /*n=read(0,buf,sizeof(buf));*/
-
-	char string[] = "vvica";
-    ft = buildFreqTable(string);
-
-    printFreqTable(ft);
-
-   /*==============Test 2- build huffman tree============*/
-
-   Node *head = buildHuffTree(ft);
-	structure(head,0);
-
-/*=====================test 3 - Build look up character -> codes table===========*/
-
-struct lookUpTable *table = buildLookUpTable(head);
-
-printf("table %s\n", (table)->code);
-
-int j;
-    for ( j = 0; j < ALPHABET_SIZE; ++j) {
-        if(table[j].code != NULL)
-       printf(" code table[ %c ] = %s\n",(char)j ,table[j].code);
+    if(argc == 1 || argc > 3)
+    {
+        fprintf(stderr, "usage: hencode infile [ outfile ]\n");
+        exit(-1);
     }
 
-/*=======================test 4 - print header=========*/
+    /*Therefor there is more than 1 argument and less than or equal to 3*/
+    if((inFd = open(argv[1], O_RDONLY)) == -1)
+    {
+        perror(argv[1]); /*1st argument permission denied*/
+        exit(-1);
 
-generateBody(table,numBitsOfCode(table));
+    }
+
+    /*Step 0 - build freq table*/
+    ft = buildFreqTable();
+
+    /*Step 1 - read one char at a time an insert at time in ft*/
+    while(read(inFd, &c, sizeof(char)))
+    {
+        insertToFreqTable(&ft, c);
+    }
+    /*Step 2 - build code huffman tree*/
+    head = buildHuffTree(ft);
+    structure(head,0);
+
+    /*Step 3 - build code look up table c->code*/
+    codeTable = buildLookUpTable(head);
+
+
+    /*if there is a outfile listed*/
+    if( argc == 3)
+    {
+        if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1)
+        {
+            perror(argv[2]); /*1st argument permission denied*/
+            exit(-1);
+        }
+
+        dup2(outFd, 1); /*outFile is now stdout if there is a file to out to*/
+
+
+        /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
+        numOfChars = (uint32_t)numUniqueChar;
+
+        /*Step 4 - build header table */
+        header = generateHeader(ft, numOfChars);
+
+        int i, n = 1;
+
+        /*write header size then one header field at a time*/
+        for(i =0 ; i< numOfChars+1 && n > 0; i++){
+
+            if(i == 0) /*first write - write number of chars*/
+                n = write(1, &numOfChars,  sizeof(uint32_t));
+            else{  /*else write the fieldHeader */
+                n = write(1, header->character, sizeof(char));
+                n += write(1, header->frequency, sizeof(int));
+                header++;
+            }
+
+        }
+
+    }else{ /*else write to std out*/
+
+        /*step 4 - */
+
+    }
 
 
 
+    /*step 3 - write to the header (read from input once again - decode the body)*/
 
-    fieldHeader *header = generateHeader(ft, numUniqueChar);
 
-	printFieldHeader(header,numUniqueChar);
 
-	printf("get codes : %d\n", numCodes);
-
-/*=================================================*/
-  free(header);
+    /*======================================================================*/
+free(header);
   free(head);
     free(ft);
-
 
 
     return 0;

@@ -2,25 +2,19 @@
 /*buildFrequencyTable: takes in a string and relates
  *
  */
-int *buildFreqTable(char *data)
+int *buildFreqTable()
 {
 	/*make a freq table for each character that we are encoding*/
 	int *freq = (int *)calloc(ALPHABET_SIZE,sizeof(int));
-	int i;
 
-	for(i = 0; i<ALPHABET_SIZE; i++)
-    {
-	    freq[i] = 0;
-    }
-	/*go until EOF*/
-	for (;*data != EOF; data++)
-	{
-
-		/*every time come across that character incrment freq*/
-		if(*data)
-		    freq[*data]++;
-	}
 	return freq;
+}
+
+void insertToFreqTable(int **ft, char c)
+{
+		if(*ft != NULL)
+		    ft[(int)c]++;
+		return;
 }
 
 void printFreqTable(int *freqTable)
@@ -33,6 +27,11 @@ void printFreqTable(int *freqTable)
     }
 }
 
-
+void freeFreqTable(int *ft)
+{
+    if(ft!=NULL)
+        free(ft);
+    return;
+}
 
 
