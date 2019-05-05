@@ -189,7 +189,7 @@ void transverse(listNode *head)
 {
     while(head->next != NULL)
     {
-        printf("node chacter %d and  %d\n", (int)head->curr->c, head->curr->freq);
+        printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
         head=head->next;
     }
         printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);

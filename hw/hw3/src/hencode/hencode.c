@@ -104,7 +104,7 @@ int numBitsOfCode(struct lookUpTable *table)
     for ( j = 0; j < ALPHABET_SIZE; ++j)
         if (table[j].code != NULL) {
             numBits += strlen(table[j].code);
-            printf("num of bits: %d, for %s\n", strlen(table[j].code), table[j].code);
+            printf("character: %c,   code length : %d , for %s\n", j, strlen(table[j].code), table[j].code);
         }
 
      /*printf("num of totalbits from code %d\n", numBits);*/
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     }
     /*Step 2 - build code huffman tree*/
     head = buildHuffTree(ft);
-    /*structure(head,0);*/
+    structure(head,0);
 
     /*Step 3 - build code look up table c->code*/
     codeTable = buildLookUpTable(head);

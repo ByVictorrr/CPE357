@@ -11,6 +11,11 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 
 	}else{
 			/*printf("hi\n");*/
+
+			if(node->c == 'a')
+            {
+			    printf("is this a leaf node", isLeaf(node));
+            }
 				s[top] = '0';
 				initLookUpTable(node->left_child, s, top+1, table);
 				s[top] = '1';

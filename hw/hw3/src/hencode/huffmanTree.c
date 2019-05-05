@@ -12,9 +12,15 @@ Node *buildHuffTree(int *freqTable)
     for (i = 1; i<ALPHABET_SIZE; i++)
         if(freqTable[i] > 0)
         {
-			numUniqueChar++;
-            /*creat a new head to pqueue*/
-            pushNewNode(&priorityQ, i ,freqTable[i]);
+            if (i == (int)'\n')
+            {
+                printf("hi im new line");
+            }
+            else {
+                numUniqueChar++;
+                /*creat a new head to pqueue*/
+                pushNewNode(&priorityQ, i, freqTable[i]);
+            }
 
         }
 		transverse(priorityQ);
@@ -24,20 +30,26 @@ Node *buildHuffTree(int *freqTable)
             pushNewNode(&priorityQ, '\0', 1);
 
         }
+        int j;
+        j = 0;
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
-           Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
+           Node * right = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq + left->freq, left, right);
+           listNode *parent = newListNode('@', right->freq + left->freq, left, right);
+
+            printf("ith insertion %d \n",  j++);
+           inorder(parent->curr);
+
 
            pushNode(&priorityQ, parent);
 
         }
 
         Node *root = poll(&priorityQ);
-        inorder(root);
+
 
         numCodes = root->freq;
 
