@@ -125,8 +125,7 @@ int main(int argc, char *argv[])
     fieldHeader *header;
 
 
-    if(argc == 1 || argc > 3)de->c].code,s);
-                  ^
+    if(argc == 1 || argc > 3)
 
     {
         fprintf(stderr, "usage: hencode infile [ outfile ]\n");
@@ -156,6 +155,7 @@ int main(int argc, char *argv[])
     /*Step 3 - build code look up table c->code*/
     codeTable = buildLookUpTable(head);
 
+    printf("num of codes: %d\n", numBitsOfCode(codeTable));
 
    /*if argc = 3  just switch file descriptors*/
 
@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
 			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
 		}
 
-       printf("num of codes: %d\n", numBitsOfCode(codeTable));
+
 
         /*
 		/*Step 6 - check if final add output is div by 8*/

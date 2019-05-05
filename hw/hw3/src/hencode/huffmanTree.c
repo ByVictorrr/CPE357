@@ -17,10 +17,11 @@ Node *buildHuffTree(int *freqTable)
             pushNewNode(&priorityQ, i ,freqTable[i]);
 
         }
+		transverse(priorityQ);
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
         {
-            pushNewNode(&priorityQ, '\0',1);
+            pushNewNode(&priorityQ, '\0', 1);
 
         }
         /*while there is more than one character in the pque*/
@@ -29,13 +30,14 @@ Node *buildHuffTree(int *freqTable)
            Node * right = poll(&priorityQ);
            Node * left = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq + left->freq, left , right );
+           listNode *parent = newListNode('\0', right->freq + left->freq, left, right);
 
            pushNode(&priorityQ, parent);
 
         }
 
         Node *root = poll(&priorityQ);
+        inorder(root);
 
         numCodes = root->freq;
 

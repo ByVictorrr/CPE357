@@ -32,6 +32,7 @@ void pushNewNode(listNode **head, char c, int freq) {
 
     listNode *beg = *head; /*get address of first head*/
 
+
     /*new node*/
     listNode *tempNode;
 
@@ -87,7 +88,6 @@ void pushNewNode(listNode **head, char c, int freq) {
     }
 
 }
-
 
 
 void pushNode(listNode **head, listNode *parent) {
@@ -189,7 +189,7 @@ void transverse(listNode *head)
 {
     while(head->next != NULL)
     {
-        printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
+        printf("node chacter %d and  %d\n", (int)head->curr->c, head->curr->freq);
         head=head->next;
     }
         printf("node chacter %c and  %d\n", head->curr->c, head->curr->freq);
