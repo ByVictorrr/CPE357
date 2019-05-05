@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 {
 
 
-    int inFd, outFd, *ft;
+    int inFd, outFd, outSavedFd, *ft;
     char c;
     Node *head;
     struct lookUpTable *codeTable;
@@ -109,14 +109,24 @@ int main(int argc, char *argv[])
     codeTable = buildLookUpTable(head);
 
 
+
+   /*if argc = 3  just switch file descriptors*/
+
+
     /*if there is a outfile listed*/
-    if( argc == 3)
-    {
+    if( argc == 3 ) {
+
         if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1)
         {
             perror(argv[2]); /*1st argument permission denied*/
             exit(-1);
         }
+
+        outSavedFd = dup(1); /*save stdout */
+        dup2(outFd, 1);
+
+    }
+
 
 
         /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
@@ -131,20 +141,36 @@ int main(int argc, char *argv[])
         for(i =0 ; i< numOfChars+1 && n > 0; i++){
 
             if(i == 0) /*first write - write number of chars*/
-                n = write(outFd, &numOfChars,  sizeof(uint32_t));
+                n = write(1, &numOfChars,  sizeof(uint32_t));
             else{  /*else write the fieldHeader */
-                n = write(outFd, &header->character, sizeof(char));
-                n = write(outFd, &header->frequency, sizeof(int));
+                n = write(1, &header->character, sizeof(char));
+                n = write(1, &header->frequency, sizeof(int));
                 header++;
             }
 
         }
 
-    }else{ /*else write to std out*/
 
-        /*step 4 - */
+        /*restore stdout*/
+        if(argc == 3)
+        {
+           dup2(outSavedFd, 1);
+           close(outFd);
+        }
 
-    }
+       /*Step 5 - build body (just read the file one more time and translate the code)*/
+        while(read(inFd, &c, sizeof(char))
+        {
+
+            
+
+        }
+
+
+
+
+
+
 
 
 
