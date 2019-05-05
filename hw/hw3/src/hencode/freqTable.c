@@ -13,7 +13,7 @@ int *buildFreqTable()
 void insertToFreqTable(int **ft, char c)
 {
 		if(*ft != NULL)
-		    ft[(int)c]++;
+		    ft[0][(int)c]++;
 		return;
 }
 

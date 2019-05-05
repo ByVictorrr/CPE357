@@ -118,8 +118,6 @@ int main(int argc, char *argv[])
             exit(-1);
         }
 
-        dup2(outFd, 1); /*outFile is now stdout if there is a file to out to*/
-
 
         /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
         numOfChars = (uint32_t)numUniqueChar;
@@ -133,10 +131,10 @@ int main(int argc, char *argv[])
         for(i =0 ; i< numOfChars+1 && n > 0; i++){
 
             if(i == 0) /*first write - write number of chars*/
-                n = write(1, &numOfChars,  sizeof(uint32_t));
+                n = write(outFd, &numOfChars,  sizeof(uint32_t));
             else{  /*else write the fieldHeader */
-                n = write(1, header->character, sizeof(char));
-                n += write(1, header->frequency, sizeof(int));
+                n = write(outFd, &header->character, sizeof(char));
+                n = write(outFd, &header->frequency, sizeof(int));
                 header++;
             }
 
@@ -155,10 +153,10 @@ int main(int argc, char *argv[])
 
 
     /*======================================================================*/
-free(header);
+/*free(header);
   free(head);
     free(ft);
-
+*/
 
     return 0;
  }
