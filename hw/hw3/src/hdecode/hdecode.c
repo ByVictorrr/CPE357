@@ -18,14 +18,13 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
     *ft = buildFreqTable();
 
    /* Step 1 - read the number of unique characters*/
-    if((read(inFd, &charToInt, sizeof(int))) <= 0)
+    if((read(inFd, &i, sizeof(int))) <= 0)
     {
         /*perror("error reading file\n"); /*1st argument permission denied*/
       /*  exit(-1);*/
     }
-    printf("numchar : %d", charToInt);
 
-    numUniqueOfChars = atoi(charToInt);
+    numUniqueOfChars = (int)i;
    /*Step 2 - read in each character store in freqTable
     * if step 1 suceeded the file should be at the first char
     * */
@@ -40,25 +39,28 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
             exit(-1);
         }
 
+        uint32_t ft_adder=0;
         /* Step 4 - read the corresponding frequency of that character*/
-        if((read(inFd, &ft[c], sizeof(uint32_t))) <= 0)
+        if((read(inFd, &ft_adder, sizeof(uint32_t))) <= 0)
         {
             perror("error reading file\n"); /*1st argument permission denied*/
             exit(-1);
         }
+        ft[0][c] = ft_adder;
 
     }
    /*step 5 - build huffmanTree from freqTable*/
-   if(ft != NULL) {
+   if(*ft != NULL) {
        *huffmanTree = buildHuffTree(ft);
    }
+
+
+   structure(*huffmanTree, 0);
+   printFreqTable(*ft);
+
    return numUniqueOfChars;
 
 }
-
-
-
-
 
 
 
@@ -81,6 +83,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
 
+    buff = read_long_line(inFd);
     int i;
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
     for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
@@ -198,8 +201,7 @@ int main(int argc, char *argv[])
            /* outFd = 1;*/
 
 
-        buff = read_long_line(inFd);
-        printf("buff is saying : %s", buff);
+
 
         decodeFile(inFd,outFd, &root, &ft);
     }

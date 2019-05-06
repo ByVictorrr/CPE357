@@ -53,7 +53,7 @@ char *read_long_line(int inFd)
         }
 	}
 
-	return buff;
+	return pbuff;
 }
 
 
