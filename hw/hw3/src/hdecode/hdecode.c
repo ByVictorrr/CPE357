@@ -1,14 +1,14 @@
-#include "../hencode/huffmanTree.h"
-#include "../hencode/freqTable.h"
+#include "huffmanTree.h"
+#include "freqTable.h"
 #include "readLongLine.h"
+#include <stdint.h>
 
 #define RD_MODE 0444
-enum boolean{FALSE, TRUE};
 extern char *buff;
 
 uint32_t totalNumberOfChars;
 
-int decodeHeader(int inFd, Node **huffmanTree, int *ft)
+int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 {
     int numUniqueOfChars;
     numUniqueOfChars = 0;
@@ -17,11 +17,13 @@ int decodeHeader(int inFd, Node **huffmanTree, int *ft)
 
     uint8_t c;
 
+    *ft = buildFreqTable();
+
    /* Step 1 - read the number of unique characters*/
     if((read(inFd, &numUniqueOfChars, sizeof(int))) <= 0)
     {
         perror("error reading file\n"); /*1st argument permission denied*/
-        exit(-1);
+      /*  exit(-1);*/
     }
 
    /*Step 2 - read in each character store in freqTable
@@ -39,7 +41,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int *ft)
         }
 
         /* Step 4 - read the corresponding frequency of that character*/
-        if((read(inFd, &ft[c], sizeof(uint32)t)) <= 0)
+        if((read(inFd, &ft[c], sizeof(uint32_t))) <= 0)
         {
             perror("error reading file\n"); /*1st argument permission denied*/
             exit(-1);
@@ -55,26 +57,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int *ft)
 }
 
 
-/* Might need to switch to a dynamic ref b limited space*/
-uint32_t getTotalNumberOfChar(int *ft)
-{
-    int i;
 
-    uint32_t tot
-
-    tot = 0;
-
-   if (ft != NULL)
-   {
-       for (i = 0; i < ALPHABET_SIZE; i++) {
-           tot += freq[c];
-       }
-
-       return tot;
-   }
-
-   return 0;
-}
 
 
 
@@ -136,13 +119,13 @@ int totChars(int *ft)
 {
     int tot = 0;
 
-    if(ft == NULL || numUniqueChars == 0)
+    if(ft == NULL)
         return 0;
 
     int j;
 
-    for (j = 1; j < ALPHABET_SIZE; j+=) {
-        if (freq[j] > 0)
+    for (j = 1; j < ALPHABET_SIZE; j++) {
+        if (ft[j] > 0)
             tot += ft[j];
     }
     return tot;
@@ -151,17 +134,14 @@ int totChars(int *ft)
 
 
 
-}
-
-void writeCode(int inFd, int outFd, Node *huffmanTree, int *ft)
+void writeCode(int inFd, int outFd, Node **huffmanTree, int **ft)
 {
 
-
-    int numUniqueChars =  decodeHeader(inFd, &huffmanTree, ft);
+    int numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
     int i;
 
     /*we need to write decoded msg to the outfile*/
-    decodeBody(inFd,outFd,totChars(ft), huffmanTree);
+    decodeBody(inFd,outFd,totChars(*ft), huffmanTree);
 
 
 }
@@ -176,22 +156,24 @@ int main(int argc, char *argv[])
     char c;
     Node *root;
     uint32_t numOfChars;
-    fieldHeader *header;
 
 
 
-    enum boolean readStdIn = argc == 1 || (argc == 2 && strcmp(argv[1] ,"-") == 0);
+    int readStdIn = argc == 1 || (argc == 2 && strcmp(argv[1] ,"-") == 0);
 
     /*Case 1 - if there is no arguments then read from stdin
      *          also output to stdout*/
+
     if(readStdIn)
     {
        /*check if can open file*/
-       if((inFd = read(argv[1], RD_ONLY, RD_MODE))==-1)
+       if((inFd = read(argv[1], O_RDONLY, RD_MODE))==-1)
        {
             perror(argv[2]); /*1st argument permission denied*/
             exit(-1);
        }
+
+
 
     }else{ /*read from file*/
 
@@ -202,17 +184,25 @@ int main(int argc, char *argv[])
             exit(-1);
         }
 
+
+        if((inFd = open(argv[1], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1 )
+        {
+            perror(argv[2]); /*1st argument permission denied*/
+            exit(-1);
+        }
+
         /*If right amount of arguments continue and check if we can open that file */
         if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1 )
         {
             perror(argv[2]); /*1st argument permission denied*/
             exit(-1);
-        }else /*read from stdout*/
-            outFd = 1;
+        } /*read from stdout*/
+           /* outFd = 1;*/
 
 
 
-            writeCode(inFd,outFd,root, ft);
+
+        writeCode(inFd,outFd, &root, &ft);
     }
 
 

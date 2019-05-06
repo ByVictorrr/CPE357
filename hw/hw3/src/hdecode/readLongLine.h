@@ -11,8 +11,8 @@
  * for a program like this.
  *
  */
-#ifndef READLONGLINE_H
-#define READLONGLINE_H
+#ifndef READLONGLINE
+#define READLONGLINE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +30,8 @@ char *pbuff, *prev;
 /*==================================================================*/
 
 /*================count number of lines==================*/
-unsigned numLines =0;
-unsigned sizeLines = 0;
+unsigned numLines ;
+unsigned sizeLines;
 
 /*=======================================================*/
 

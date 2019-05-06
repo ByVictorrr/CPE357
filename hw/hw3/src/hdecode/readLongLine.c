@@ -1,7 +1,10 @@
 #include "readLongLine.h"
 
+
 char *read_long_buff(int inFd)
 {
+    numLines = 0;
+    sizeLines = 0;
 	unsigned sizebuff = MAXCHAR;
 	char *strcat(char *dest, const char *src);
 	char *temp, c; /*temp is for moving allong pbuff*/
