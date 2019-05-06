@@ -32,7 +32,7 @@ Node *buildHuffTree(int *freqTable)
            Node * left = poll(&priorityQ);
            Node * right = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('@', right->freq + left->freq, left, right);
+           listNode *parent = newListNode('$', right->freq + left->freq, left, right);
 
             printf("ith insertion %d \n",  j++);
            inorder(parent->curr);

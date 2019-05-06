@@ -15,7 +15,7 @@ typedef struct headerBits
 fieldHeader *generateHeader(int *ft, int numUniqueChars)
 {
     /*allocating for header*/
-    fieldHeader *header = (fieldHeader*)malloc(sizeof(fieldHeader)*numUniqueChars);
+    fieldHeader *header = (fieldHeader*)calloc(numUniqueChars,sizeof(fieldHeader));
     int i;
     int header_inc = 0;
     for ( i=1; i<ALPHABET_SIZE; i++)
@@ -39,6 +39,12 @@ void printFieldHeader(fieldHeader *header, int numUniqueChars)
     }
 }
 
+void freeHeader(fieldHeader *header)
+{
+    if(header != NULL)
+       free(header);
+    return;
+}
 /*========================End of Header============================*/
 
 
@@ -88,11 +94,13 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
     return bits_Left_to_write;
 }
 
-void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable)
+void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable, fieldHeader *header)
 {
+    /*freeHeader(header);*/
     freeFreqTable(freqTable);
     freeLookUpTable(table);
     freeHuffmanTree(huffmanTree);
+
 }
 
 
@@ -106,10 +114,11 @@ int numBitsOfCode(struct lookUpTable *table)
  {
     int numBits = 0;
     int j;
-    for ( j = 0; j < ALPHABET_SIZE; ++j)
-        if (table[j].code != NULL) {
-            numBits += strlen(table[j].code);
-            printf("character: %c,   code length : %d , for %s\n", j, strlen(table[j].code), table[j].code);
+    if(table != NULL)
+        for ( j =1; j < ALPHABET_SIZE; ++j)
+            if (table[j].code != NULL) {
+                numBits += strlen(table[j].code);
+                printf("character: %c,   code length : %d , for %s\n", j, strlen(table[j].code), table[j].code);
         }
 
      /*printf("num of totalbits from code %d\n", numBits);*/
@@ -201,8 +210,6 @@ int main(int argc, char *argv[])
 
         lseek(inFd, 0,  0); /*start reading at the begging*/
 
-        int countNumBitsWR = 0;
-
        /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
 
 		uint8_t output;
@@ -232,7 +239,7 @@ int main(int argc, char *argv[])
         }
 
 
-      freeEveryThing(head, codeTable, ft);
+      freeEveryThing(head, codeTable, ft, header);
     /*step 3 - write to the header (read from input once again - decode the body)*/
 
 
