@@ -159,8 +159,6 @@ int main(int argc, char *argv[])
     /*Step 1 - read one char at a time an insert at time in ft*/
     while(read(inFd, &c, sizeof(char)))
     {
-        printf("%c", c);
-            if(c!='\n')
                 insertToFreqTable(&ft, c);
     }
     /*Step 2 - build code huffman tree*/
@@ -219,7 +217,6 @@ int main(int argc, char *argv[])
         /*Step 5 - build body (just read the file one more time and translate the code)*/
         while(read(inFd, &c, sizeof(uint8_t)) > 0) {
             /*codeTable[c].code - the code corresponding to char c*/
-            if (c != '\n')
             divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
 		}
 
