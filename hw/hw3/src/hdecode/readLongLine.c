@@ -1,7 +1,7 @@
 #include "readLongLine.h"
 
 
-char *read_long_buff(int inFd)
+char *read_long_line(int inFd)
 {
     numLines = 0;
     sizeLines = 0;

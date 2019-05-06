@@ -1,15 +1,10 @@
 #include "huffmanTree.h"
 #include "freqTable.h"
-#include "readLongLine.h"
 #include <stdint.h>
+#include "readLongLine.h"
+#include "hdecode.h"
 
 
-#define RD_MODE 0444
-extern char *buff;
-
-char charToInt[4];
-
-uint32_t totalNumberOfChars;
 
 int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 {
@@ -76,17 +71,15 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
      *
      *         Decode while reading keep track of number of chars read
      * */
+    /*initalize the buffer*/
+
+
 
     int indexBuff;
 
     Node *root = huffmanTree;
 
-    if(read(inFd, &buff, MAXCHAR) <= 0)
-    {
-       /*throw error s*/
-       perror("error reading file\n"); /*1st argument permission denied*/
-            exit(-1);
-    }
+
 
     int i;
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
@@ -139,7 +132,7 @@ int totChars(int *ft)
 
 
 
-void writeCode(int inFd, int outFd, Node **huffmanTree, int **ft)
+void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
 {
 
     int numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
@@ -190,7 +183,7 @@ int main(int argc, char *argv[])
         }
 
 
-        if((inFd = open(argv[1], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1 )
+        if((inFd = open(argv[1], O_RDONLY)) == -1 )
         {
             perror(argv[2]); /*1st argument permission denied*/
             exit(-1);
@@ -205,9 +198,10 @@ int main(int argc, char *argv[])
            /* outFd = 1;*/
 
 
+        buff = read_long_line(inFd);
+        printf("buff is saying : %s", buff);
 
-
-        writeCode(inFd,outFd, &root, &ft);
+        decodeFile(inFd,outFd, &root, &ft);
     }
 
 

@@ -11,8 +11,8 @@
  * for a program like this.
  *
  */
-#ifndef READLONGLINE
-#define READLONGLINE
+#ifndef READLONGLINE_H_
+#define READLONGLINE_H_
 
 #include <stdio.h>
 #include <stdlib.h>

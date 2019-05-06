@@ -1,14 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm
 MAIN = hdecode
-OBJS = hdecode.o freqTable.o  node.o pQueue.o huffmanTree.o readLongLine.o
-
+OBJS = hdecode.o readLongLine.o freqTable.o node.o pQueue.o huffmanTree.o 
 all : $(MAIN)
 
-$(MAIN) : $(OBJS) 
+$(MAIN) : $(OBJS) hdecode.h 
 	$(CC) $(CFLAGS) -o $(MAIN) $(OBJS)
 
-hencode.o : hdecode.c 
+hencode.o : hdecode.c hdecode.h
 	$(CC) $(CFLAGS) -c hdecode.c
 
 freqTable.o : freqTable.c freqTable.h
