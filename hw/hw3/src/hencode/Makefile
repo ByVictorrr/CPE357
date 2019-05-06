@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm
 MAIN = hencode
-OBJS = hencode.o freqTable.o lookUpTable.c node.o pQueue.o huffmanTree.o
+OBJS = hencode.o freqTable.o lookUpTable.o node.o pQueue.o huffmanTree.o
+
 all : $(MAIN)
 
 $(MAIN) : $(OBJS) hencode.h
@@ -27,3 +28,4 @@ pQueue.o : pQueue.c pQueue.h
 
 clean :
 	rm *.o $(MAIN) core
+

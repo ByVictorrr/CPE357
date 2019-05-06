@@ -88,7 +88,12 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
     return bits_Left_to_write;
 }
 
-
+void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable)
+{
+    freeFreqTable(freqTable);
+    freeLookUpTable(table);
+    freeHuffmanTree(huffmanTree);
+}
 
 
 
@@ -116,7 +121,6 @@ int numBitsOfCode(struct lookUpTable *table)
 int main(int argc, char *argv[])
 {
 
-
     int inFd, outFd, outSavedFd, *ft;
     char c;
     Node *head;
@@ -126,11 +130,11 @@ int main(int argc, char *argv[])
 
 
     if(argc == 1 || argc > 3)
-
     {
         fprintf(stderr, "usage: hencode infile [ outfile ]\n");
         exit(-1);
     }
+
 
     /*Therefor there is more than 1 argument and less than or equal to 3*/
     if((inFd = open(argv[1], O_RDONLY)) == -1)
@@ -146,7 +150,9 @@ int main(int argc, char *argv[])
     /*Step 1 - read one char at a time an insert at time in ft*/
     while(read(inFd, &c, sizeof(char)))
     {
-        insertToFreqTable(&ft, c);
+        printf("%c", c);
+            if(c!='\n')
+                insertToFreqTable(&ft, c);
     }
     /*Step 2 - build code huffman tree*/
     head = buildHuffTree(ft);
@@ -158,7 +164,6 @@ int main(int argc, char *argv[])
     printf("num of codes: %d\n", numBitsOfCode(codeTable));
 
    /*if argc = 3  just switch file descriptors*/
-
 
     /*if there is a outfile listed*/
     if( argc == 3 ) {
@@ -174,8 +179,6 @@ int main(int argc, char *argv[])
 
     }
 
-
-
         /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
         numOfChars = (uint32_t)numUniqueChar;
 
@@ -186,7 +189,6 @@ int main(int argc, char *argv[])
 
         /*write header size then one header field at a time*/
         for(i =0 ; i< numOfChars+1 && n > 0; i++){
-
             if(i == 0) /*first write - write number of chars*/
                 n = write(1, &numOfChars,  sizeof(uint32_t));
             else{  /*else write the fieldHeader */
@@ -204,16 +206,15 @@ int main(int argc, char *argv[])
        /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
 
 		uint8_t output;
+
 		int divisablity_by_8;
 
-       /*Step 5 - build body (just read the file one more time and translate the code)*/
-        while(read(inFd, &c, sizeof(uint8_t)))
-        {
-            /*codeTable[c].code - the code corresponding to char c*/ 
-			divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
+        /*Step 5 - build body (just read the file one more time and translate the code)*/
+        while(read(inFd, &c, sizeof(uint8_t)) > 0) {
+            /*codeTable[c].code - the code corresponding to char c*/
+            if (c != '\n')
+            divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
 		}
-
-
 
         /*
 		/*Step 6 - check if final add output is div by 8*/
@@ -231,16 +232,9 @@ int main(int argc, char *argv[])
         }
 
 
-
+      freeEveryThing(head, codeTable, ft);
     /*step 3 - write to the header (read from input once again - decode the body)*/
 
-
-
-    /*======================================================================*/
-/*free(header);
-  free(head);
-    free(ft);
-*/
 
     return 0;
  }

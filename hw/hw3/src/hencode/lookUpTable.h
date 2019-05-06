@@ -11,6 +11,7 @@ struct lookUpTable{
 
 void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table);
 struct lookUpTable *buildLookUpTable(Node *root);
+void freeLookUpTable(struct lookUpTable *table);
 
 #endif
 

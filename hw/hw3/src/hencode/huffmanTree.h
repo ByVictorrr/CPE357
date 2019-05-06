@@ -12,5 +12,6 @@ int numCodes;
 Node *buildHuffTree(int *freqTable);
 void inorder(Node *root);
 int isLeaf(Node *n);
+void freeHuffmanTree(Node *tree);
 
 #endif

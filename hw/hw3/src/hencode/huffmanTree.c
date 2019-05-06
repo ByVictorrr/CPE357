@@ -10,17 +10,11 @@ Node *buildHuffTree(int *freqTable)
     int i;
 
     for (i = 1; i<ALPHABET_SIZE; i++)
-        if(freqTable[i] > 0)
+        if(freqTable[i] >0)
         {
-            if (i == (int)'\n')
-            {
-                printf("hi im new line");
-            }
-            else {
                 numUniqueChar++;
                 /*creat a new head to pqueue*/
                 pushNewNode(&priorityQ, i, freqTable[i]);
-            }
 
         }
 		transverse(priorityQ);
@@ -74,4 +68,14 @@ int isLeaf(Node *n)
 	if (n->left_child == NULL && n->right_child == NULL)
 		return TRUE;
 	return FALSE;
+}
+
+void freeHuffmanTree(Node *tree)
+{
+    if(tree == NULL)
+        return;
+    else{
+        freeHuffmanTree(tree->left_child);
+        freeHuffmanTree(tree->right_child);
+    }
 }
