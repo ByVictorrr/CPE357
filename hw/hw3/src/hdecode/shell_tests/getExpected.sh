@@ -4,7 +4,7 @@ for file in $( ls ../inputs/* ); do
 	 BASE=`basename ${file} .in`
 	 #program testing
 
-	 ~pn-cs357/demos/./hencode ${file} ../expected/${BASE}.expected
+	 ~pn-cs357/demos/./hdecode ${file} ../expected/${BASE}.expected
 
 	 if [ $? -eq 0 ]; then
 		 echo "succeeded"
