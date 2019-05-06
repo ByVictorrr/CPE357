@@ -1,7 +1,14 @@
 #include "lookUpTable.h"
 
+
+/*for debugging*/
+char c;
+
+
 void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
  {
+    printf("on character %c", node->c );
+
     if(isLeaf(node))
     {
 
@@ -10,16 +17,10 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 		strcpy((*table)[node->c].code,s);
 
 	}else{
-			/*printf("hi\n");*/
-
-			if(node->c == 'a')
-            {
-			    printf("is this a leaf node", isLeaf(node));
-            }
 				s[top] = '0';
 				initLookUpTable(node->left_child, s, top+1, table);
 				s[top] = '1';
-				initLookUpTable(node->right_child,s, top+1, table);
+                initLookUpTable(node->right_child, s, top+1, table);
 			}
 
 
@@ -30,7 +31,6 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 {
     struct lookUpTable *table = (struct lookUpTable*)malloc(sizeof(struct lookUpTable)*ALPHABET_SIZE);
     char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
-    *s = EOF;
     initLookUpTable(root,s, 0 ,&table);
     return table;
 }
