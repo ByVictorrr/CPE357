@@ -36,5 +36,5 @@ unsigned sizeLines = 0;
 /*=======================================================*/
 
 char *read_long_line(int inFd);
-
+void freeBuffs(char *buff);
 #endif

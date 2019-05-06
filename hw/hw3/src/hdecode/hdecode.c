@@ -81,16 +81,90 @@ uint32_t getTotalNumberOfChar(int *ft)
 
 
 /*Call after header, so left off at the first part of the body*/
-void decodeBody(int inFd, int outFd, int numUniqueChars, Node *huffmanTree)
+void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 {
 
     /*Step 1 - read in the file from where left off
      *
      *         Decode while reading keep track of number of chars read
      * */
-    if(read(inFd, &buff))
+
+    int indexBuff;
+
+    Node *root = huffmanTree;
+
+    if(read(inFd, &buff, MAXCHAR) <= 0)
+    {
+       /*throw error s*/
+       perror("error reading file\n"); /*1st argument permission denied*/
+            exit(-1);
+    }
+
+    int i;
+    /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
+    for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
+    {
+        /*Step 3 - transverse the tree until a char is found.
+         *
+         * - incrment the buffer each time until a char is found
+         * - if leaf found jump out of the loop , start from root
+         *
+         * */
+       while(!isLeaf(huffmanTree))
+       {
+           /*if the current byte is 0 */
+          if(buff[indexBuff] == '0')
+             huffmanTree = huffmanTree->left_child;
+
+          else if (buff[indexBuff] == '1')
+              huffmanTree = huffmanTree->right_child;
+
+          indexBuff++;
+       }
+
+        /*Step 4 - after reading converting the code to characters write it out*/
+       if (write(outFd, &huffmanTree->c, sizeof(char)) <= 0)
+           perror("write error\n");
+
+
+    }
+
+
 }
 
+int totChars(int *ft)
+{
+    int tot = 0;
+
+    if(ft == NULL || numUniqueChars == 0)
+        return 0;
+
+    int j;
+
+    for (j = 1; j < ALPHABET_SIZE; j+=) {
+        if (freq[j] > 0)
+            tot += ft[j];
+    }
+    return tot;
+}
+
+
+
+
+}
+
+void writeCode(int inFd, int outFd, Node *huffmanTree, int *ft)
+{
+
+
+    int numUniqueChars =  decodeHeader(inFd, &huffmanTree, ft);
+    int i;
+
+    /*we need to write decoded msg to the outfile*/
+    decodeBody(inFd,outFd,totChars(ft), huffmanTree);
+
+
+}
 
 
 
@@ -100,8 +174,7 @@ int main(int argc, char *argv[])
 
     int inFd, outFd, inSavedFd, outSavedFd, *ft;
     char c;
-    Node *head;
-    struct lookUpTable *codeTable;
+    Node *root;
     uint32_t numOfChars;
     fieldHeader *header;
 
@@ -136,121 +209,13 @@ int main(int argc, char *argv[])
             exit(-1);
         }else /*read from stdout*/
             outFd = 1;
+
+
+
+            writeCode(inFd,outFd,root, ft);
     }
 
 
-    /*Case 2 - if argv[1] is [ (infile) | - ]
-     * if infile then use that for the input
-     * if - then use stdin for read in
-     */
-    if (argc > 1)
-    {
-
-    }
-    /*Case 3 - if argc is greater than 2 then read in file
-
-    if(argc == 1 || argc > 3)
-    {
-        fprintf(stderr, "usage: hencode infile [ outfile ]\n");
-        exit(-1);
-    }
-
-
-    /*Therefor there is more than 1 argument and less than or equal to 3*/
-    if((inFd = open(argv[1], O_RDONLY)) == -1)
-    {
-        perror(argv[1]); /*1st argument permission denied*/
-        exit(-1);
-
-    }
-
-    /*Step 0 - build freq table*/
-    ft = buildFreqTable();
-
-    /*Step 1 - read one char at a time an insert at time in ft*/
-    while(read(inFd, &c, sizeof(char)))
-    {
-        insertToFreqTable(&ft, c);
-    }
-    /*Step 2 - build code huffman tree*/
-    head = buildHuffTree(ft);
-    /*structure(head,0);
-
-    /*Step 3 - build code look up table c->code*/
-    codeTable = buildLookUpTable(head);
-
-    /*printf("num of codes: %d\n", numBitsOfCode(codeTable));*/
-
-    /*if argc = 3  just switch file descriptors*/
-
-    /*if there is a outfile listed*/
-    if( argc == 3 ) {
-
-        if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1)
-        {
-            perror(argv[2]); /*1st argument permission denied*/
-            exit(-1);
-        }
-
-        outSavedFd = dup(1); /*save stdout */
-        dup2(outFd, 1);
-
-    }
-
-    /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
-    numOfChars = (uint32_t)numUniqueChar;
-
-    /*Step 4 - build header table */
-    header = generateHeader(ft, numOfChars);
-
-    int i, n = 1;
-
-    /*write header size then one header field at a time*/
-    for(i =0 ; i< numOfChars+1 && n > 0; i++){
-        if(i == 0) /*first write - write number of chars*/
-            n = write(1, &numOfChars,  sizeof(uint32_t));
-        else{  /*else write the fieldHeader */
-            n = write(1, &header->character, sizeof(char));
-            n = write(1, &header->frequency, sizeof(int));
-            header++;
-        }
-
-    }
-
-    lseek(inFd, 0,  0); /*start reading at the begging*/
-
-    /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
-
-    uint8_t output;
-
-    int divisablity_by_8;
-
-    /*Step 5 - build body (just read the file one more time and translate the code)*/
-    while(read(inFd, &c, sizeof(uint8_t)) > 0) {
-        /*codeTable[c].code - the code corresponding to char c*/
-        divisablity_by_8 = writeBits(c, strlen(codeTable[c].code), &output, codeTable);
-    }
-
-    /*
-    /*Step 6 - check if final add output if no div by 8*/
-    printf("div 8 check %d", divisablity_by_8);
-    if(divisablity_by_8 != 8)
-    {
-        /*shift it to fill in missing zeros*/
-        output = output << (8 - divisablity_by_8);
-        write(1, &output, sizeof(uint8_t));
-    }
-
-    /*restore stdout*/
-    if(argc == 3)
-    {
-        dup2(outSavedFd, 1);
-        close(outFd);
-    }
-
-
-    freeEveryThing(head, codeTable, ft, header);
-    /*step 3 - write to the header (read from input once again - decode the body)*/
 
 
     return 0;

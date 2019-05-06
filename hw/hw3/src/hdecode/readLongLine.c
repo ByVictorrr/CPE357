@@ -53,6 +53,16 @@ char *read_long_buff(int inFd)
 	return buff;
 }
 
+
+void freeBuffs(char *buff)
+{
+    if(pbuff != NULL)
+        free(pbuff);
+    if(buff != NULL)
+        free(buff);
+    return;
+}
+
 /*
 
 
