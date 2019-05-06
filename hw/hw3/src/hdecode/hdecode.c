@@ -3,8 +3,11 @@
 #include "readLongLine.h"
 #include <stdint.h>
 
+
 #define RD_MODE 0444
 extern char *buff;
+
+char charToInt[4];
 
 uint32_t totalNumberOfChars;
 
@@ -20,12 +23,14 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
     *ft = buildFreqTable();
 
    /* Step 1 - read the number of unique characters*/
-    if((read(inFd, &numUniqueOfChars, sizeof(int))) <= 0)
+    if((read(inFd, &charToInt, sizeof(int))) <= 0)
     {
-        perror("error reading file\n"); /*1st argument permission denied*/
+        /*perror("error reading file\n"); /*1st argument permission denied*/
       /*  exit(-1);*/
     }
+    printf("numchar : %d", charToInt);
 
+    numUniqueOfChars = atoi(charToInt);
    /*Step 2 - read in each character store in freqTable
     * if step 1 suceeded the file should be at the first char
     * */
@@ -166,13 +171,13 @@ int main(int argc, char *argv[])
 
     if(readStdIn)
     {
+
        /*check if can open file*/
-       if((inFd = read(argv[1], O_RDONLY, RD_MODE))==-1)
+       if((inFd = open(argv[1], O_RDONLY))==-1)
        {
             perror(argv[2]); /*1st argument permission denied*/
             exit(-1);
        }
-
 
 
     }else{ /*read from file*/
