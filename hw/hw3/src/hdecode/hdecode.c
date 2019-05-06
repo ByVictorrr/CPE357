@@ -46,17 +46,23 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
             perror("error reading file\n"); /*1st argument permission denied*/
             exit(-1);
         }
+
+        printf("error for: %c think %d\n", c , ft_adder);
         ft[0][c] = ft_adder;
 
     }
+
+
+    printFreqTable(*ft);
+
    /*step 5 - build huffmanTree from freqTable*/
    if(*ft != NULL) {
-       *huffmanTree = buildHuffTree(ft);
+       *huffmanTree = buildHuffTree(*ft);
    }
 
 
    structure(*huffmanTree, 0);
-   printFreqTable(*ft);
+   /*printFreqTable(*ft);*/
 
    return numUniqueOfChars;
 
@@ -97,13 +103,15 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
        while(!isLeaf(huffmanTree))
        {
+
+           printf("debugging huffmanTree -> c %c\n", huffmanTree->c);
            /*mask from left to right is x000 1110, is x a 1 or 0? */
-          if(buff[indexBuff] & MASK_MSB == 0x80 && huffmanTree->left_child) {
+          if(buff[indexBuff] & MASK_MSB == 0x80 ) {
               huffmanTree = huffmanTree->left_child;
           }
 
 
-          else if (buff[indexBuff] && MASK_MSB == 0x00 && huffmanTree->right_child) {
+          else if (buff[indexBuff] && MASK_MSB == 0x00) {
               huffmanTree = huffmanTree->right_child;
           }
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
@@ -144,7 +152,7 @@ void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
     int i;
 
     /*we need to write decoded msg to the outfile*/
-    decodeBody(inFd,outFd,totChars(*ft), huffmanTree);
+    decodeBody(inFd,outFd,totChars(*ft), *huffmanTree);
 
 
 }

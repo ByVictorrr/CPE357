@@ -16,7 +16,6 @@ Node *buildHuffTree(int *freqTable)
                 /*creat a new head to pqueue*/
                 pushNewNode(&priorityQ, i, freqTable[i]);
         }
-        transverse(priorityQ);
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
         {
