@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "readLongLine.h"
 #include "hdecode.h"
-
+#define MASK_MSB 0x80
 
 
 int decodeHeader(int inFd, Node **huffmanTree, int **ft)
@@ -62,8 +62,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 
 }
 
-
-
+/*decode left to right reading body 1000 0000 = 0x80*/
 
 /*Call after header, so left off at the first part of the body*/
 void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
@@ -76,35 +75,53 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
     /*initalize the buffer*/
 
 
-
     int indexBuff;
 
     Node *root = huffmanTree;
 
 
-
     buff = read_long_line(inFd);
     int i;
+
+    int numCodes = 0;
+    uint8_t byte = buff[0];
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
     for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
     {
         /*Step 3 - transverse the tree until a char is found.
          *
-         * - incrment the buffer each time until a char is found
+         * - shift that current that one encodeod char till find a matching
          * - if leaf found jump out of the loop , start from root
          *
          * */
+
        while(!isLeaf(huffmanTree))
        {
-           /*if the current byte is 0 */
-          if(buff[indexBuff] == '0')
-             huffmanTree = huffmanTree->left_child;
+           /*mask from left to right is x000 1110, is x a 1 or 0? */
+          if(buff[indexBuff] & MASK_MSB == 0x80 && huffmanTree->left_child) {
+              huffmanTree = huffmanTree->left_child;
+          }
 
-          else if (buff[indexBuff] == '1')
+
+          else if (buff[indexBuff] && MASK_MSB == 0x00 && huffmanTree->right_child) {
               huffmanTree = huffmanTree->right_child;
+          }
+          /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
+          buff[indexBuff] = buff[indexBuff] << 1;
 
-          indexBuff++;
+          /*incrment numCodes - reset once new chacter has been found*/
+          numCodes++;
+
+
+          /*if the numCodes seen in a char is 8 then move on to the next byte*/
+          if(numCodes == 8)
+          {
+            indexBuff++;
+            numCodes=0;
+          }
+
        }
+
 
         /*Step 4 - after reading converting the code to characters write it out*/
        if (write(outFd, &huffmanTree->c, sizeof(char)) <= 0)
@@ -112,6 +129,22 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
     }
+
+}
+
+
+
+
+
+
+void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
+{
+
+    int numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
+    int i;
+
+    /*we need to write decoded msg to the outfile*/
+    decodeBody(inFd,outFd,totChars(*ft), huffmanTree);
 
 
 }
@@ -131,23 +164,6 @@ int totChars(int *ft)
     }
     return tot;
 }
-
-
-
-
-void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
-{
-
-    int numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
-    int i;
-
-    /*we need to write decoded msg to the outfile*/
-    decodeBody(inFd,outFd,totChars(*ft), huffmanTree);
-
-
-}
-
-
 
 
 int main(int argc, char *argv[])
