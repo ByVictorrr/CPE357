@@ -20,15 +20,15 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
    /* Step 1 - read the number of unique characters*/
     if((read(inFd, &i, sizeof(int))) <= 0)
     {
-        /*perror("error reading file\n"); /*1st argument permission denied*/
-      /*  exit(-1);*/
+        perror("error reading file\n"); /*1st argument permission denied*/
+        exit(-1);
     }
 
     numUniqueOfChars = (int)i;
    /*Step 2 - read in each character store in freqTable
     * if step 1 suceeded the file should be at the first char
     * */
-
+    uint32_t ft_adder=0;
    /*read in sets of 5 bytes*/
     for (i= 0; i < numUniqueOfChars; i++) {
 
@@ -39,7 +39,6 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
             exit(-1);
         }
 
-        uint32_t ft_adder=0;
         /* Step 4 - read the corresponding frequency of that character*/
         if((read(inFd, &ft_adder, sizeof(uint32_t))) <= 0)
         {
@@ -119,6 +118,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
           buff[indexBuff] = buff[indexBuff] << 1;
 
+
           /*incrment numCodes - reset once new chacter has been found*/
           numCodes++;
 
@@ -142,7 +142,13 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 }
 
+void printBinChar(char c)
+{
 
+    char output[9];
+    itoa(c,output,2);
+    prinf()
+}
 
 
 
