@@ -104,16 +104,17 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
        while(!isLeaf(huffmanTree))
        {
 
-           printf("debugging huffmanTree -> c %c\n", huffmanTree->c);
            /*mask from left to right is x000 1110, is x a 1 or 0? */
           if(buff[indexBuff] & MASK_MSB == 0x80 ) {
+              printf("masking 0x80");
               huffmanTree = huffmanTree->left_child;
           }
 
-
           else if (buff[indexBuff] && MASK_MSB == 0x00) {
+              printf("masking 0x00");
               huffmanTree = huffmanTree->right_child;
           }
+
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
           buff[indexBuff] = buff[indexBuff] << 1;
 
