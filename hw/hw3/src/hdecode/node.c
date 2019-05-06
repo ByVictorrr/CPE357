@@ -36,6 +36,8 @@ void structure ( struct node *root, int level ){
     } else {
         structure ( root->right_child, level + 1 );
         padding ( '\t', level );
+        if( root->c == '\n')
+            root->c = '!';
         printf ( "%c\n", root->c);
         structure ( root->left_child, level + 1 );
     }

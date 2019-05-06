@@ -90,7 +90,10 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
     int i;
 
     int numCodes = 0;
-    uint8_t byte = buff[0];
+
+
+
+    printf("buff: %s", buff);
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
     for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
     {
@@ -106,13 +109,11 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
            /*mask from left to right is x000 1110, is x a 1 or 0? */
           if(buff[indexBuff] & MASK_MSB == 0x80 ) {
-              printf("masking 0x80");
-              huffmanTree = huffmanTree->left_child;
-          }
-
-          else if (buff[indexBuff] && MASK_MSB == 0x00) {
-              printf("masking 0x00");
+              printf("masking 0x80\n");
               huffmanTree = huffmanTree->right_child;
+          }else {
+              printf("masking 0x00\n");
+              huffmanTree = huffmanTree->left_child;
           }
 
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
@@ -120,7 +121,6 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
           /*incrment numCodes - reset once new chacter has been found*/
           numCodes++;
-
 
           /*if the numCodes seen in a char is 8 then move on to the next byte*/
           if(numCodes == 8)
@@ -131,13 +131,14 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
        }
 
-
         /*Step 4 - after reading converting the code to characters write it out*/
        if (write(outFd, &huffmanTree->c, sizeof(char)) <= 0)
            perror("write error\n");
 
 
+       printf("char inserted %c \n", huffmanTree->c);
     }
+
 
 }
 
