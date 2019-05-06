@@ -17,25 +17,19 @@ Node *buildHuffTree(int *freqTable)
                 pushNewNode(&priorityQ, i, freqTable[i]);
 
         }
-		transverse(priorityQ);
         /*if there is only one character in the table*/
         if (size(priorityQ) == 1)
         {
             pushNewNode(&priorityQ, '\0', 1);
 
         }
-        int j;
-        j = 0;
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
            Node * left = poll(&priorityQ);
            Node * right = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('$', right->freq + left->freq, left, right);
-
-            printf("ith insertion %d \n",  j++);
-           inorder(parent->curr);
+           listNode *parent = newListNode('\0', right->freq + left->freq, left, right);
 
 
            pushNode(&priorityQ, parent);

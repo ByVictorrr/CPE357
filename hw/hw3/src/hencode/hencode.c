@@ -163,12 +163,12 @@ int main(int argc, char *argv[])
     }
     /*Step 2 - build code huffman tree*/
     head = buildHuffTree(ft);
-    structure(head,0);
+    /*structure(head,0);
 
     /*Step 3 - build code look up table c->code*/
     codeTable = buildLookUpTable(head);
 
-    printf("num of codes: %d\n", numBitsOfCode(codeTable));
+    /*printf("num of codes: %d\n", numBitsOfCode(codeTable));*/
 
    /*if argc = 3  just switch file descriptors*/
 
@@ -221,10 +221,12 @@ int main(int argc, char *argv[])
 		}
 
         /*
-		/*Step 6 - check if final add output is div by 8*/
-		if(divisablity_by_8 != 0)
-		{	
-			output = output << divisablity_by_8;
+		/*Step 6 - check if final add output if no div by 8*/
+        printf("div 8 check %d", divisablity_by_8);
+		if(divisablity_by_8 != 8)
+		{
+		    /*shift it to fill in missing zeros*/
+			output = output << (8 - divisablity_by_8);
             write(1, &output, sizeof(uint8_t));
         }
 

@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "../hencode/node.c"
 
+
+
+
 char *decompess(HuffmanEnodded results)
 {
 	Node *curr;
