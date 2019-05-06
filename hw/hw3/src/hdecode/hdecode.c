@@ -1,13 +1,16 @@
 #include "../hencode/huffmanTree.h"
 #include "../hencode/freqTable.h"
+#include "readLongLine.h"
+
 #define RD_MODE 0444
 enum boolean{FALSE, TRUE};
+extern char *buff;
 
+uint32_t totalNumberOfChars;
 
-
-int decodeHeader(int inFd, Node **huffmanTree)
+int decodeHeader(int inFd, Node **huffmanTree, int *ft)
 {
-    int numUniqueOfChars, *ft;
+    int numUniqueOfChars;
     numUniqueOfChars = 0;
 
     uint32_t i;
@@ -24,7 +27,6 @@ int decodeHeader(int inFd, Node **huffmanTree)
    /*Step 2 - read in each character store in freqTable
     * if step 1 suceeded the file should be at the first char
     * */
-   ft = buildFreqTable();
 
    /*read in sets of 5 bytes*/
     for (i= 0; i < numUniqueOfChars; i++) {
@@ -43,20 +45,50 @@ int decodeHeader(int inFd, Node **huffmanTree)
             exit(-1);
         }
 
-
     }
-   /*step 3 - build huffmanTree from freqTable*/
+   /*step 5 - build huffmanTree from freqTable*/
    if(ft != NULL) {
        *huffmanTree = buildHuffTree(ft);
-       free(ft);
    }
    return numUniqueOfChars;
 
 }
 
-void decodeBody(int inFd, int outFd, int numO)
+
+/* Might need to switch to a dynamic ref b limited space*/
+uint32_t getTotalNumberOfChar(int *ft)
+{
+    int i;
+
+    uint32_t tot
+
+    tot = 0;
+
+   if (ft != NULL)
+   {
+       for (i = 0; i < ALPHABET_SIZE; i++) {
+           tot += freq[c];
+       }
+
+       return tot;
+   }
+
+   return 0;
+}
+
+
+
+
+
+/*Call after header, so left off at the first part of the body*/
+void decodeBody(int inFd, int outFd, int numUniqueChars, Node *huffmanTree)
 {
 
+    /*Step 1 - read in the file from where left off
+     *
+     *         Decode while reading keep track of number of chars read
+     * */
+    if(read(inFd, &buff))
 }
 
 
