@@ -32,7 +32,6 @@ void pushNewNode(listNode **head, char c, int freq) {
 
     listNode *beg = *head; /*get address of first head*/
 
-
     /*new node*/
     listNode *tempNode;
 
@@ -107,6 +106,7 @@ void pushNode(listNode **head, listNode *parent) {
         parent->next= *head;
         *head = parent;
     }
+
 	/*case 3 - general case (it goes through the list and finds a spot)*/
     else
     {
