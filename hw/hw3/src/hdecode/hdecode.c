@@ -114,7 +114,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
        while(!isLeaf(huffmanTree))
        {
            /*mask from left to right is x000 1110, is x a 1 or 0? */
-          if((buff[indexBuff] & mask) == 1 ) {
+          if((buff[indexBuff] & mask) == 0 ) {
               printf("insert left");
               huffmanTree = huffmanTree->left_child;
           }else {
