@@ -1,15 +1,5 @@
 #include "hencode.h"
 
-#define BYTE 8.0
-/*=================Beg of header===================================*/
-
-/*Should be 5 bytes {count | char| }*/
-typedef struct headerBits
-{
-    uint8_t character;
-    uint32_t frequency; /*number of chars in freq table*/
-
-}fieldHeader;
 
 /*This method gives the string wit the codes*/
 fieldHeader *generateHeader(int *ft, int numUniqueChars)
@@ -96,15 +86,12 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
 
 void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable, fieldHeader *header)
 {
-    /*freeHeader(header);*/
+    freeHeader(header);
     freeFreqTable(freqTable);
     freeLookUpTable(table);
     freeHuffmanTree(huffmanTree);
 
 }
-
-
-
 
 /*getCodeLen - returns the length of the code
  * Example: if code (in char ) is 0110 10001
@@ -222,13 +209,15 @@ int main(int argc, char *argv[])
 
         /*
 		/*Step 6 - check if final add output if no div by 8*/
-        printf("div 8 check %d", divisablity_by_8);
+        /*printf("div 8 check %d", divisablity_by_8);*/
 		if(divisablity_by_8 != 8)
 		{
 		    /*shift it to fill in missing zeros*/
 			output = output << (8 - divisablity_by_8);
             write(1, &output, sizeof(uint8_t));
         }
+
+        freeEveryThing(head, codeTable, ft, header);
 
         /*restore stdout*/
         if(argc == 3)
@@ -238,7 +227,7 @@ int main(int argc, char *argv[])
         }
 
 
-      freeEveryThing(head, codeTable, ft, header);
+
     /*step 3 - write to the header (read from input once again - decode the body)*/
 
 

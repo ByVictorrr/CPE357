@@ -1,4 +1,4 @@
-*#include "freqTable.h"
+#include "freqTable.h"
 /*buildFrequencyTable: takes in a string and relates
  *
  */
