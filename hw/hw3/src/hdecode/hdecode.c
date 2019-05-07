@@ -94,7 +94,10 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
 
-    printf("buff: %s", buff);
+   int k ;
+    for(k=0; k<6; k++)
+        printf("buffcool[ %d ] = %x\n", k, (uint8_t)buff[k]);
+
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
     for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
     {
@@ -104,6 +107,9 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
          * - if leaf found jump out of the loop , start from root
          *
          * */
+
+        printf("buff[ %d ] ", indexBuff);
+        printf("\n");
 
        while(!isLeaf(huffmanTree))
        {
@@ -134,7 +140,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
        }
 
         /*Step 4 - after reading converting the code to characters write it out*/
-       if (write(outFd, &huffmanTree->c, sizeof(char)) <= 0)
+       if (write(outFd, &huffmanTree->c, sizeof(unsigned char)) <= 0)
            perror("write error\n");
 
 

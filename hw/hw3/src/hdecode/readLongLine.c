@@ -14,7 +14,15 @@ void print_binary(unsigned char x) {
         b = b >> 1;
     }
 }
-
+void printbincharpad(unsigned char c)
+{
+    int i;
+    for (i = 7; i >= 0; --i)
+    {
+        putchar( (c & (1 << i)) ? '1' : '0' );
+    }
+    putchar('\n');
+}
 unsigned char *read_long_line(int inFd)
 {
     numLines = 0;
@@ -26,7 +34,7 @@ unsigned char *read_long_line(int inFd)
 	int onebuff = 0;
 
 	/*case 2: reading the whole file */
-	pbuff = temp = (unsigned char*)malloc(MAXCHAR);
+	pbuff = temp = (unsigned char*)calloc(MAXCHAR, sizeof(unsigned char));
 
 	while((read(inFd, &c, sizeof(unsigned char))) > 0)
 	{
