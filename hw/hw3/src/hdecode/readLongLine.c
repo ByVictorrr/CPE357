@@ -82,8 +82,6 @@ unsigned char *read_long_line(int inFd)
 
 void freeBuffs(unsigned char *buff)
 {
-    if(pbuff != NULL)
-        free(pbuff);
     if(buff != NULL)
         free(buff);
     return;

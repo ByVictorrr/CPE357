@@ -1,12 +1,14 @@
 #include "hdecode.h"
 
 
-void freeEveryThing(int *ft, Node *Tree)
+void freeEveryThing(int *ft, Node *Tree, unsigned char *buff)
 {
     if(ft != NULL)
         freeFreqTable(ft);
     if(Tree != NULL)
         freeHuffmanTree(Tree);
+    if(pbuff != NULL)
+        freeBuffs(buff);
     return;
 }
 
@@ -32,7 +34,8 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
    /*Step 2 - read in each character store in freqTable
     * if step 1 suceeded the file should be at the first char
     * */
-    uint32_t ft_adder=0;
+    uint32_t ft_adder;
+    ft_adder=0;
    /*read in sets of 5 bytes*/
     for (i= 0; i < numUniqueOfChars; i++) {
 
@@ -86,11 +89,13 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
     buff = read_long_line(inFd);
 
-    uint8_t mask= MASK_MSB;
+    uint8_t mask;
+    mask = MASK_MSB;
 
     int i;
 
-    int numCodes = 0;
+    int numCodes;
+    numCodes = 0;
 
 
 /*
@@ -142,7 +147,8 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
 {
 
-    int numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
+    int numUniqueChars ;
+    numUniqueChars =  decodeHeader(inFd, huffmanTree, ft);
     int i;
 
     /*we need to write decoded msg to the outfile*/
@@ -172,9 +178,7 @@ int main(int argc, char *argv[])
 {
 
     int inFd, outFd, inSavedFd, outSavedFd, *ft;
-    char c;
     Node *root;
-    uint32_t numOfChars;
 
 
 
@@ -245,7 +249,7 @@ int main(int argc, char *argv[])
         close(outFd);
     }
 
-    /*freeEveryThing(ft, root);*/
+    freeEveryThing(ft, root, buff);
 
     return 0;
 }
