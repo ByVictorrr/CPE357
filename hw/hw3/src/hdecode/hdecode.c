@@ -87,6 +87,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
     buff = read_long_line(inFd);
 
+    uint8_t mask= MASK_MSB;
 
     int i;
 
@@ -99,7 +100,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
         printf("buffcool[ %d ] = %x\n", k, (uint8_t)buff[k]);
 
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
-    for (i = numTotalChars, indexBuff = 0; i> 0; i--, huffmanTree = root)
+    for (i = numTotalChars, indexBuff = 0; i > 0; i--, huffmanTree = root)
     {
         /*Step 3 - transverse the tree until a char is found.
          *
@@ -108,40 +109,38 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
          *
          * */
 
-        printf("buff[ %d ] ", indexBuff);
-        printf("\n");
+      /*  printf("buff[ %d ] =  %x\n", indexBuff, (uint8_t)buff[indexBuff]);;*/
 
        while(!isLeaf(huffmanTree))
        {
-
            /*mask from left to right is x000 1110, is x a 1 or 0? */
-          if(buff[indexBuff] & MASK_MSB == 0x80 ) {
-              printf("masking 0x80\n");
-              huffmanTree = huffmanTree->right_child;
-          }else {
-              printf("masking 0x00\n");
+          if((buff[indexBuff] & mask) == 1 ) {
+              printf("insert left");
               huffmanTree = huffmanTree->left_child;
+          }else {
+              printf("insert right");
+              huffmanTree = huffmanTree->right_child;
           }
-
+            printf("mask =  %d\n", mask);
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
-          buff[indexBuff] = buff[indexBuff] << 1;
 
-
-          /*incrment numCodes - reset once new chacter has been found*/
-          numCodes++;
 
           /*if the numCodes seen in a char is 8 then move on to the next byte*/
-          if(numCodes == 8)
+          if((mask = mask >>  1) == 0)
           {
             indexBuff++;
-            numCodes=0;
+            mask = 0x80;
           }
 
+
+
        }
+
 
         /*Step 4 - after reading converting the code to characters write it out*/
        if (write(outFd, &huffmanTree->c, sizeof(unsigned char)) <= 0)
            perror("write error\n");
+
 
 
        printf("char inserted %c \n", huffmanTree->c);
