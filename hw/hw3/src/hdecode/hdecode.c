@@ -1,13 +1,14 @@
-#include "huffmanTree.h"
-#include "freqTable.h"
-#include <stdint.h>
-#include "readLongLine.h"
 #include "hdecode.h"
-#define MASK_MSB 0x80
 
 
-
-
+void freeEveryThing(int *ft, Node *Tree)
+{
+    if(ft != NULL)
+        freeFreqTable(ft);
+    if(Tree != NULL)
+        freeHuffmanTree(Tree);
+    return;
+}
 
 int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 {
@@ -49,19 +50,17 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
             exit(-1);
         }
 
-        printf("error for: %c think %d\n", c , ft_adder);
+        /*printf("error for: %c think %d\n", c , ft_adder);*/
         ft[0][c] = ft_adder;
 
     }
-    printFreqTable(*ft);
+    /*printFreqTable(*ft);*/
 
    /*step 5 - build huffmanTree from freqTable*/
    if(*ft != NULL) {
        *huffmanTree = buildHuffTree(*ft);
    }
 
-   structure(*huffmanTree, 0);
-   /*printFreqTable(*ft);*/
 
    return numUniqueOfChars;
 
@@ -94,10 +93,11 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
     int numCodes = 0;
 
 
-
+/*
    int k ;
-    for(k=0; k<6; k++)
+    for(k=0; k<6; k++),
         printf("buffcool[ %d ] = %x\n", k, (uint8_t)buff[k]);
+        */
 
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
     for (i = numTotalChars, indexBuff = 0; i > 0; i--, huffmanTree = root)
@@ -115,13 +115,10 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
        {
            /*mask from left to right is x000 1110, is x a 1 or 0? */
           if((buff[indexBuff] & mask) == 0 ) {
-              printf("insert left");
               huffmanTree = huffmanTree->left_child;
           }else {
-              printf("insert right");
               huffmanTree = huffmanTree->right_child;
           }
-            printf("mask =  %d\n", mask);
           /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
 
 
@@ -129,27 +126,18 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
           if((mask = mask >>  1) == 0)
           {
             indexBuff++;
-            mask = 0x80;
+            mask = MASK_MSB;
           }
 
-
-
        }
-
 
         /*Step 4 - after reading converting the code to characters write it out*/
        if (write(outFd, &huffmanTree->c, sizeof(unsigned char)) <= 0)
            perror("write error\n");
 
-
-
-       printf("char inserted %c \n", huffmanTree->c);
     }
 
-
 }
-
-
 
 void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
 {
@@ -195,47 +183,69 @@ int main(int argc, char *argv[])
     /*Case 1 - if there is no arguments then read from stdin
      *          also output to stdout*/
 
-    if(readStdIn)
-    {
-
-       /*check if can open file*/
-       if((inFd = open(argv[1], O_RDONLY))==-1)
-       {
-            perror(argv[2]); /*1st argument permission denied*/
-            exit(-1);
-       }
 
 
-    }else{ /*read from file*/
-
-        /* if there are too many arguments throw an error*/
-        if(argc > 3)
-        {
-            fprintf(stderr, "usage: ./hdecode infile [ ( infile | - ) [ outfile ] ]\n");
-            exit(-1);
-        }
-
-
-        if((inFd = open(argv[1], O_RDONLY)) == -1 )
-        {
-            perror(argv[2]); /*1st argument permission denied*/
-            exit(-1);
-        }
-
-        /*If right amount of arguments continue and check if we can open that file */
-        if((outFd = open(argv[2], O_CREAT|O_WRONLY|O_TRUNC, 0700)) == -1 )
-        {
-            perror(argv[2]); /*1st argument permission denied*/
-            exit(-1);
-        } /*read from stdout*/
-           /* outFd = 1;*/
-
-
-        decodeFile(inFd,outFd, &root, &ft);
+    /*Case 1 - First look if the right format*/
+    if(argc > 3){
+        fprintf(stderr, "usage: ./hdecode infile [ ( infile | - ) [ outfile ] ]\n");
+        exit(-1);
     }
 
 
+    /*===================Check if should where should read in =============================*/
+    /*Case 2 -  Check to see if read from file
+     * Assumed : After the right Format*/
 
+
+    if(!readStdIn) /*Dont read from std in*/
+    {
+        if ((inFd = open(argv[1], O_RDONLY)) == -1) {
+            perror(argv[2]); /*1st argument permission denied*/
+            exit(-1);
+        }
+        /*save std in */
+        inSavedFd = dup(0);
+        dup2(inFd, 0);
+    }
+
+   /*=========================================================================================*/
+
+
+
+   /*===================Check if should where should write from =============================*/
+  /*Case 3 - check to if write to file
+   * Assumed : After the right Format
+   * */
+         if(argc == 3)
+         {
+             /*If right amount of arguments continue and check if we can open that file */
+             if ((outFd = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0700)) == -1) {
+                 perror(argv[2]); /*1st argument permission denied*/
+                 exit(-1);
+             } /*read from stdout*/
+          /*save std in */
+         outSavedFd = dup(1);
+         dup2(outFd, 0);
+
+         }
+/*=========================================================================================*/
+
+
+    decodeFile(0,1, &root, &ft);
+
+    /*If there is a infile switch back to and close that file*/
+    if ((argc == 3 || argc == 2) && (strcmp(argv[1],"-")) )
+    {
+        dup2(inSavedFd, 0);
+        close(inFd);
+    }
+    if(argc == 3)
+    {
+        dup2(outSavedFd, 1);
+        close(outFd);
+    }
+
+    freeEveryThing(ft, root);
 
     return 0;
 }
