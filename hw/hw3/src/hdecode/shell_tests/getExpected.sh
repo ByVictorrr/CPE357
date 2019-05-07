@@ -17,7 +17,6 @@ for getInput in $( ls ~/CPE357/hw/hw3/src/hencode/expected/* ); do
 
 done
 
-
 for file in $( ls ~/CPE357/hw/hw3/src/hdecode/inputs/* ); do
 	 echo -n "Testing with ${file} -- "
 	 BASE=`basename ${file} .in`

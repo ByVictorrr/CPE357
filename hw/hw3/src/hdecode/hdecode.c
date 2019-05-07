@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
              } /*read from stdout*/
           /*save std in */
          outSavedFd = dup(1);
-         dup2(outFd, 0);
+         dup2(outFd, 1);
 
          }
 /*=========================================================================================*/
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
         close(outFd);
     }
 
-    freeEveryThing(ft, root);
+    /*freeEveryThing(ft, root);*/
 
     return 0;
 }

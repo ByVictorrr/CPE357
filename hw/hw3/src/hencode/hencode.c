@@ -7,8 +7,10 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
     /*allocating for header*/
     fieldHeader *header = NULL;
 
-    if((header= (fieldHeader*)calloc( numUniqueChars ,sizeof(fieldHeader))) == NULL)
+    if((header= (fieldHeader*)calloc( numUniqueChars + 1 ,sizeof(fieldHeader))) == NULL)
         return NULL;
+
+    printf("numOfunique chars : %d", numUniqueChars);
 
     int i;
     int header_inc = 0;
@@ -201,7 +203,7 @@ int main(int argc, char *argv[])
         }
 
 
-        freeHeader(header);
+        /*freeHeader(header);*/
 
         lseek(inFd, 0,  0); /*start reading at the begging*/
 

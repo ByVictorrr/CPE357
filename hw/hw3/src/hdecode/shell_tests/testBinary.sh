@@ -11,7 +11,6 @@ for file in $( ls ../inputs/* ); do
 
 	fi
 
-
 done
 
 
