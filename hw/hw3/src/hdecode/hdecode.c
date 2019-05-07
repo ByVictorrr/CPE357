@@ -6,6 +6,9 @@
 #define MASK_MSB 0x80
 
 
+
+
+
 int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 {
     int numUniqueOfChars;
@@ -50,15 +53,12 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
         ft[0][c] = ft_adder;
 
     }
-
-
     printFreqTable(*ft);
 
    /*step 5 - build huffmanTree from freqTable*/
    if(*ft != NULL) {
        *huffmanTree = buildHuffTree(*ft);
    }
-
 
    structure(*huffmanTree, 0);
    /*printFreqTable(*ft);*/
@@ -86,6 +86,8 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
     buff = read_long_line(inFd);
+
+
     int i;
 
     int numCodes = 0;
@@ -141,15 +143,6 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
 }
-
-void printBinChar(char c)
-{
-
-    char output[9];
-    itoa(c,output,2);
-    prinf()
-}
-
 
 
 
@@ -231,8 +224,6 @@ int main(int argc, char *argv[])
             exit(-1);
         } /*read from stdout*/
            /* outFd = 1;*/
-
-
 
 
         decodeFile(inFd,outFd, &root, &ft);

@@ -1,22 +1,38 @@
 #include "readLongLine.h"
 
+void print_binary(unsigned char x) {
+    int b = 128;
 
-char *read_long_line(int inFd)
+    while (b != 0) {
+
+        if (b <= x) {
+            x -= b;
+            printf("1");
+        } else
+            printf("0");
+
+        b = b >> 1;
+    }
+}
+
+unsigned char *read_long_line(int inFd)
 {
     numLines = 0;
     sizeLines = 0;
 	unsigned sizebuff = MAXCHAR;
-	char *strcat(char *dest, const char *src);
-	char *temp, c; /*temp is for moving allong pbuff*/
+	unsigned char *temp, c; /*temp is for moving allong pbuff*/
 
 	/*initalize current size of buffer*/	
 	int onebuff = 0;
 
 	/*case 2: reading the whole file */
-	pbuff = temp = (char*)malloc(MAXCHAR);
+	pbuff = temp = (unsigned char*)malloc(MAXCHAR);
 
-	while((read(inFd, &c, sizeof(char))) > 0)
+	while((read(inFd, &c, sizeof(unsigned char))) > 0)
 	{
+	   /* print_binary(c);
+	    printf(" above is %c \n", c);
+	    */
 		/*case 3: store value of c in buffer */
 		*temp++ = c;
 		/*case 4: check if an overflow occured in buffer same buff
@@ -25,19 +41,19 @@ char *read_long_line(int inFd)
 		{
 			/*Size alloationa are alwaysgoing to be mutliples os MAXCHAr*/
 			sizebuff = sizebuff + MAXCHAR;
-			pbuff = (char*)realloc(pbuff,sizebuff);
+			pbuff = (unsigned char*)realloc(pbuff,sizebuff);
 			temp = pbuff + (sizebuff - MAXCHAR); /*tryin to get next spot in stack for word*/
 		}
 		if ( c == '\n') {
             if (!numLines) {
                 /*case 5.1.1: 1st time allocate space for buff*/
-                buff = (char *) malloc(onebuff + 1); /*what if not overflowed*/
+                buff = (unsigned char *) malloc(onebuff + 1); /*what if not overflowed*/
                 strcpy(buff, pbuff);
-                prev = buff; /*have prev point to first char*/
+                prev = buff; /*have prev point to first unsigned char*/
                 sizeLines = onebuff;
             } else { /*Case 5.1.2: ith time allocating space for buff, also need to only reallocate on condition*/
                 /*If were in this scope its assume that there is at least two buffs*/
-                buff = (char *) realloc(buff, onebuff + sizeLines + 1);
+                buff = (unsigned char *) realloc(buff, onebuff + sizeLines + 1);
                 /*copy contents from buffer to prev*/
                 prev = buff;
                 strcpy((prev = prev + sizeLines), pbuff);
@@ -45,7 +61,7 @@ char *read_long_line(int inFd)
 
             }
             /*case 6: reset buffer*/ free(pbuff);
-            pbuff = (char *) calloc(MAXCHAR, sizeof(char));
+            pbuff = (unsigned char *) calloc(MAXCHAR, sizeof(unsigned char));
             temp = pbuff;
 
             sizebuff = MAXCHAR;
@@ -56,8 +72,7 @@ char *read_long_line(int inFd)
 	return pbuff;
 }
 
-
-void freeBuffs(char *buff)
+void freeBuffs(unsigned char *buff)
 {
     if(pbuff != NULL)
         free(pbuff);
@@ -67,19 +82,18 @@ void freeBuffs(char *buff)
 }
 
 /*
-
-
 int main(int argc, char *argv[])
 {
 
-
 	int inFd = open(argv[1], O_RDONLY);
 
-	char *buff_ptr = read_long_buff(inFd);
+	unsigned char *buff_ptr = read_long_line(inFd);
 
 
+	printf("%s\n", buff_ptr);
 	for (;*buff_ptr != '\0'; buff_ptr++)
-		putchar(*buff_ptr);
+	    putchar(*buff_ptr);
+
 
 	close(inFd);
 

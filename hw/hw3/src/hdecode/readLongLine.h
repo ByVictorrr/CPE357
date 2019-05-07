@@ -4,7 +4,7 @@
  * adjacent duplicate lines as it copies its stdin to its stdout. That is, any line that is identical
  * to the previous line will be discarded rather than copied to stdout.
  * Your program may not impose any limits on file size or line length.
- * To get started, I highly recommend writing a function char *read long line(FILE *file)
+ * To get started, I highly recommend writing a function unsigned char *read long line(FILE *file)
  * that will read an arbitrarily long line from the given file into newly-allocated space. Once you
  * have that, the program is easy.
  * Be careful to free memory once you are done with it. A memory leak could be a real problem
@@ -21,12 +21,13 @@
 #include <string.h>
 #define MAXCHAR 1000 /*inital amt of lines in the buffer*/
 
+
 /*======================lines memory=================================*/
-char *buff;
+unsigned char *buff;
 /*===================================================================*/
 
 /*======================Current line buffer=========================*/
-char *pbuff, *prev;
+unsigned char *pbuff, *prev;
 /*==================================================================*/
 
 /*================count number of lines==================*/
@@ -35,6 +36,6 @@ unsigned sizeLines;
 
 /*=======================================================*/
 
-char *read_long_line(int inFd);
-void freeBuffs(char *buff);
+unsigned char *read_long_line(int inFd);
+void freeBuffs(unsigned char *buff);
 #endif
