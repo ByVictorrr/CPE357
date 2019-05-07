@@ -5,7 +5,11 @@
 fieldHeader *generateHeader(int *ft, int numUniqueChars)
 {
     /*allocating for header*/
-    fieldHeader *header = (fieldHeader*)calloc(numUniqueChars,sizeof(fieldHeader));
+    fieldHeader *header = NULL;
+
+    if((header= (fieldHeader*)calloc( numUniqueChars ,sizeof(fieldHeader))) == NULL)
+        return NULL;
+
     int i;
     int header_inc = 0;
     for ( i=1; i<ALPHABET_SIZE; i++)
@@ -20,6 +24,9 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
     }
     return header;
 }
+
+
+
 
 void printFieldHeader(fieldHeader *header, int numUniqueChars)
 {
@@ -122,7 +129,7 @@ int main(int argc, char *argv[])
     Node *head;
     struct lookUpTable *codeTable;
     uint32_t numOfChars;
-    fieldHeader *header;
+    fieldHeader *header = NULL;
 
 
     if(argc == 1 || argc > 3)
@@ -193,6 +200,9 @@ int main(int argc, char *argv[])
 
         }
 
+
+        freeHeader(header);
+
         lseek(inFd, 0,  0); /*start reading at the begging*/
 
        /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
@@ -217,7 +227,7 @@ int main(int argc, char *argv[])
             write(1, &output, sizeof(uint8_t));
         }
 
-        freeEveryThing(head, codeTable, ft, header);
+       /* freeEveryThing(head, codeTable, ft, header);*/
 
         /*restore stdout*/
         if(argc == 3)
