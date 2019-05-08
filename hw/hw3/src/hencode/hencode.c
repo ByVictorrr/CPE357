@@ -7,13 +7,13 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
     /*allocating for header*/
     fieldHeader *header = NULL;
 
-    if((header= (fieldHeader*)calloc( numUniqueChars + 1 ,sizeof(fieldHeader))) == NULL)
-        return NULL;
+    header = (fieldHeader*)calloc( numUniqueChars + 1 ,sizeof(fieldHeader));
 
     printf("numOfunique chars : %d", numUniqueChars);
 
     int i;
     int header_inc = 0;
+
     for ( i=1; i<ALPHABET_SIZE; i++)
     {
         if(ft[i] > 0) {
@@ -93,8 +93,7 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
     return bits_Left_to_write;
 }
 
-void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable, fieldHeader *header)
-{
+void freeEveryThing(Node *huffmanTree, struct lookUpTable *table, int *freqTable, fieldHeader *header) {
     freeHeader(header);
     freeFreqTable(freqTable);
     freeLookUpTable(table);
@@ -126,12 +125,12 @@ int numBitsOfCode(struct lookUpTable *table)
 int main(int argc, char *argv[])
 {
 
-    int inFd, outFd, outSavedFd, *ft;
+    int inFd, outFd, outSavedFd, *ft = NULL;
     char c;
-    Node *head;
-    struct lookUpTable *codeTable;
+    Node *head = NULL;
+    struct lookUpTable *codeTable = NULL;
     uint32_t numOfChars;
-    fieldHeader *header = NULL;
+    fieldHeader *header = NULL, *baseHeader = NULL;
 
 
     if(argc == 1 || argc > 3)
@@ -186,7 +185,7 @@ int main(int argc, char *argv[])
         numOfChars = (uint32_t)numUniqueChar;
 
         /*Step 4 - build header table */
-        header = generateHeader(ft, numOfChars);
+        header  = baseHeader = generateHeader(ft, numOfChars);
 
         int i, n = 1;
 
@@ -203,7 +202,6 @@ int main(int argc, char *argv[])
         }
 
 
-        /*freeHeader(header);*/
 
         lseek(inFd, 0,  0); /*start reading at the begging*/
 
@@ -229,7 +227,8 @@ int main(int argc, char *argv[])
             write(1, &output, sizeof(uint8_t));
         }
 
-       /* freeEveryThing(head, codeTable, ft, header);*/
+
+       freeEveryThing(head, codeTable, ft, baseHeader);
 
         /*restore stdout*/
         if(argc == 3)
