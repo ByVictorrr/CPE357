@@ -161,7 +161,6 @@ int main(int argc, char *argv[])
     /*Step 3 - build code look up table c->code*/
     codeTable = buildLookUpTable(head);
 
-
    /*if argc = 3  just switch file descriptors*/
 
     /*if there is a outfile listed*/

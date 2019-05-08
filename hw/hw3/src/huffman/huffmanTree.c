@@ -15,12 +15,24 @@ Node *buildHuffTree(int *freqTable)
             pushNewNode(&priorityQ, i, freqTable[i]);
         }
     }
-        /*if there is only one character in the table*/
+        /*
         if (size(priorityQ) == 1)
         {
             pushNewNode(&priorityQ, '\0', 1);
 
         }
+		*/
+
+		/*if tree is empty*/
+		if(priorityQ == NULL)
+			return NULL;
+
+		/*if size === 1*/
+		if(size(priorityQ) == 1)
+		{
+			poll(&priorityQ);
+			return NULL;
+		}
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {

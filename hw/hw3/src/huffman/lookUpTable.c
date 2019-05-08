@@ -5,6 +5,8 @@
 void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
  {
 
+	 if (node == NULL)
+		 return;
     if(isLeaf(node))
     {
         s[top] = '\0';
