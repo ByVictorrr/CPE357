@@ -147,22 +147,25 @@ int main(int argc, char *argv[])
     }
 
     /*Step 0 - build freq table*/
+
     ft = buildFreqTable();
 
     /*Step 1 - read one char at a time an insert at time in ft*/
     while(read(inFd, &c, sizeof(char)))
     {
-                insertToFreqTable(&ft, c);
+        insertToFreqTable(&ft, c);
     }
-    /*Step 2 - build code huffman tree*/
-    head = buildHuffTree(ft);
-    /*structure(head,0);*/
 
-    /*Step 3 - build code look up table c->code*/
-    codeTable = buildLookUpTable(head);
+    /*CURRENTLY KNOW HOW MANY UNIQUE CHARS THERE ARE*/
+    if(numUniqueChar >= 2)
+    {
+        /*case 2 - build tree if there is at least 2 char*/
+        head = buildHuffTree(ft);
+        /*case 3 - build look up table if there are at least two char*/
+        codeTable = buildLookUpTable(head);
+    }
 
    /*if argc = 3  just switch file descriptors*/
-
     /*if there is a outfile listed*/
     if( argc == 3 ) {
 
@@ -180,10 +183,10 @@ int main(int argc, char *argv[])
         /*| num of chars = numofUniqueChar|[ c1 | count of c1 ... | cn | count of cn|]  = feild header */
         numOfChars = (uint32_t)numUniqueChar;
 
-        /*Step 4 - build header table */
-        header  = baseHeader = generateHeader(ft, numOfChars);
-
-
+        /*Step 4 - build header table if there is at least one unique char*/
+        if(numUniqueChar > 0)
+        {
+            header  = baseHeader = generateHeader(ft, numOfChars);
 
         /*write header size then one header field at a time*/
         for(i =0 ; i< numOfChars+1 && n > 0; i++){
@@ -196,20 +199,24 @@ int main(int argc, char *argv[])
             }
 
         }
+        }
 
 
+
+        printf("im here : %d", numUniqueChar);
+
+        /*If num of Unique chars is 1 then dont output the body*/
+        if(numUniqueChar > 1)
+        {
 
         lseek(inFd, 0,  0); /*start reading at the begging*/
 
        /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
 
-
-
-
-
         /*Step 5 - build body (just read the file one more time and translate the code)*/
         while(read(inFd, &c, sizeof(uint8_t)) > 0) {
             /*codeTable[c].code - the code corresponding to char c*/
+    
             divisablity_by_8 = writeBits(c, strlen(codeTable[(int)c].code), &output, codeTable);
 		}
 
@@ -222,6 +229,7 @@ int main(int argc, char *argv[])
             write(1, &output, sizeof(uint8_t));
         }
 
+        }
 
        freeEveryThing(head, codeTable, ft, baseHeader);
 

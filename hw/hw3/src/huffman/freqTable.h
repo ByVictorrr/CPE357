@@ -4,7 +4,7 @@
 #define ALPHABET_SIZE 256
 #include <stdio.h>
 #include <stdlib.h>
-
+int numUniqueChar;
 int *buildFreqTable();
 void insertToFreqTable(int **ft, char c);
 void printFreqTable(int *ft);

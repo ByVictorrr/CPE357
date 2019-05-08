@@ -2,6 +2,8 @@
 /*buildFrequencyTable: takes in a string and relates
  *
  */
+numUniqueChar = 0;
+
 int *buildFreqTable()
 {
 	/*make a freq table for each character that we are encoding*/
@@ -13,7 +15,13 @@ int *buildFreqTable()
 void insertToFreqTable(int **ft, char c)
 {
 		if(*ft != NULL)
+        {
+            if(ft[0][(int)c] == 0)
+                numUniqueChar++;
+
+
 		    ft[0][(int)c]++;
+        }
 		return;
 }
 

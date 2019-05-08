@@ -1,38 +1,34 @@
 #include "huffmanTree.h"
 
-numUniqueChar = 0;
 
 
 Node *buildHuffTree(int *freqTable)
 {
     listNode *priorityQ = NULL;
+    Node *root = NULL;
     int i;
 
     for (i = 1; i<ALPHABET_SIZE; i++) {
         if (freqTable[i] > 0) {
-            numUniqueChar++;
             /*creat a new head to pqueue*/
             pushNewNode(&priorityQ, i, freqTable[i]);
         }
     }
-        /*
-        if (size(priorityQ) == 1)
-        {
-            pushNewNode(&priorityQ, '\0', 1);
+        
 
-        }
-		*/
+/*====================Special cases ===============================*/
+        /*case 1 - if numUniqueChar == 0*/
+        if (priorityQ == NULL)
+            return NULL;
 
-		/*if tree is empty*/
-		if(priorityQ == NULL)
-			return NULL;
-
-		/*if size === 1*/
+		/*Case 2 - if numUniqueChar == 1*/
 		if(size(priorityQ) == 1)
-		{
+        {
 			poll(&priorityQ);
 			return NULL;
 		}
+/*=================================================================*/
+
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
@@ -43,7 +39,7 @@ Node *buildHuffTree(int *freqTable)
            pushNode(&priorityQ, parent);
         }
 
-        Node *root = poll(&priorityQ);
+        root = poll(&priorityQ);
         numCodes = root->freq;
 
         return root;
