@@ -62,6 +62,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
    /*step 5 - build huffmanTree from freqTable*/
    if(*ft != NULL) {
        *huffmanTree = buildHuffTree(*ft);
+       /*if(*huffmanTree == NULL)*/
    }
 
 
@@ -72,8 +73,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
 /*decode left to right reading body 1000 0000 = 0x80*/
 
 /*Call after header, so left off at the first part of the body*/
-void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
-{
+void decodeBody(int inFd, int outFd, int numTotalChars,int numOfUniqueChars,  Node *huffmanTree, int *ft) {
 
     /*Step 1 - read in the file from where left off
      *
@@ -99,8 +99,7 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
 
 
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
-    for (i = numTotalChars, indexBuff = 0; i > 0 && numUniqueChar > 1 ; i--, huffmanTree = root)
-    {
+    for (i = numTotalChars, indexBuff = 0; i > 0 && huffmanTree != NULL; i--, huffmanTree = root) {
         /*Step 3 - transverse the tree until a char is found.
          *
          * - shift that current that one encodeod char till find a matching
@@ -108,40 +107,54 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
          *
          * */
 
-      /*  printf("buff[ %d ] =  %x\n", indexBuff, (uint8_t)buff[indexBuff]);;*/
+        /*  printf("buff[ %d ] =  %x\n", indexBuff, (uint8_t)buff[indexBuff]);;*/
 
-       while(!isLeaf(huffmanTree))
-       {
-           /*mask from left to right is x000 1110, is x a 1 or 0? */
-          if((buff[indexBuff] & mask) == 0 ) {
-              huffmanTree = huffmanTree->left_child;
-          }else {
-              huffmanTree = huffmanTree->right_child;
-          }
-          /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
+        while (!isLeaf(huffmanTree)) {
+            /*mask from left to right is x000 1110, is x a 1 or 0? */
+            if ((buff[indexBuff] & mask) == 0) {
+                huffmanTree = huffmanTree->left_child;
+            } else {
+                huffmanTree = huffmanTree->right_child;
+            }
+            /*shift that buffer encoded char that is one byte 0001 _ 1110 buff[indexBuff]*/
 
 
-          /*if the numCodes seen in a char is 8 then move on to the next byte*/
-          if((mask = mask >>  1) == 0)
-          {
-            indexBuff++;
-            mask = MASK_MSB;
-          }
+            /*if the numCodes seen in a char is 8 then move on to the next byte*/
+            if ((mask = mask >> 1) == 0) {
+                indexBuff++;
+                mask = MASK_MSB;
+            }
 
-       }
-
+        }
         /*Step 4 - after reading converting the code to characters write it out*/
-       if (write(outFd, &huffmanTree->c, sizeof(unsigned char)) <= 0)
-           perror("write error\n");
+        if (write(outFd, &huffmanTree->c, sizeof(unsigned char)) <= 0)
+            perror("write error\n");
 
     }
-
-    /*Step 4 - after reading converting the code to characters write it out*/
-       if (write(outFd, , sizeof(unsigned char)) <= 0)
-           perror("write error\n");
+    /*=============================CASE of one unique char*==================*/
+    if (huffmanTree == NULL) {
+        int i;
+        char ch;
+        if (numOfUniqueChars == 1) {
+            for (i = 0; i < ALPHABET_SIZE; i++) {
+                if (ft[i] > 0)
+                    ch = i;
+            }
+        }
+        while (numTotalChars != 0) {
+            if (write(outFd, &ch, sizeof(unsigned char)) <= 0) {
+                perror("write error\n");
+            }
+            numTotalChars--;
+        }
+    }
+    /*================================================================*/
 
 
 }
+
+
+
 
 void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
 {
@@ -151,7 +164,7 @@ void decodeFile(int inFd, int outFd, Node **huffmanTree, int **ft)
     int i;
 
     /*we need to write decoded msg to the outfile*/
-    decodeBody(inFd,outFd,totChars(*ft), *huffmanTree);
+    decodeBody(inFd,outFd,totChars(*ft),numUniqueChars, *huffmanTree, *ft);
 
 
 }

@@ -21,11 +21,11 @@ void insertToFreqTable(int **ft, unsigned char c)
 
 		if(*ft != NULL)
         {
-            if(ft[0][(int)c] == 0) {
+            if(ft[0][(unsigned char)c] == 0) {
                 numUniqueChar++;
             }
 
-		    ft[0][(int)c]++;
+		    ft[0][(unsigned char)c]++;
         }
 		return;
 }
@@ -36,7 +36,7 @@ void printFreqTable(int *freqTable)
     for (i = 0; i < ALPHABET_SIZE; i++)
     {
         if (freqTable[i] > 0 )
-            printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);
+            printf("freqTable[ %c ] = %d\n", (unsigned char)i, freqTable[i]);
     }
 }
 
