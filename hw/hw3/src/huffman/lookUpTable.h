@@ -9,7 +9,7 @@ struct lookUpTable{
         char *code;
 };
 
-void initLookUpTable(Node *node, unsigned char *s, int top ,struct lookUpTable **table);
+void initLookUpTable(Node *node, char *s, long top ,struct lookUpTable **table);
 struct lookUpTable *buildLookUpTable(Node *root);
 void printLookUpTable(struct lookUpTable *table);
 void freeLookUpTable(struct lookUpTable *table);

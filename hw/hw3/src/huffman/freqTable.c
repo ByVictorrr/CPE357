@@ -13,7 +13,6 @@ int *buildFreqTable()
 	for(i=0; i< ALPHABET_SIZE; i++)
 	    freq[i]=0;
 
-
 	return freq;
 }
 

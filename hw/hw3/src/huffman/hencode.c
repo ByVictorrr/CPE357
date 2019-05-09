@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 {
 
     int inFd, outFd, outSavedFd, *ft = NULL;
-    char c;
+    unsigned char c;
     Node *head = NULL;
     struct lookUpTable *codeTable = NULL;
     uint32_t numOfChars;
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     ft = buildFreqTable();
 
     /*Step 1 - read one char at a time an insert at time in ft*/
-    while(read(inFd, &c, sizeof(char)))
+    while(read(inFd, &c, sizeof(unsigned char)))
     {
         insertToFreqTable(&ft, c);
     }
@@ -163,13 +163,12 @@ int main(int argc, char *argv[])
         /*case 2 - build tree if there is at least 2 char*/
         head = buildHuffTree(ft);
         /*case 3 - build look up table if there are at least two char*/
-        codeTable = buildLookUpTable(head);
+        if((codeTable = buildLookUpTable(head)) == NULL)
+            exit(-1);
     }
 
-
-
-    printFreqTable(ft);
     printLookUpTable(codeTable);
+
 
    /*if argc = 3  just switch file descriptors*/
     /*if there is a outfile listed*/

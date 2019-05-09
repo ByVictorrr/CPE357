@@ -16,7 +16,6 @@ Node *buildHuffTree(int *freqTable)
         }
     }
         
-        transverse(priorityQ);
 /*====================Special cases ===============================*/
         /*case 1 - if numUniqueChar == 0*/
         if (priorityQ == NULL)
