@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 int *buildFreqTable();
-void insertToFreqTable(int **ft, char c);
+void insertToFreqTable(int **ft, unsigned char c);
 void printFreqTable(int *ft);
 void freeFreqTable(int *ft);
 

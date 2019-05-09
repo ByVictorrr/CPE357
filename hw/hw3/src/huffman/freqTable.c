@@ -17,7 +17,7 @@ int *buildFreqTable()
 	return freq;
 }
 
-void insertToFreqTable(int **ft, char c)
+void insertToFreqTable(int **ft, unsigned char c)
 {
 
 		if(*ft != NULL)

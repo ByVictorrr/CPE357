@@ -2,11 +2,9 @@
 
 
 
-void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
+void initLookUpTable(Node *node, unsigned char *s, int top ,struct lookUpTable **table)
  {
 
-	 if (node == NULL)
-		 return;
     if(isLeaf(node))
     {
         s[top] = '\0';
@@ -32,7 +30,7 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
  struct lookUpTable *buildLookUpTable(Node *root)
 {
     struct lookUpTable *table = (struct lookUpTable*)calloc(ALPHABET_SIZE,sizeof(struct lookUpTable));
-    char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
+    unsigned char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
     initLookUpTable(root,s, 0 ,&table);
     free(s);
     return table;

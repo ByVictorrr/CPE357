@@ -166,7 +166,7 @@ int totChars(int *ft)
 
     int j;
 
-    for (j = 1; j < ALPHABET_SIZE; j++) {
+    for (j = 0; j < ALPHABET_SIZE; j++) {
         if (ft[j] > 0)
             tot += ft[j];
     }
