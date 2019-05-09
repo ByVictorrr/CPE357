@@ -219,10 +219,13 @@ int main(int argc, char *argv[])
 
 		/*Step 6 - check if final add output if no div by 8*/
         /*printf("div 8 check %d", divisablity_by_8);*/
-		if(divisablity_by_8 != 8)
+
+
+		if(divisablity_by_8 != BYTE)
 		{
 		    /*shift it to fill in missing zeros*/
-			output = output << (8 - divisablity_by_8);
+            printf("%d", 8-divisablity_by_8);
+			output = output << (8-divisablity_by_8);
             write(1, &output, sizeof(uint8_t));
         }
 

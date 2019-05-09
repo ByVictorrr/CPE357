@@ -28,7 +28,7 @@ void insertToFreqTable(int **ft, char c)
 void printFreqTable(int *freqTable)
 {
     int i;
-    for (i = 1; i < ALPHABET_SIZE; i++)
+    for (i = 0; i < ALPHABET_SIZE; i++)
     {
         if (freqTable[i] > 0 )
             printf("freqTable[ %c ] = %d\n", (char)i, freqTable[i]);

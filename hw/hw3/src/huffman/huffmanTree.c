@@ -8,7 +8,7 @@ Node *buildHuffTree(int *freqTable)
     Node *root = NULL;
     int i;
 
-    for (i = 1; i<ALPHABET_SIZE; i++) {
+    for (i = 0; i<ALPHABET_SIZE; i++) {
         if (freqTable[i] > 0) {
             /*creat a new head to pqueue*/
             pushNewNode(&priorityQ, i, freqTable[i]);

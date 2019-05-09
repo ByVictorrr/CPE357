@@ -10,7 +10,9 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
     if(isLeaf(node))
     {
         s[top] = '\0';
-		(*table)[node->c].code = (char*)calloc(ALPHABET_SIZE,sizeof(char));
+
+		(*table)[node->c].code = (char*)calloc(strlen(s),sizeof(char));
+
 		if(s!=NULL)
 		    strcpy((*table)[node->c].code, s);
     }
@@ -42,7 +44,7 @@ void freeLookUpTable(struct lookUpTable *table) {
     {
         int i;
         /*free each character corresonding to that code*/
-        for (i = 1; i < ALPHABET_SIZE; i++)
+        for (i = 0; i < ALPHABET_SIZE; i++)
             if(table[i].code != NULL) {
                 free(table[i].code);
             }
