@@ -39,6 +39,20 @@ void initLookUpTable(Node *node, char *s, int top ,struct lookUpTable **table)
 }
 
 
+
+void printLookUpTable(struct lookUpTable *table) {
+    if (table != NULL)
+    {
+        int i;
+        /*free each character corresonding to that code*/
+        for (i = 0; i < ALPHABET_SIZE; i++)
+            if(table[i].code != NULL) {
+                printf("0x%x: %s\n", i, table[i].code);
+            }
+    }
+    return;
+}
+
 void freeLookUpTable(struct lookUpTable *table) {
     if (table != NULL)
     {

@@ -11,11 +11,12 @@ Node *buildHuffTree(int *freqTable)
     for (i = 0; i<ALPHABET_SIZE; i++) {
         if (freqTable[i] > 0) {
             /*creat a new head to pqueue*/
+
             pushNewNode(&priorityQ, i, freqTable[i]);
         }
     }
         
-
+        transverse(priorityQ);
 /*====================Special cases ===============================*/
         /*case 1 - if numUniqueChar == 0*/
         if (priorityQ == NULL)

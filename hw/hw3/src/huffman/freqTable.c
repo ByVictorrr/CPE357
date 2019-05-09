@@ -2,23 +2,29 @@
 /*buildFrequencyTable: takes in a string and relates
  *
  */
-numUniqueChar = 0;
+int numUniqueChar = 0;
 
 int *buildFreqTable()
 {
 	/*make a freq table for each character that we are encoding*/
-	int *freq = (int *)calloc(2*ALPHABET_SIZE,sizeof(int));
+	int *freq = (int *)malloc(ALPHABET_SIZE*sizeof(int));
+
+    int i;
+	for(i=0; i< ALPHABET_SIZE; i++)
+	    freq[i]=0;
+
 
 	return freq;
 }
 
 void insertToFreqTable(int **ft, char c)
 {
+
 		if(*ft != NULL)
         {
-            if(ft[0][(int)c] == 0)
+            if(ft[0][(int)c] == 0) {
                 numUniqueChar++;
-
+            }
 
 		    ft[0][(int)c]++;
         }

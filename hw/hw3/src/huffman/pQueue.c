@@ -5,6 +5,12 @@ listNode *newListNode(char c, int freq, Node *left , Node *right)
     listNode *new = (listNode*)malloc(sizeof(listNode));
 
     new->curr = newNode(c,freq, left, right);
+
+    if(!new->curr || !new)
+    {
+        printf("New or curr is null\n");
+        exit(-1);
+    }
     new->next=NULL;
     return new;
 }
@@ -18,8 +24,8 @@ int size(listNode *head)
        return 1;
 
    /*count  has to be at least 1 by time to get here*/
-   int count;
-   count =1;
+   int count = 1;
+
    while (head->next)
    {
        head=head->next;
@@ -150,7 +156,9 @@ void pushNode(listNode **head, listNode *parent) {
 void pop(listNode ** head)
 {
     listNode *temp = *head;
+
     (*head) = (*head)->next;
+
     free(temp->curr);
     free(temp);
 }

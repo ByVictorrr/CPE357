@@ -158,13 +158,18 @@ int main(int argc, char *argv[])
     }
 
     /*CURRENTLY KNOW HOW MANY UNIQUE CHARS THERE ARE*/
-    if(numUniqueChar >= 2)
+    if(numUniqueChar >= 2 )
     {
         /*case 2 - build tree if there is at least 2 char*/
         head = buildHuffTree(ft);
         /*case 3 - build look up table if there are at least two char*/
         codeTable = buildLookUpTable(head);
     }
+
+
+
+    printFreqTable(ft);
+    printLookUpTable(codeTable);
 
    /*if argc = 3  just switch file descriptors*/
     /*if there is a outfile listed*/
