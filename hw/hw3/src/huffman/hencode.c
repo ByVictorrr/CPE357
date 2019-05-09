@@ -11,7 +11,7 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
 
     header = (fieldHeader*)calloc( numUniqueChars + 1 ,sizeof(fieldHeader));
 
-    for ( i=1; i<ALPHABET_SIZE; i++)
+    for ( i=0; i<ALPHABET_SIZE; i++)
     {
         if(ft[i] > 0) {
             /*insert into header*/
@@ -128,6 +128,7 @@ int main(int argc, char *argv[])
     uint32_t numOfChars;
     fieldHeader *header = NULL, *baseHeader = NULL;
     uint8_t output;
+    uint32_t output_for_nothing = 0;
     int divisablity_by_8;
     int i, n = 1;
 
@@ -202,34 +203,42 @@ int main(int argc, char *argv[])
         }
 
 
-        /*If num of Unique chars is 1 then dont output the body*/
+
+    /*==============Case (numUniqueChar > 1 ) we need to ouput body=================*/
         if(numUniqueChar > 1)
         {
 
-        lseek(inFd, 0,  0); /*start reading at the begging*/
+	        lseek(inFd, 0,  0); /*start reading at the begging*/
 
-       /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
+	       /*the max number numCodes can represent if there all 1's - 2^{numcodes}  + (1) plus if we need to pad 00's*/
 
-        /*Step 5 - build body (just read the file one more time and translate the code)*/
-        while(read(inFd, &c, sizeof(uint8_t)) > 0) {
-            /*codeTable[c].code - the code corresponding to char c*/
-    
-            divisablity_by_8 = writeBits(c, strlen(codeTable[(int)c].code), &output, codeTable);
-		}
+	        /*Step 5 - build body (just read the file one more time and translate the code)*/
+	        while(read(inFd, &c, sizeof(uint8_t)) > 0) {
+	            /*codeTable[c].code - the code corresponding to char c*/
 
-		/*Step 6 - check if final add output if no div by 8*/
-        /*printf("div 8 check %d", divisablity_by_8);*/
+	            divisablity_by_8 = writeBits(c, strlen(codeTable[(int)c].code), &output, codeTable);
+			}
+
+			/*Step 6 - check if final add output if no div by 8*/
+	        /*printf("div 8 check %d", divisablity_by_8);*/
 
 
-		if(divisablity_by_8 != BYTE)
-		{
-		    /*shift it to fill in missing zeros*/
-            printf("%d", 8-divisablity_by_8);
-			output = output << (8-divisablity_by_8);
-            write(1, &output, sizeof(uint8_t));
+			if(divisablity_by_8 != BYTE)
+			{
+			    /*shift it to fill in missing zeros*/
+				output = output << divisablity_by_8;
+	            write(1, &output, sizeof(uint8_t));
+	        }
+
         }
 
+        /*==============Case (numUniqueChar ==0 ) Output 4 zero bytes if nothing in the file=================*/
+        if(numUniqueChar==0){
+            write(1, &output_for_nothing, sizeof(uint32_t));
         }
+        /*======================================================================================================*/
+
+
 
        freeEveryThing(head, codeTable, ft, baseHeader);
 

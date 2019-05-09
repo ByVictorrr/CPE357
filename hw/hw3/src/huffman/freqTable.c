@@ -7,7 +7,7 @@ numUniqueChar = 0;
 int *buildFreqTable()
 {
 	/*make a freq table for each character that we are encoding*/
-	int *freq = (int *)calloc(ALPHABET_SIZE,sizeof(int));
+	int *freq = (int *)calloc(2*ALPHABET_SIZE,sizeof(int));
 
 	return freq;
 }
