@@ -11,7 +11,7 @@ void initLookUpTable(Node *node, char *s, long top ,struct lookUpTable **table)
     {
         s[top] = '\0';
 
-		(*table)[c].code = (char*)calloc(strlen(s)+1,sizeof(char));
+		(*table)[c].code = (char*)calloc(strlen(s),sizeof(char));
 
 		if(s!=NULL) {
             strcpy((*table)[c].code, s);
@@ -35,7 +35,6 @@ void initLookUpTable(Node *node, char *s, long top ,struct lookUpTable **table)
     struct lookUpTable *table = (struct lookUpTable*)calloc(ALPHABET_SIZE+1,sizeof(struct lookUpTable));
     char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
     initLookUpTable(root,s, 0 ,&table);
-
     free(s);
     return table;
 }

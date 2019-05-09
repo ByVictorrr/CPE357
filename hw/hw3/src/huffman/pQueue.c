@@ -1,6 +1,6 @@
 #include "pQueue.h"
 
-listNode *newListNode(char c, int freq, Node *left , Node *right)
+listNode *newListNode(unsigned char c, int freq, Node *left , Node *right)
 {
     listNode *new = (listNode*)malloc(sizeof(listNode));
 
@@ -29,7 +29,7 @@ int size(listNode *head)
    return count;
 }
 
-void pushNewNode(listNode **head, char c, int freq) {
+void pushNewNode(listNode **head, unsigned char c, int freq) {
 
     listNode *beg = *head; /*get address of first head*/
 
