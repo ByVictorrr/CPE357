@@ -35,7 +35,7 @@ Node *buildHuffTree(int *freqTable)
            Node * left = poll(&priorityQ);
            Node * right = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq + left->freq, left, right);
+           listNode *parent = newListNode(-1, right->freq + left->freq, left, right);
            pushNode(&priorityQ, parent);
         }
 

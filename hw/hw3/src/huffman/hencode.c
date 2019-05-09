@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
             exit(-1);
     }
 
-   /* printLookUpTable(codeTable);*/
+   printLookUpTable(codeTable);
 
 
    /*if argc = 3  just switch file descriptors*/
