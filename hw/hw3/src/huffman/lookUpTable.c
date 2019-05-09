@@ -5,15 +5,16 @@
 void initLookUpTable(Node *node, char *s, long top ,struct lookUpTable **table)
  {
 
+    unsigned char c = (unsigned char)node->c;
+
     if(isLeaf(node))
     {
         s[top] = '\0';
 
-		(*table)[node->c].code = (char*)calloc(strlen(s),sizeof(char));
+		(*table)[c].code = (char*)calloc(strlen(s)+1,sizeof(char));
 
 		if(s!=NULL) {
-		    printf("size of ");
-            strcpy((*table)[node->c].code, s);
+            strcpy((*table)[c].code, s);
         }
 
     }
@@ -31,9 +32,10 @@ void initLookUpTable(Node *node, char *s, long top ,struct lookUpTable **table)
 
  struct lookUpTable *buildLookUpTable(Node *root)
 {
-    struct lookUpTable *table = (struct lookUpTable*)calloc(ALPHABET_SIZE,sizeof(struct lookUpTable));
+    struct lookUpTable *table = (struct lookUpTable*)calloc(ALPHABET_SIZE+1,sizeof(struct lookUpTable));
     char *s=(char*)calloc(ALPHABET_SIZE,sizeof(char));
     initLookUpTable(root,s, 0 ,&table);
+
     free(s);
     return table;
 }

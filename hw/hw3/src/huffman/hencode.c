@@ -9,14 +9,14 @@ fieldHeader *generateHeader(int *ft, int numUniqueChars)
     int i;
     int header_inc = 0;
 
-    header = (fieldHeader*)calloc( numUniqueChars + 1 ,sizeof(fieldHeader));
+    header = (fieldHeader*)calloc( numUniqueChars ,sizeof(fieldHeader));
 
     for ( i=0; i<ALPHABET_SIZE; i++)
     {
         if(ft[i] > 0) {
             /*insert into header*/
-            header[header_inc].frequency = (uint32_t) ft[i];
-            header[header_inc].character = (uint8_t) i;
+            header[(unsigned char)header_inc].frequency = (uint32_t) ft[i];
+            header[(unsigned char)header_inc].character = (uint8_t) i;
             header_inc++;
         }
 
@@ -64,7 +64,7 @@ int writeBits(char c, int lenCode, uint8_t *byte, struct lookUpTable *codeTable)
     if (lenCode == 0)
         return 0;
 
-    temp = codeTable[(int)c].code;
+    temp = codeTable[(unsigned char)c].code;
     /*Step 2 - go through each characters code and mask and shift save to byte*/
     for (i = 0; i < lenCode; i++) {
 
@@ -106,7 +106,7 @@ int numBitsOfCode(struct lookUpTable *table)
     int numBits = 0;
     int j;
     if(table != NULL)
-        for ( j =1; j < ALPHABET_SIZE; ++j)
+        for ( j =0; j < ALPHABET_SIZE; ++j)
             if (table[j].code != NULL) {
                 numBits += strlen(table[j].code);
                 printf("character: %c,   code length : %ld , for %s\n", j, strlen(table[j].code), table[j].code);
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
             exit(-1);
     }
 
-    printLookUpTable(codeTable);
+   /* printLookUpTable(codeTable);*/
 
 
    /*if argc = 3  just switch file descriptors*/
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
 	        while(read(inFd, &c, sizeof(uint8_t)) > 0) {
 	            /*codeTable[c].code - the code corresponding to char c*/
 
-	            divisablity_by_8 = writeBits(c, strlen(codeTable[(int)c].code), &output, codeTable);
+	            divisablity_by_8 = writeBits(c, strlen(codeTable[(unsigned)c].code), &output, codeTable);
 			}
 
 			/*Step 6 - check if final add output if no div by 8*/

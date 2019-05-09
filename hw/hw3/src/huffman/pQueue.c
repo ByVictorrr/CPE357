@@ -6,11 +6,6 @@ listNode *newListNode(char c, int freq, Node *left , Node *right)
 
     new->curr = newNode(c,freq, left, right);
 
-    if(!new->curr || !new)
-    {
-        printf("New or curr is null\n");
-        exit(-1);
-    }
     new->next=NULL;
     return new;
 }
