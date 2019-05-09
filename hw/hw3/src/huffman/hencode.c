@@ -202,9 +202,6 @@ int main(int argc, char *argv[])
         }
 
 
-
-        printf("im here : %d", numUniqueChar);
-
         /*If num of Unique chars is 1 then dont output the body*/
         if(numUniqueChar > 1)
         {
