@@ -54,7 +54,7 @@ int decodeHeader(int inFd, Node **huffmanTree, int **ft)
         }
 
         /*printf("error for: %c think %d\n", c , ft_adder);*/
-        ft[0][c] = ft_adder;
+        ft[0][(unsigned char)c] = ft_adder;
 
     }
     /*printFreqTable(*ft);*/
@@ -98,14 +98,8 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
     numCodes = 0;
 
 
-/*
-   int k ;
-    for(k=0; k<6; k++),
-        printf("buffcool[ %d ] = %x\n", k, (uint8_t)buff[k]);
-        */
-
     /*Step 2 - go through the buffer - EOF indicator is for this buffer is '\0'*/
-    for (i = numTotalChars, indexBuff = 0; i > 0; i--, huffmanTree = root)
+    for (i = numTotalChars, indexBuff = 0; i > 0 && numUniqueChar > 1 ; i--, huffmanTree = root)
     {
         /*Step 3 - transverse the tree until a char is found.
          *
@@ -141,6 +135,11 @@ void decodeBody(int inFd, int outFd, int numTotalChars, Node *huffmanTree)
            perror("write error\n");
 
     }
+
+    /*Step 4 - after reading converting the code to characters write it out*/
+       if (write(outFd, , sizeof(unsigned char)) <= 0)
+           perror("write error\n");
+
 
 }
 

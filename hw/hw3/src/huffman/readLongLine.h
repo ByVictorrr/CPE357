@@ -23,20 +23,16 @@
 
 
 /*======================lines memory=================================*/
-unsigned char *buff;
+char *buff;
 /*===================================================================*/
 
 /*======================Current line buffer=========================*/
-unsigned char *pbuff, *prev;
+char *pbuff, *prev;
 /*==================================================================*/
-
+int index;
 /*================count number of lines==================*/
-unsigned numLines ;
-unsigned sizeLines;
 
-/*=======================================================*/
-
-unsigned char *read_long_line(int inFd);
-void freeBuffs(unsigned char *buff);
-void printbincharpad(unsigned char c);
+char *read_long_line(int inFd);
+void freeBuffs(char *buff);
+void printbincharpad(char c);
 #endif
