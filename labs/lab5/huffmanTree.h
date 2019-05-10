@@ -5,8 +5,7 @@
 
 #define ALPHABET_SIZE 256
 
-enum boolean{FALSE,TRUE};
-int numUniqueChar;
+typedef enum boolean{FALSE,TRUE} bool;
 int numCodes;
 
 Node *buildHuffTree(int *freqTable);

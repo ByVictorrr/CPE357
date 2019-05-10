@@ -1,44 +1,45 @@
 #include "huffmanTree.h"
 
-numUniqueChar = 0;
 
 
 Node *buildHuffTree(int *freqTable)
 {
     listNode *priorityQ = NULL;
-
+    Node *root = NULL;
     int i;
 
-    for (i = 1; i<ALPHABET_SIZE; i++)
-        if(freqTable[i] >0)
-        {
-                numUniqueChar++;
-                /*creat a new head to pqueue*/
-                pushNewNode(&priorityQ, i, freqTable[i]);
+    for (i = 0; i<ALPHABET_SIZE; i++) {
+        if (freqTable[i] > 0) {
+            /*creat a new head to pqueue*/
 
+            pushNewNode(&priorityQ, (unsigned char)i, freqTable[i]);
         }
-        /*if there is only one character in the table*/
-        if (size(priorityQ) == 1)
-        {
-            pushNewNode(&priorityQ, '\0', 1);
+    }
+        
+/*====================Special cases ===============================*/
+        /*case 1 - if numUniqueChar == 0*/
+        if (priorityQ == NULL)
+            return NULL;
 
-        }
+		/*Case 2 - if numUniqueChar == 1*/
+		if(size(priorityQ) == 1)
+        {
+			poll(&priorityQ);
+			return NULL;
+		}
+/*=================================================================*/
+
         /*while there is more than one character in the pque*/
         while(size(priorityQ) > 1)
         {
            Node * left = poll(&priorityQ);
            Node * right = poll(&priorityQ);
            /*wrap parent in a listNode*/
-           listNode *parent = newListNode('\0', right->freq + left->freq, left, right);
-
-
+           listNode *parent = newListNode('\0', (unsigned int)right->freq + (unsigned int)left->freq, left, right);
            pushNode(&priorityQ, parent);
-
         }
 
-        Node *root = poll(&priorityQ);
-
-
+        root = poll(&priorityQ);
         numCodes = root->freq;
 
         return root;
@@ -71,5 +72,6 @@ void freeHuffmanTree(Node *tree)
     else{
         freeHuffmanTree(tree->left_child);
         freeHuffmanTree(tree->right_child);
+        free(tree);
     }
 }

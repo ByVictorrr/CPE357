@@ -6,7 +6,7 @@
 
 
 
-Node *newNode(char c, int freq, Node *left, Node *right)
+Node *newNode(unsigned char c, int freq, Node *left, Node *right)
 {
 	 Node *new;
 	 if ((new = (Node*)malloc(sizeof(Node))) == NULL)
@@ -21,7 +21,7 @@ Node *newNode(char c, int freq, Node *left, Node *right)
 	return new;
 }
 
-void padding ( char ch, int n ){
+void padding ( unsigned char ch, int n ){
     int i;
 
     for ( i = 0; i < n; i++ )

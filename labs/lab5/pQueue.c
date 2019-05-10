@@ -1,10 +1,11 @@
 #include "pQueue.h"
 
-listNode *newListNode(char c, int freq, Node *left , Node *right)
+listNode *newListNode(unsigned char c, int freq, Node *left , Node *right)
 {
     listNode *new = (listNode*)malloc(sizeof(listNode));
 
     new->curr = newNode(c,freq, left, right);
+
     new->next=NULL;
     return new;
 }
@@ -18,8 +19,8 @@ int size(listNode *head)
        return 1;
 
    /*count  has to be at least 1 by time to get here*/
-   int count;
-   count =1;
+   int count = 1;
+
    while (head->next)
    {
        head=head->next;
@@ -28,7 +29,7 @@ int size(listNode *head)
    return count;
 }
 
-void pushNewNode(listNode **head, char c, int freq) {
+void pushNewNode(listNode **head, unsigned char c, int freq) {
 
     listNode *beg = *head; /*get address of first head*/
 
@@ -150,7 +151,9 @@ void pushNode(listNode **head, listNode *parent) {
 void pop(listNode ** head)
 {
     listNode *temp = *head;
+
     (*head) = (*head)->next;
+
     free(temp->curr);
     free(temp);
 }

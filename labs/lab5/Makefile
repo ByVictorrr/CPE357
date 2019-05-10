@@ -1,15 +1,15 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm
-MAIN = hencode
-OBJS = hencode.o freqTable.o lookUpTable.o node.o pQueue.o huffmanTree.o
+MAIN = htable
+OBJS = htable.o freqTable.o lookUpTable.o node.o pQueue.o huffmanTree.o
 
 all : $(MAIN)
 
-$(MAIN) : $(OBJS) hencode.h
+$(MAIN) : $(OBJS) htable.h
 	$(CC) $(CFLAGS) -o $(MAIN) $(OBJS)
 
-hencode.o : hencode.c hencode.h
-	$(CC) $(CFLAGS) -c hencode.c
+htable.o : htable.c htable.h
+	$(CC) $(CFLAGS) -c htable.c
 
 freqTable.o : freqTable.c freqTable.h
 	$(CC) $(CFLAGS) -c freqTable.c

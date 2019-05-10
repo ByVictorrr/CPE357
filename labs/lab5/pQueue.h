@@ -12,9 +12,9 @@ typedef struct nodeList{
 }listNode;
 
 
-listNode *newListNode(char c, int freq, Node *left , Node *right);
+listNode *newListNode(unsigned char c, int freq, Node *left , Node *right);
 int size(listNode *head);
-void pushNewNode(listNode **head, char c, int freq);
+void pushNewNode(listNode **head, unsigned char c, int freq);
 void pushNode(listNode **head, listNode *parent);
 void pop(listNode ** head);
 Node *peek(listNode ** head);
