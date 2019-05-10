@@ -1,13 +1,15 @@
 #include <unistd.h>
 #include <limits.h>
-
+#include <stdio.h>
 
 int main()
 {
-	long maxs[] = {sysconf(CHILD_MAX), sysconf(OPEN_MAX), sysconf(PAGE_MAX)}
+	
+	printf("sysconf(CHILD_MAX) = %d\n",sysconf(_SC_CHILD_MAX));
+	
+	printf("sysconf(OPEN_MAX) = %d\n",sysconf(_SC_OPEN_MAX));
+	printf("sysconf(PAGE_SIZE) = %d\n",sysconf(_SC_PAGE_SIZE));
 
-	while((n=write(sizeof(long),maxs, sizeof(long)) > 0 )
-		;
-
-return 0;
+	return 0;
 }
+
