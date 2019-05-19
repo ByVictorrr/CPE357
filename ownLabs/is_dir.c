@@ -42,7 +42,7 @@ int isLeafDir(char *path)
 				error("malloc err");
 			}
 			strcpy(relative_path, path);
-			strcpy(relative_path, "//");
+			strcpy(relative_path, "/");
 			strcat(relative_path, entry->d_name);
 
 			printf("relative path: %s\n", relative_path);

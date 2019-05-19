@@ -65,68 +65,6 @@ void print_file_block(struct dirent *dir_entry, int outFd)
 	
 
 	
-	
-	/*step 4 - print the content blocks (512 bytes per block)*/
-
-	/*step 5 - print */
-
-}
-
-
-/*has to be recursive*/
-void creat_Archieve(char *path)
-{
-	struct stat file_info;
-	DIR *dp;
-	struct dirent *dir_entry;
-	
-	/*Step 1 - determine if the path is a file or directory*/
-	if(stat(path, &file_info) <= 0)
-	{
-		perror("stat failed");
-		exit(EXIT_FAILURE);
-	}
-	/*Step 2 - determine What type of file it is*/
-	if (S_ISDIR(file_info.st_mode))
-	{
-		/*Step 3 - open directoy*/
-		if((dp = opendir(path)) <= 0)
-		{
-			perror("no able to open directory");
-			exit(EXIT_FAILURE);
-		}
-
-		/*Step 4 - iterate through each entry of the directory*/
-		while ((dir_entry = readdir(dp)) != NULL)
-		{
-			/*get info about file*/
-			if (stat(dir_entry->d_name, &file_info) <= 0)
-			{
-				/* code */
-			}
-			/*Case 1 - entry could be another directoy*/
-
-
-			/*case 2 - reg file */
-
-
-			/*case 3 - symlin*/
-		}
-		
-	}
-	else if(S_ISREG(file_info.st_mode))
-	{
-
-	}
-	else if (S_ISLNK(file_info.st_mode))
-	{
-
-	}else{ /*accepting no other file types*/
-		perror("not accepting type of file");
-		exit(EXIT_FAILURE);
-	}
-}
-
 
 /*[valid bit|c|t|x|v|f|S]*/
 int *get_option(char *options)
@@ -139,10 +77,10 @@ int *get_option(char *options)
 	{	
 		switch(options[i])		
 		{
-			case 'c':
+			case 'c': /*creation mode - creat archieve*/
 				option_int[1] = TRUE;
 				break;
-			case 't':
+			case 't': m    b
 				option_int[2] = TRUE;
 				break;
 			case 'x':
@@ -169,19 +107,10 @@ int *get_option(char *options)
 
 int main(int argc, char *argv[])
 {
-	char *usage = "Usage: mytar [ctxvS]f tarfile [ path [ ... ] ]\n";
-	int option[6] = {0};
-
-
+	
+	int *option;
 	int inFd, outFd;
 
-
-	if(argc != 4 || argc != 3)
-	{
-
-		write(errno(stderr), &usage, strlen(usage));
-		exit(EXIT_FAILURE);
-	}
 
 	/*Options:
 	 * c - creat an archieve
@@ -191,23 +120,40 @@ int main(int argc, char *argv[])
 	 * S - Be strict on std compliance
 	 */
 
-	/*Option 0 - f(file to be used)*/
-	if ((inFd=open(argv[2], O_RDONLY)) == -1)
+	
+	
+	/*Step 1 - validate the command line input
+		
+	[valid bit|c|t|x|v|f|S]
+	
+	*/
+	if( (argc != 4 || argc != 3) && (option = get_option(argv[1]))[0] == FALSE)
 	{
-		perror(argv[2]);
+		perror("Usage: mytar [ctxvS]f tarfile [ path [ ... ] ]\n");
 		exit(EXIT_FAILURE);
 	}
 
-
-	/*Option 1 - c creat archieve*/
-
-	/*Does argv[1] contain c?*/
-	if (strstr(argv[1],"c") != NULL)
+	/*Step 1.1 - check if valid bit is set*/
+	if(option[0] == TRUE)
 	{
-		/*create file that i*/
-	}
+		/*Step 2 - open up the */
+		if ((outFd=open(argv[2], O_WRONLY | O_TRUNC | O_CREAT) == -1)
+		{
+			perror(argv[2]);
+			exit(EXIT_FAILURE);
+		}
+		/*Case: creation and file*/
+		if (option[1] == TRUE && option[5])
+		{
 
-	/*Option 2 - */
+
+		}
+
+
+	}
+/*=============================================================*/
+	
+
 
 	
 	return 0;
