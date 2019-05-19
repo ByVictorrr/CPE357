@@ -7,7 +7,11 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+
+#define OPTION_SIZE 6
 #define HEADER_SIZE 512
+
+enum boolean{FALSE,TRUE};
 
 char header[HEADER_SIZE];
 
@@ -121,16 +125,56 @@ void creat_Archieve(char *path)
 		perror("not accepting type of file");
 		exit(EXIT_FAILURE);
 	}
-
-
 }
 
+
+/*[valid bit|c|t|x|v|f|S]*/
+int *get_option(char *options)
+{
+	int *option_int = (int *)calloc(OPTION_SIZE+1, sizeof(int);
+
+	option_int[0] = TRUE;
+
+	for(int i = 0; i< OPTION_SIZE; i++)
+	{	
+		switch(options[i])		
+		{
+			case 'c':
+				option_int[1] = TRUE;
+				break;
+			case 't':
+				option_int[2] = TRUE;
+				break;
+			case 'x':
+				option_int[3] = TRUE;
+				break;
+			case 'v':
+				option_int[4] = TRUE;
+				break;
+			case 'f':
+				option_int[5] = TRUE;
+				break;
+			case 'S':
+				option_int[6] = TRUE;
+				break;
+			default:
+				option_int[0] = FALSE;
+				break;
+		}
+
+	}
+	return option;
+}
 
 
 int main(int argc, char *argv[])
 {
 	char *usage = "Usage: mytar [ctxvS]f tarfile [ path [ ... ] ]\n";
+	int option[6] = {0};
+
+
 	int inFd, outFd;
+
 
 	if(argc != 4 || argc != 3)
 	{
@@ -168,3 +212,6 @@ int main(int argc, char *argv[])
 	
 	return 0;
 }
+
+
+
