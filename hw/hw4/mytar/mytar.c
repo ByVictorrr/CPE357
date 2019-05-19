@@ -1,19 +1,8 @@
-#include <stdio.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <string.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <stdlib.h>
+#include "mytar.h"
 
-
-#define OPTION_SIZE 6
-#define HEADER_SIZE 512
 
 enum boolean{FALSE,TRUE};
 
-char header[HEADER_SIZE];
 
 void reset_header(char *header)
 {
@@ -58,18 +47,17 @@ void print_file_block(struct dirent *dir_entry, int outFd)
 	safe_write(outFd, buff.st_mtime);
 	/*step  3.7 - write chksum*/
 	safe_write(outFd, getChkSum());
+	}
+}
 
 
 
-
-	
-
-	
 
 /*[valid bit|c|t|x|v|f|S]*/
 int *get_option(char *options)
 {
 	int *option_int = (int *)calloc(OPTION_SIZE+1, sizeof(int);
+	const int c = 1, t = 2, x = 3, v = 4, f = 5, S=6;
 
 	option_int[0] = TRUE;
 
@@ -78,22 +66,22 @@ int *get_option(char *options)
 		switch(options[i])		
 		{
 			case 'c': /*creation mode - creat archieve*/
-				option_int[1] = TRUE;
+				option_int[c] = TRUE;
 				break;
-			case 't': m    b
-				option_int[2] = TRUE;
+			case 't': 
+				option_int[t] = TRUE;
 				break;
 			case 'x':
-				option_int[3] = TRUE;
+				option_int[x] = TRUE;
 				break;
 			case 'v':
-				option_int[4] = TRUE;
+				option_int[v] = TRUE;
 				break;
 			case 'f':
-				option_int[5] = TRUE;
+				option_int[f] = TRUE;
 				break;
 			case 'S':
-				option_int[6] = TRUE;
+				option_int[S] = TRUE;
 				break;
 			default:
 				option_int[0] = FALSE;
@@ -101,6 +89,19 @@ int *get_option(char *options)
 		}
 
 	}
+	/*Check if one or more option selected*/
+	if(option_int[c]+option_int[t]+option_int[x] > 1)
+	{
+		perror("you can only choose option x,t,c at the same time\n");
+		exit(EXIT_FAILURE);
+	}
+	else if(option_int[c]+option_int[t]+option_int[x] == 0)
+	{
+		/*only f was givent */
+		perrror("you must choose one of the options x,t,c same time\n");
+		exit(EXIT_FAILURE);
+	}
+	
 	return option;
 }
 
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
 {
 	
 	int *option;
+	const int c = 1, t = 2, x = 3, v = 4, f = 5, S=6;
 	int inFd, outFd;
 
 
@@ -142,17 +144,23 @@ int main(int argc, char *argv[])
 			perror(argv[2]);
 			exit(EXIT_FAILURE);
 		}
-		/*Case: creation and file*/
-		if (option[1] == TRUE && option[5])
+		/*Case 1 : creation and file*/
+		if (option[1] == TRUE && option[5] == TRUE)
 		{
 
+		}
+		/*Case 2 : creation, file, and verbosity*/
+		else if(option[1] == TRUE && option[2] == TRUE && option[3] == TRUE)
+		{
+
+		}
+		/*Case 3: table, and file*/
+		else if(option[])
+		{
 
 		}
 
-
 	}
-/*=============================================================*/
-	
 
 
 	
