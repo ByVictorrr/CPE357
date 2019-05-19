@@ -3,9 +3,127 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+
+#define HEADER_SIZE 512
+
+char header[HEADER_SIZE];
+
+void reset_header(char *header)
+{
+	for(int i = 0; i< HEADER_SIZE; i++)
+		header[i] = '\0';
+}
+void safe_write(int out_fd, char *data)
+{
+	if (write(data, out_fd) <= 0)
+	{
+		perror("write failed");
+		exit(EXIT_FAILURE);
+	}	
+}
+
+
+void print_file_block(struct dirent *dir_entry, int outFd)
+{
+
+	struct stat buff;
+	/*Step 1 - use dir-entry to get name of file*
+
+	/Step 2 - use that name to get stat of the file*/
+	if(stat(dir_entry->d_name, &buff) <= 0)
+	{
+		perror("stat didnt work");
+		exit(EXIT_FAILURE);
+	
+	/*step 3 - print that header block (512 bytes)*/
+	/*step 3.1 - print name to archieve*/
+	safe_write(outFd, dir_entry->d_name);
+	/*step 3.2 - write mode_t*/
+	safe_write(outFd, buff.st_mode);
+	printf("Test size of size of buff: %d", sizeof(buff.st_mode));
+	/*Step 3.3 - write uid */
+	safe_write(outFd, buff.st_uid);
+	/*step 3.4 - write gid */
+	safe_write(outFd, buff.st_gid);
+	/*step 3.5 - write size */
+	safe_write(outFd, buff.st_size);
+	/*step 3.6 - write mtime*/
+	safe_write(outFd, buff.st_mtime);
+	/*step  3.7 - write chksum*/
+	safe_write(outFd, getChkSum());
 
 
 
+
+	
+
+	
+	
+	/*step 4 - print the content blocks (512 bytes per block)*/
+
+	/*step 5 - print */
+
+}
+
+
+/*has to be recursive*/
+void creat_Archieve(char *path)
+{
+	struct stat file_info;
+	DIR *dp;
+	struct dirent *dir_entry;
+	
+	/*Step 1 - determine if the path is a file or directory*/
+	if(stat(path, &file_info) <= 0)
+	{
+		perror("stat failed");
+		exit(EXIT_FAILURE);
+	}
+	/*Step 2 - determine What type of file it is*/
+	if (S_ISDIR(file_info.st_mode))
+	{
+		/*Step 3 - open directoy*/
+		if((dp = opendir(path)) <= 0)
+		{
+			perror("no able to open directory");
+			exit(EXIT_FAILURE);
+		}
+
+		/*Step 4 - iterate through each entry of the directory*/
+		while ((dir_entry = readdir(dp)) != NULL)
+		{
+			/*get info about file*/
+			if (stat(dir_entry->d_name, &file_info) <= 0)
+			{
+				/* code */
+			}
+			/*Case 1 - entry could be another directoy*/
+
+
+			/*case 2 - reg file */
+
+
+			/*case 3 - symlin*/
+		}
+		
+	}
+	else if(S_ISREG(file_info.st_mode))
+	{
+
+	}
+	else if (S_ISLNK(file_info.st_mode))
+	{
+
+	}else{ /*accepting no other file types*/
+		perror("not accepting type of file");
+		exit(EXIT_FAILURE);
+	}
+
+
+}
 
 
 
