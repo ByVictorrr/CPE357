@@ -1,48 +1,12 @@
 #include <sys/stat.h>
 #include <stdint.h>
+#include "header.c"
 
-/* HEADER FIELD LENGTHS */
-#define NAME_LEN 100
-#define MODE_LEN 8
-#define UID_LEN 8
-#define GID_LEN 8
-#define SIZE_LEN 12
-#define MTIME_LEN 12
-#define CHKSUM_LEN 8
-#define TYPEFLAG_LEN 1
-#define LINKNAME_LEN 100
-#define MAGIC_LEN 6
-#define VERSION_LEN 2
-#define UNAME_LEN 32
-#define GNAME_LEN 32
-#define DEVMAJOR_LEN 8
-#define DEVMINOR_LEN 8
-#define PREFIX_LEN 155
 
-typedef struct header{
-    uint8_t name[NAME_LEN];
-    uint8_t mode[MODE_LEN];
-    uint8_t uid[UID_LEN];
-    uint8_t gid[GID_LEN];
-    uint8_t size[SIZE_LEN];
-    uint8_t mtime[MTIME_LEN];
-    uint8_t chksumf[CHKSUM_LEN];
-    uint8_t typeflag;
-    uint8_t linkname[LINKNAME_LEN];
-    uint8_t magic[MAGIC_LEN];
-    uint8_t version[VERSION_LEN];
-    uint8_t uname[UNAME_LEN];
-    uint8_t gname[GNAME_LEN];
-    uint8_t devmajor[DEVMAJOR_LEN];
-    uint8_t devminor[DEVMINOR_LEN];
-    uint8_t prefix[PREFIX_LEN];
-}headerEntry;
 
-void print_err(char *msg)
-{
-    perror(msg);
-    exit(EXIT_FAILURE);
-}
+
+
+/*==================================================================*/
 
 
 /*creat_achieve: called when the main gets option c
@@ -60,40 +24,28 @@ void creat_archive(char **argv, int options) {
 
 
    /*Step 2 - use conditional glags to print if verbosity*/
-   if (flags == 0 || flags == 1) {
-      c = *pathname;
-      while(i < strlen(pathname)) {
-         if (c != '/' && c != '\0') {
-            printf("%c", c);
-            c = pathname[i + 1];
-         }
-         i++;
-      }
-      printf("\n");
-   }
 
-   if (S_ISDIR(curr.st_mode)) {
-      add_archive_entry(pathname, pathname, outfd, 2, flags);
+   /*Step 3 - file type check what path is */
+   if (S_ISDIR(info_file.st_mode)) {
+
+      add_entry(pathname, pathname, outfd, 2, flags);
+
       traverse(pathname, outfd, flags);
    }
    else if (S_ISREG(curr.st_mode)) {
-      add_archive_entry(pathname, pathname, outfd, 0, flags);
+      add_entry(pathname, pathname, outfd, 0, flags);
    }
 
    else if (S_ISLNK(curr.st_mode)) {
-      add_archive_entry(pathname, pathname, outfd, 1, flags);
+      add_entry(pathname, pathname, outfd, 1, flags);
    }
 }
-
-void traverse(char *pathname, int outfd, int flags) {
+/*transverse_dir: if path is a directory its used to transverse it and its subdirectories*/
+void traverse_dir(char **argv, int options) {
    struct dirent *entry;
-   struct stat curr;
+   struct stat curr_file_info;
    DIR *dp;
-   char *end;
 
-   /*printf("pathname: %s\n", pathname);*/
-   /*printf("flags: %d\n", flags);*/
-   /*printf("dab\n");*/
    if ((dp = opendir(pathname)) == NULL) {
       perror("traverse dir");
       exit(EXIT_FAILURE);
