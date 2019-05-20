@@ -39,7 +39,10 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     free(name);
 }
     
+void get_chksum()
+{
 
+}
 
 void get_typeflags(char *pathname, headerEntry *header_entry){
 
@@ -140,7 +143,7 @@ printf(" int devminor: %d\n", hdr->devminor );
 printf(" char prefix[]: %s\n", hdr->prefix );
 
 }
-
+/*
 void reset_header_entry(headerEntry *entry)
 {
 memset(hdr->name, '\0', NAME_LEN);
@@ -160,6 +163,10 @@ memset(hdr->devmajor , '\0', DEVMAJOR_LEN);
 memset(hdr->devminor , '\0', DEVMINOR_LEN);
 memset(hdr->prefix , '\0', PREFIX_LEN);
 }
+*/
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -169,11 +176,12 @@ int main(int argc, char **argv)
     get_name(argv[1], &header_entry);
     printf("pathname = : %s", header_entry.name);
     */
-
+   char *pathname = "inputs/test1";
+   int tarFd = open("outputs/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    /*Test 2- header work, expcept for gid , uname*/
-    get_stats("header.c", &header_entry);
+    get_stats(pathname, &header_entry);
     print_header(&header_entry);
-    
 
     return 0;
+
 }
