@@ -1,6 +1,6 @@
 #include <sys/stat.h>
 #include <stdio.h>
-#include
+#include <syscall.h>
 /*===================Header function and vars=====================================*/
 #define NAME_LEN 100
 #define MODE_LEN 8
@@ -91,12 +91,27 @@ void get_typeflags(char *pathname, headerEntry *header_entry){
 
 void get_linkname(char *pathname, headerEntry *header_entry)
 {
-    struct stat buff;
+    struct stat file_info;
+    char *buff = (char *)malloc(sizeof(char)*LINKNAME_LEN);
+    int fd, i;
 
     if(lstat(pathname, &buff) == -1)
         print_err("stat error in get_linkname");
+    
+    if((fd = open(pathname, O_RDONLY)) == -1)
+        print_err("open err in get_linkname");
 
-    header_entry->linkname = buff.
+    for(i = 0; read(fd, &buff, 1) != -1; i++)
+        ;
+
+    if(i<LINKNAME_LEN) /*fill with zeros*/
+    {
+        memset(buff[LINKNAME_LEN - i], '\0', LINKNAME_LEN-i);
+    }
+
+    memcpy(header_entry->linkname, buff, LINKNAME_LEN);
+
+    free(buff);
 }
 
 
@@ -118,10 +133,16 @@ void get_Stats(char *pathname, headerEntry *header_entry)
    get_typeflags(pathname, header_entry);
 
    if(header_entry->typeflag = '5')
-   {
-       get_linkname();
-   }
-
+       get_linkname(pathname, header_entry);
+   else
+       memcpy(header_entry->linkname, '\0', LINKNAME_LEN);
+    
+    header_entry->magic = "ustar";  
+    memcpy(header_entry->version, 0, VERSION_LEN);
+    memcpy(header_entry->uname, file_info.st_uid, UID_LEN);
+    memcpy(header_entry->gid, file_info.st_gid, GID_LEN);
+    memcpy(header_entry->devmajor, major(file_info.st_dev), DEVMAJOR_LEN);
+    memcpy(header_entry->devminor, minor(file_info.st_dev), DEVMINOR_LEN);
 
 }
 
@@ -129,6 +150,4 @@ void get_Stats(char *pathname, headerEntry *header_entry)
 
 
 
-
-
-
+int main(int argc i)
