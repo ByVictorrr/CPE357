@@ -1,6 +1,11 @@
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <syscall.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 /*===================Header function and vars=====================================*/
 #define NAME_LEN 100
 #define MODE_LEN 8
@@ -26,7 +31,7 @@ typedef struct header{
     uint8_t gid[GID_LEN];
     uint8_t size[SIZE_LEN];
     uint8_t mtime[MTIME_LEN];
-    uint8_t chksumf[CHKSUM_LEN];
+    uint8_t chksum[CHKSUM_LEN];
     uint8_t typeflag;
     uint8_t linkname[LINKNAME_LEN];
     uint8_t magic[MAGIC_LEN];
@@ -50,21 +55,25 @@ void print_err(char *msg)
 /*get_name : gets the name of the pathname with nothing in front*/
 void get_name(char *pathname, headerEntry *header_entry)
 {
-    char *name = (char *)malloc(sizeof(char)strlen(pathname));
+    char *name = (char *)malloc(sizeof(char)*strlen(pathname));
 
     /*Step 1- Next we shall go through and seperate the prefix and the actual name to be used in entry*/
     while((pathname = strtok(pathname, "/")) != NULL)
     {
         strcpy(name, pathname);
-        printf("<<%s>>\n", pathname)
+        /*printf("<<%s>>\n", pathname);*/
         pathname = NULL;
     }
+
+    printf("hi");
     /*Step 2- if the length of the name is to big*/
-    if(strlen(name) => NAME_LEN)
+    if(strlen(name) >= NAME_LEN)
     {
         ;
     }
-    strncpy(header_entry->name, name);
+    strncpy(header_entry->name, name, NAME_LEN);
+
+    free(name);
 }
 
 void get_typeflags(char *pathname, headerEntry *header_entry){
@@ -82,11 +91,10 @@ void get_typeflags(char *pathname, headerEntry *header_entry){
    {
        header_entry->typeflag = '\0';
    }
-   else if(S_ISLINK(file_info.st_mode))
+   else if(S_ISLNK(file_info.st_mode))
    {
        header_entry->typeflag = '5';
    }
-
 }
 
 void get_linkname(char *pathname, headerEntry *header_entry)
@@ -115,13 +123,13 @@ void get_linkname(char *pathname, headerEntry *header_entry)
 }
 
 
-void get_Stats(char *pathname, headerEntry *header_entry)
+void get_stats(char *pathname, headerEntry *header_entry)
 {
    struct stat file_info;
 
+    printf("%s\n", pathname);
    if(lstat(pathname, &file_info) == -1)
-       print_err("stat err in uid in get_uid_gid");
-
+       print_err("stat err, in get_stats function");
 
    /*Setting each member in header struct to that of pathname attribute*/
    get_name(pathname, header_entry);
@@ -137,17 +145,45 @@ void get_Stats(char *pathname, headerEntry *header_entry)
    else
        memcpy(header_entry->linkname, '\0', LINKNAME_LEN);
     
-    header_entry->magic = "ustar";  
+    strncpy(header_entry->magic, "ustar", MAGIC_LEN);
     memcpy(header_entry->version, 0, VERSION_LEN);
     memcpy(header_entry->uname, file_info.st_uid, UID_LEN);
     memcpy(header_entry->gid, file_info.st_gid, GID_LEN);
-    memcpy(header_entry->devmajor, major(file_info.st_dev), DEVMAJOR_LEN);
-    memcpy(header_entry->devminor, minor(file_info.st_dev), DEVMINOR_LEN);
+   /* memcpy(header_entry->devmajor, MAJOR(file_info.st_dev), DEVMAJOR_LEN);
+    memcpy(header_entry->devminor, MINOR(file_info.st_dev), DEVMINOR_LEN);
+    */
+   memset(header_entry->devmajor, '\0', DEVMAJOR_LEN);
+   memset(header_entry->devminor, '\0', DEVMINOR_LEN);
+}
+
+void print_header(headerEntry *hdr)
+{
+printf(" char name[]: %s\n", hdr->name );
+printf(" mode_t mode: 0%04o\n",hdr->mode );
+printf(" uid_t uid: %d\n", (int)hdr->uid );
+printf(" gid_t gid: %d\n", (int)hdr->gid );
+printf(" size_t size: %d\n", (int)hdr->size );
+printf(" time_t mtime: %d --- %s", (int)hdr->mtime, ctime(&hdr->mtime));
+printf(" int chksum: %d\n", hdr->chksum );
+printf(" char typeflag: %c\n", hdr->typeflag );
+printf(" char linkname[]: %s\n", hdr->linkname );
+printf(" char magic[]: %s\n", hdr->magic );
+printf(" char version[]: %s\n", hdr->version );
+printf(" char uname[]: %s\n", hdr->uname );
+printf(" char gname[]: %s\n", hdr->gname );
+printf(" int devmajor: %d\n", hdr->devmajor );
+printf(" int devminor: %d\n", hdr->devminor );
+printf(" char prefix[]: %s\n", hdr->prefix );
 
 }
 
 
 
+int main(int argc, char **argv)
+{
+    headerEntry header_entry;
+    get_stats(argv[1], &header_entry);
+    print_header(&header_entry);
 
-
-int main(int argc i)
+    return 0;
+}
