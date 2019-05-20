@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 /*===================Header function and vars=====================================*/
 #define NAME_LEN 100
 #define MODE_LEN 8
@@ -61,11 +62,8 @@ void get_name(char *pathname, headerEntry *header_entry)
     while((pathname = strtok(pathname, "/")) != NULL)
     {
         strcpy(name, pathname);
-        /*printf("<<%s>>\n", pathname);*/
         pathname = NULL;
     }
-
-    printf("hi");
     /*Step 2- if the length of the name is to big*/
     if(strlen(name) >= NAME_LEN)
     {
@@ -93,25 +91,25 @@ void get_typeflags(char *pathname, headerEntry *header_entry){
    }
    else if(S_ISLNK(file_info.st_mode))
    {
-       header_entry->typeflag = '5';
+       header_entry->typeflag = '2';
    }
 }
 
 void get_linkname(char *pathname, headerEntry *header_entry)
 {
     struct stat file_info;
-    char *buff = (char *)malloc(sizeof(char)*LINKNAME_LEN);
-    int fd, i;
+    char c, buff[LINKNAME_LEN];
+    int fd, i, n;
 
     if(lstat(pathname, &buff) == -1)
         print_err("stat error in get_linkname");
-    
     if((fd = open(pathname, O_RDONLY)) == -1)
         print_err("open err in get_linkname");
 
-    for(i = 0; read(fd, &buff, 1) != -1; i++)
-        ;
-
+    for(i = 0; (n=read(fd, &c, 1)) > 0 || i<= LINKNAME_LEN-1; i++)
+    {
+        buff[i] = c;
+    }
     if(i<LINKNAME_LEN) /*fill with zeros*/
     {
         memset(buff[LINKNAME_LEN - i], '\0', LINKNAME_LEN-i);
@@ -119,36 +117,34 @@ void get_linkname(char *pathname, headerEntry *header_entry)
 
     memcpy(header_entry->linkname, buff, LINKNAME_LEN);
 
-    free(buff);
-}
+   }
 
 
-void get_stats(char *pathname, headerEntry *header_entry)
+void get_stats(const char *pathname, headerEntry *header_entry)
 {
    struct stat file_info;
 
-    printf("%s\n", pathname);
    if(lstat(pathname, &file_info) == -1)
-       print_err("stat err, in get_stats function");
+       print_err("stat err, {in get_stats function");
 
    /*Setting each member in header struct to that of pathname attribute*/
    get_name(pathname, header_entry);
-   memcpy(header_entry->mode,file_info.st_mode, MODE_LEN);
-   memcpy(header_entry->uid, file_info.st_uid, UID_LEN);
-   memcpy(header_entry->gid, file_info.st_gid, GID_LEN);
-   memcpy(header_entry->size, file_info.st_size, SIZE_LEN);
-   memcpy(header_entry->mtime, file_info.st_mtime, MTIME_LEN);
+   memcpy(header_entry->mode,&file_info.st_mode, MODE_LEN);
+   memcpy(header_entry->uid, &file_info.st_uid, UID_LEN);
+   memcpy(header_entry->gid, &file_info.st_gid, GID_LEN);
+   memcpy(header_entry->size, &file_info.st_size, SIZE_LEN);
+   memcpy(header_entry->mtime, &file_info.st_mtime, MTIME_LEN);
    get_typeflags(pathname, header_entry);
 
-   if(header_entry->typeflag = '5')
+   if(header_entry->typeflag == '2')
        get_linkname(pathname, header_entry);
    else
-       memcpy(header_entry->linkname, '\0', LINKNAME_LEN);
+       memset(header_entry->linkname, '\0', LINKNAME_LEN);
     
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
-    memcpy(header_entry->version, 0, VERSION_LEN);
-    memcpy(header_entry->uname, file_info.st_uid, UID_LEN);
-    memcpy(header_entry->gid, file_info.st_gid, GID_LEN);
+    memset(header_entry->version, 0, VERSION_LEN);
+    memcpy(header_entry->uname, &file_info.st_uid, UID_LEN);
+    memcpy(header_entry->gid, &file_info.st_gid, GID_LEN);
    /* memcpy(header_entry->devmajor, MAJOR(file_info.st_dev), DEVMAJOR_LEN);
     memcpy(header_entry->devminor, MINOR(file_info.st_dev), DEVMINOR_LEN);
     */
@@ -182,7 +178,13 @@ printf(" char prefix[]: %s\n", hdr->prefix );
 int main(int argc, char **argv)
 {
     headerEntry header_entry;
-    get_stats(argv[1], &header_entry);
+
+    /*Test 1- name works
+    get_name(argv[1], &header_entry);
+    printf("pathname = : %s", header_entry.name);
+    */
+
+    get_stats("header.c", &header_entry);
     print_header(&header_entry);
 
     return 0;
