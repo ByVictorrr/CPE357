@@ -1,32 +1,4 @@
-#include <string.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdint.h>
-
-/* HEADER FIELD OFFSETS */
-#define NAME 0
-#define MODE 100
-#define UID 108
-#define GID 116
-#define SIZE 124
-#define MTIME 136
-#define CHKSUM 148
-#define TYPEFLAG 156
-#define LINKNAME 157
-#define MAGIC 257
-#define VERSION 263
-#define UNAME 265
-#define GNAME 297
-#define DEVMAJOR 329
-#define DEVMINOR 337
-#define PREFIX 345
-
-/* HEADER SIZE fields*/
-#define BLOCK_SIZE 512
-#define NAME_SIZE 100
-
-uint8_t header[BLOCK_SIZE];
+#include "header.h"
 
 void print_error(uint8_t *msg)
 {
@@ -100,22 +72,7 @@ void creat_header(uint8_t *pathname)
 
 
 
-void freeHeaderField(
-    char *name,
-    char *mode,
-    char *uid,
-    char *gid,
-    char *size,
-    char *mtime,
-    char *chksum,
-    char *linkname,
-    char *magic,
-    char *version,
-    char *uname,
-    char *gname,
-    char *devmajor,
-    char *devminor,
-    char *prefix)
+void freeHeaderEntry(he)
 {
     if(name != NULL)
         free(name);
