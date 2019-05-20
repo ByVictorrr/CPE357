@@ -13,12 +13,14 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     char *name = (char *)malloc(sizeof(char)*strlen(pathname));
     char *prefix = (char *)malloc(sizeof(char)*strlen(pathname));
     char *removal;
+    char *token;
     strcpy(prefix, pathname);
+    if( (token = strtok(pathname, "/")) !=NULL){
     /*Step 1- Next we shall go through and seperate the prefix and the actual name to be used in entry*/
-    while((pathname = strtok(pathname, "/")) != NULL)
+    while(token != NULL)
     {
-        strcpy(name, pathname);
-        pathname = NULL;
+        strcpy(name, token);
+        token = strtok(NULL, "/");
     }
     if(strlen(name) < strlen(prefix))
     {
@@ -27,6 +29,8 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     }else{
         memset(prefix,'\0', PREFIX_LEN);
     }
+    }
+
 
     /*Step 2- if the length of the name is to big*/
     if(strlen(name) >= NAME_LEN)
