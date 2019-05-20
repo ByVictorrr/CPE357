@@ -79,12 +79,13 @@ int main(int argc, char **argv)
     printf("pathname = : %s", header_entry.name);
     */
 
-   char *pathname = "inputs/test1";
-   int tarFd = open("outputs/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
+    char *pathname = "inputs/test1";
+    int tarFd = open("outputs/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    /*Test 2- header work, expcept for gid , uname*/
+    
     get_stats(pathname, &header_entry);
     print_header(&header_entry);
-     add_entry(pathname, tarFd, header_entry);
+        add_entry(pathname, tarFd, header_entry);
 
     return 0;
 

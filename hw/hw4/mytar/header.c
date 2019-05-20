@@ -129,22 +129,22 @@ void get_stats(const char *pathname, headerEntry *header_entry)
 
 void print_header(headerEntry *hdr)
 {
-printf(" char name[]: %s\n", hdr->name );
-printf(" mode_t mode: 0%04o\n",hdr->mode );
-printf(" uid_t uid: %d\n", (int)hdr->uid );
-printf(" gid_t gid: %d\n", (int)hdr->gid );
-printf(" size_t size: %d\n", (int)hdr->size );
-printf(" time_t mtime: %d --- %s", (int)hdr->mtime, ctime(&hdr->mtime));
-printf(" int chksum: %d\n", hdr->chksum );
-printf(" char typeflag: %c\n", hdr->typeflag );
-printf(" char linkname[]: %s\n", hdr->linkname );
-printf(" char magic[]: %s\n", hdr->magic );
-printf(" char version[]: %s\n", hdr->version );
-printf(" char uname[]: %s\n", hdr->uname );
-printf(" char gname[]: %s\n", hdr->gname );
-printf(" int devmajor: %d\n", hdr->devmajor );
-printf(" int devminor: %d\n", hdr->devminor );
-printf(" char prefix[]: %s\n", hdr->prefix );
+    printf(" char name[]: %s\n", hdr->name );
+    printf(" mode_t mode: 0%04o\n",hdr->mode );
+    printf(" uid_t uid: %d\n", (int)hdr->uid );
+    printf(" gid_t gid: %d\n", (int)hdr->gid );
+    printf(" size_t size: %d\n", (int)hdr->size );
+    printf(" time_t mtime: %d --- %s", (int)hdr->mtime, ctime(&hdr->mtime));
+    printf(" int chksum: %d\n", hdr->chksum );
+    printf(" char typeflag: %c\n", hdr->typeflag );
+    printf(" char linkname[]: %s\n", hdr->linkname );
+    printf(" char magic[]: %s\n", hdr->magic );
+    printf(" char version[]: %s\n", hdr->version );
+    printf(" char uname[]: %s\n", hdr->uname );
+    printf(" char gname[]: %s\n", hdr->gname );
+    printf(" int devmajor: %d\n", hdr->devmajor );
+    printf(" int devminor: %d\n", hdr->devminor );
+    printf(" char prefix[]: %s\n", hdr->prefix );
 
 }
 /*
