@@ -67,8 +67,40 @@ void get_name(char *pathname, headerEntry *header_entry)
     strncpy(header_entry->name, name);
 }
 
+void get_typeflags(char *pathname, headerEntry *header_entry){
 
-void getStats(char *pathname, headerEntry *header_entry)
+   struct stat file_info;
+
+   if(lstat(pathname, &file_info) == -1)
+       print_err("stat err in uid in get_uid_gid");
+
+   if(S_ISDIR(file_info.st_mode))
+   {
+       header_entry->typeflag = '5';
+   }
+   else if(S_ISREG(file_info.st_mode))
+   {
+       header_entry->typeflag = '\0';
+   }
+   else if(S_ISLINK(file_info.st_mode))
+   {
+       header_entry->typeflag = '5';
+   }
+
+}
+
+void get_linkname(char *pathname, headerEntry *header_entry)
+{
+    struct stat buff;
+
+    if(lstat(pathname, &buff) == -1)
+        print_err("stat error in get_linkname");
+
+    header_entry->linkname = buff.
+}
+
+
+void get_Stats(char *pathname, headerEntry *header_entry)
 {
    struct stat file_info;
 
@@ -76,10 +108,19 @@ void getStats(char *pathname, headerEntry *header_entry)
        print_err("stat err in uid in get_uid_gid");
 
 
+   /*Setting each member in header struct to that of pathname attribute*/
    get_name(pathname, header_entry);
    memcpy(header_entry->mode,file_info.st_mode, MODE_LEN);
    memcpy(header_entry->uid, file_info.st_uid, UID_LEN);
    memcpy(header_entry->gid, file_info.st_gid, GID_LEN);
+   memcpy(header_entry->size, file_info.st_size, SIZE_LEN);
+   memcpy(header_entry->mtime, file_info.st_mtime, MTIME_LEN);
+   get_typeflags(pathname, header_entry);
+
+   if(header_entry->typeflag = '5')
+   {
+       get_linkname();
+   }
 
 
 }
