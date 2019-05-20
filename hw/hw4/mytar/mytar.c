@@ -1,54 +1,9 @@
 #include "mytar.h"
-
+#include "creat.h"
 
 enum boolean{FALSE,TRUE};
 
 
-void reset_header(char *header)
-{
-	for(int i = 0; i< HEADER_SIZE; i++)
-		header[i] = '\0';
-}
-void safe_write(int out_fd, char *data)
-{
-	if (write(data, out_fd) <= 0)
-	{
-		perror("write failed");
-		exit(EXIT_FAILURE);
-	}	
-}
-
-
-void print_file_block(struct dirent *dir_entry, int outFd)
-{
-
-	struct stat buff;
-	/*Step 1 - use dir-entry to get name of file*
-
-	/Step 2 - use that name to get stat of the file*/
-	if(stat(dir_entry->d_name, &buff) <= 0)
-	{
-		perror("stat didnt work");
-		exit(EXIT_FAILURE);
-	
-	/*step 3 - print that header block (512 bytes)*/
-	/*step 3.1 - print name to archieve*/
-	safe_write(outFd, dir_entry->d_name);
-	/*step 3.2 - write mode_t*/
-	safe_write(outFd, buff.st_mode);
-	printf("Test size of size of buff: %d", sizeof(buff.st_mode));
-	/*Step 3.3 - write uid */
-	safe_write(outFd, buff.st_uid);
-	/*step 3.4 - write gid */
-	safe_write(outFd, buff.st_gid);
-	/*step 3.5 - write size */
-	safe_write(outFd, buff.st_size);
-	/*step 3.6 - write mtime*/
-	safe_write(outFd, buff.st_mtime);
-	/*step  3.7 - write chksum*/
-	safe_write(outFd, getChkSum());
-	}
-}
 
 
 
@@ -138,15 +93,10 @@ int main(int argc, char *argv[])
 	/*Step 1.1 - check if valid bit is set*/
 	if(option[0] == TRUE)
 	{
-		/*Step 2 - open up the */
-		if ((outFd=open(argv[2], O_WRONLY | O_TRUNC | O_CREAT) == -1)
-		{
-			perror(argv[2]);
-			exit(EXIT_FAILURE);
-		}
 		/*Case 1 : creation and file*/
 		if (option[1] == TRUE && option[5] == TRUE)
 		{
+		    creat_archieve()
 
 		}
 		/*Case 2 : creation, file, and verbosity*/
