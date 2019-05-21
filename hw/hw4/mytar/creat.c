@@ -19,7 +19,7 @@ void creat_archive(char **argv, int options) {
 
    /*Step 3 - file type check what path is */
    if (S_ISDIR(info_file.st_mode)) {
-
+      /*where does pathname come from*/
       add_entry(pathname, pathname, outfd, 2, flags);
 
       traverse(pathname, outfd, flags);
