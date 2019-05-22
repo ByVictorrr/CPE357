@@ -33,16 +33,12 @@ int isLeafDir(char *path)
 		/*Step 3 - iterate through that directory*/
 		while((entry = readdir(dp)) != NULL)
 		{
-			int size_name = strlen(path)+strlen(entry->d_name);
 
-			if(size_name > MAX_PATH+1){
-				error("to long of a name");
-			}
-			if((relative_path = (char *)malloc(sizeof(char)*size_name)) == NULL){
+			if((relative_path = (char *)malloc(sizeof(char)*strlen(path)+strlen(entry->d_name)+1)) == NULL){
 				error("malloc err");
 			}
 			strcpy(relative_path, path);
-			strcpy(relative_path, "/");
+			strcat(relative_path, "/");
 			strcat(relative_path, entry->d_name);
 
 			printf("relative path: %s\n", relative_path);
@@ -51,11 +47,13 @@ int isLeafDir(char *path)
 				error("stat error\n");	
 
 			/*Case 1 - could be current directory || or parent*/
-			if((strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0) && S_ISDIR(buff.st_mode))
+			if((strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) && S_ISDIR(buff.st_mode))
 			{
 				printf("shouldnt get here for non leaf%s\n",relative_path);
 				return 0;	
 			}
+
+			free(relative_path);
 		}
 	}
 	return 1;
