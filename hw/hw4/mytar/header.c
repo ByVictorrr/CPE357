@@ -89,7 +89,6 @@ void get_linkname(char *pathname, headerEntry *header_entry)
         memset(buff[LINKNAME_LEN - i], '\0', LINKNAME_LEN-i);
     }
 
-   
     memcpy(header_entry->linkname, buff, LINKNAME_LEN);
 
  }

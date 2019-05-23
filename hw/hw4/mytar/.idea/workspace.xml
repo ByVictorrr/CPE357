@@ -10,11 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3c8e889e-3175-4df3-a507-9ac8b54a961e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.vscode/ipch/207d6e12af8a0548/creat.ipch" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/ipch/207d6e12af8a0548/creat.ipch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/ipch/9f652aeb8fd9b2dd/entry.ipch" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/ipch/9f652aeb8fd9b2dd/entry.ipch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creat.c" beforeDir="false" afterPath="$PROJECT_DIR$/creat.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/entry.c" beforeDir="false" afterPath="$PROJECT_DIR$/entry.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/header.c" beforeDir="false" afterPath="$PROJECT_DIR$/header.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -125,10 +121,11 @@
     <option name="totallyTimeSpent" value="9640000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="27" y="7" width="208" height="1016" extended-state="6" />
+    <frame x="27" y="7" width="808" height="1016" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.8101266" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.51187336" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Version Control" />
@@ -161,17 +158,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/header.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/creat.c">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/header.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="72" selection-start-line="72" selection-end-line="72" />
         </state>
       </provider>
     </entry>
