@@ -3,9 +3,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
-
-void transverse_back(char *pathname)
+void transverse_back(char *pathname, ino_t inum)
 {
 	DIR *dp;
 
@@ -26,7 +26,8 @@ void transverse_back(char *pathname)
 		;
 
 	chdir("..");
-	transverse_back(dir->d_name);
+
+	transverse_back(dir->d_name, dir->);
 	
 	strcat(pwd, "/");
 	strcat(pwd, dir->d_name);

@@ -15,7 +15,9 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     char *prefix = (char *)malloc(sizeof(char)*strlen(pathname));
     char *removal;
     char *token;
+
     strcpy(prefix, pathname);
+
     if( (token = strtok(pathname, "/")) !=NULL){
     /*Step 1- Next we shall go through and seperate the prefix and the actual name to be used in entry*/
     while(token != NULL)
