@@ -27,6 +27,10 @@
 #define DEVMINOR_LEN 8
 #define PREFIX_LEN 155
 
+
+#define BLOCK_SIZE 512
+#define MAX_8_BYTES 8
+
 typedef struct header{
     uint8_t name[NAME_LEN];
     uint8_t mode[MODE_LEN];
@@ -61,5 +65,9 @@ void get_stats(const char *pathname, headerEntry *header_entry);
 void print_header(headerEntry *hdr);
 
 void reset_header_entry(headerEntry *entry);
+
+uint8_t hash_fieldHeader(char *feild, int LENGTH);
+
+void get_chksum(headerEntry *hdr);
 
 #endif
