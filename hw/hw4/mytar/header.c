@@ -56,6 +56,13 @@ void get_chksum(headerEntry *hdr)
     uint8_t init_chkSum[CHKSUM_LEN] = {' '};
     uint64_t checkSum = 0;
 
+                */
+void get_chksum(headerEntry *hdr)
+{
+    uint8_t init_chkSum[CHKSUM_LEN] = {' '};
+    uint64_t checkSum = 0;
+
+    checkSum = hash_fieldHeader(init_chkSum, CHKSUM_LEN);
     checkSum += hash_fieldHeader(hdr->name, NAME_LEN);
     checkSum += hash_fieldHeader(hhd->mode, MODE_LEN)
     checkSum += hash_fieldHeader(hdr->uid, UID_LEN );
@@ -73,6 +80,8 @@ void get_chksum(headerEntry *hdr)
     checkSum += hash_fieldHeader(hdr->devminor , NAME_LEN);
     checkSum += hash_fieldHeader(hdr->prefix , NAME_LEN);
 
+    memset(hdr->chksum,checkSum,CHKSUM_LEN);
+}
 }
 
 
