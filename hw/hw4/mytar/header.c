@@ -51,14 +51,37 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
                 - treat chksum as if it were filled up with spaces
                 
                 */
-void get_chksum()
+void get_chksum(headerEntry *hdr)
 {
     uint8_t init_chkSum[CHKSUM_LEN] = {' '};
-    uint8_t *chkSum_buff;
+    uint64_t checkSum = 0;
+
+    checkSum += hash_fieldHeader(hdr->name, NAME_LEN);
+    checkSum += hash_fieldHeader(hhd->mode, MODE_LEN)
+    checkSum += hash_fieldHeader(hdr->uid, UID_LEN );
+    checkSum += hash_fieldHeader(hint)hdr->gid , NAME_LEN);
+    checkSum += hash_fieldHeader(hint)hdr->size , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->mtime);
+    checkSum += hash_fieldHeader(hdr->chksum , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->typeflag , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->linkname , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->magic , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->version , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->uname , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->gname , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->devmajor , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->devminor , NAME_LEN);
+    checkSum += hash_fieldHeader(hdr->prefix , NAME_LEN);
+
+}
 
 
-    if(chkSum_buff = (uint8_t)malloc(sizeof(uint8_t)*ASCII_MAX))
-
+uint64_t hash_fieldHeader(char *feild, int LENGTH){
+    int i;
+    uint64_t res = 0;
+    for (i = 0; i < LENGTH; i++)
+        res += feild[i];
+    return res;    
 }
 
 void get_typeflags(char *pathname, headerEntry *header_entry){
@@ -137,6 +160,8 @@ void get_stats(const char *pathname, headerEntry *header_entry)
     */
    memset(header_entry->devmajor, '\0', DEVMAJOR_LEN);
    memset(header_entry->devminor, '\0', DEVMINOR_LEN);
+
+   get_chksum(header);
 }
 
 void print_header(headerEntry *hdr)
