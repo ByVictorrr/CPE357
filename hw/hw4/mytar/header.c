@@ -49,8 +49,7 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
 /*get_checkSum: -like a hashcode function but adds up all characters in header block, 
                 stored as ASCII string terminated by one or more nll chars
                 - treat chksum as if it were filled up with spaces
-                
-                */
+              
 void get_chksum(headerEntry *hdr)
 {
     uint8_t init_chkSum[CHKSUM_LEN] = {' '};

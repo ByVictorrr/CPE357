@@ -63,6 +63,7 @@ void traverse_dir(char **argv, int options) {
          }
 
          strcat(pathname, "/");
+         
          add_archive_entry(pathname, entry->d_name, outfd, 2, flags);
 
          traverse(pathname, outfd, flags);
