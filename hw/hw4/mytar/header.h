@@ -66,7 +66,7 @@ void print_header(headerEntry *hdr);
 
 void reset_header_entry(headerEntry *entry);
 
-uint8_t hash_fieldHeader(char *feild, int LENGTH);
+uint64_t hash_fieldHeader(char *feild, int LENGTH);
 
 void get_chksum(headerEntry *hdr);
 
