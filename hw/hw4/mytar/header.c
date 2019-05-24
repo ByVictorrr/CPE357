@@ -8,6 +8,7 @@ void print_err(char *msg)
 }
 
 
+
 /*get_name : gets the name of the pathname with nothing in front
 
 Assumption: PATHMAX > strlen(pathname)
@@ -21,12 +22,11 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     char name[NAME_LEN];
     char prefix[PREFIX_LEN];
     char arr_pathname[strlen(pathname)+1];
-    char *removal;
     char *token;
 
 
     memset(name, '\0', NAME_LEN);
-    memset(arr_pathname, '\0',strlen(pathname)+1);
+    memset(arr_pathname, '\0', strlen(pathname)+1);
     memset(prefix, '\0', PREFIX_LEN);
     strcpy(arr_pathname, pathname);
 
@@ -36,17 +36,13 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
 
 
     /*Step 1- Next we shall go through and seperate the prefix and the actual name to be used in entry*/
-    for(token=strtok(arr_pathname, "/"); token;
-     token = strtok(NULL, "/"), 
-     prefix = strcat(prefix, "/"), prefix = strcat(prefix, token)){
-        {
+    for(token=strtok(arr_pathname, "/"); token; token = strtok(NULL, "/"))
             strcpy(name, token);
             
-        }
-    }
-    /*Step 2- see if NAME_LEN < strlen(name)
-    -> if so then lets put some of name in prefix 
-    */
+    /*Step 2 - get the prefix*/
+    strncpy(prefix, pathname, strlen(pathname)-(strlen(name)+1));
+
+/*
     if(strlen(name) > NAME_LEN)
     {
         int over_size = strlen(name)  - NAME_LEN;
@@ -59,10 +55,11 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
     }else
         memset(prefix,'\0', PREFIX_LEN);
 
-
-    /*Step 2- if the length of the name is to big*/
+*/
+/*
     if(strlen(name) >= NAME_LEN)
         ;
+        */
     strncpy(header_entry->name, name, NAME_LEN);
     strncpy(header_entry->prefix, prefix, PREFIX_LEN);
 
@@ -87,7 +84,7 @@ void get_chksum(headerEntry *hdr)
     checkSum += hash_fieldHeader(hdr->size , SIZE_LEN);
     checkSum += hash_fieldHeader(hdr->mtime, MTIME_LEN);
     checkSum += hash_fieldHeader(hdr->chksum , CHKSUM_LEN);
-    checkSum += hash_fieldHeader(hdr->typeflag , TYPEFLAG_LEN);
+    checkSum += hdr->typeflag;
     checkSum += hash_fieldHeader(hdr->linkname , LINKNAME_LEN);
     checkSum += hash_fieldHeader(hdr->magic , MAGIC_LEN);
     checkSum += hash_fieldHeader(hdr->version , VERSION_LEN);
@@ -101,11 +98,11 @@ void get_chksum(headerEntry *hdr)
 }
 
 
-uint64_t hash_fieldHeader(char *feild, int LENGTH){
+uint64_t hash_fieldHeader(uint8_t *field, int LENGTH){
     int i;
     uint64_t res = 0;
     for (i = 0; i < LENGTH; i++)
-        res += feild[i];
+        res += field[i];
     return res;    
 }
 
@@ -158,9 +155,14 @@ void get_linkname(char *pathname, headerEntry *header_entry)
 void get_stats(const char *pathname, headerEntry *header_entry)
 {
    struct stat file_info;
+   struct passwd *pass;
+   struct group *grp;
 
    if(lstat(pathname, &file_info) == -1)
        print_err("stat err, {in get_stats function");
+
+    pass=getpwuid(file_info.st_uid);
+    grp=getgrgid(file_info.st_gid);
 
    /*Setting each member in header struct to that of pathname attribute*/
    get_name_prefix(pathname, header_entry);
@@ -177,9 +179,10 @@ void get_stats(const char *pathname, headerEntry *header_entry)
        memset(header_entry->linkname, '\0', LINKNAME_LEN);
     
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
-    memset(header_entry->version, 0, VERSION_LEN);
-    memcpy(header_entry->uname, &file_info.st_uid, UID_LEN);
-    memcpy(header_entry->gid, &file_info.st_gid, GID_LEN);
+    memset(header_entry->version, '\0', VERSION_LEN);
+
+    memcpy(header_entry->uname, pass->pw_name, UID_LEN);
+    memcpy(header_entry->gname, grp->gr_name, GID_LEN);
    /* memcpy(header_entry->devmajor, MAJOR(file_info.st_dev), DEVMAJOR_LEN);
     memcpy(header_entry->devminor, MINOR(file_info.st_dev), DEVMINOR_LEN);
     */
@@ -251,19 +254,19 @@ int main(int argc, char **argv)
 {
     headerEntry header_entry;
 
-    /*Test 1- name works*/
+    /*Test 1- name works
     get_name_prefix("/home/victor/file.asm", &header_entry);
-    printf("name = : %s", header_entry.name);
+    printf("name = : %s\n", header_entry.name);
     printf("prefix = : %s", header_entry.prefix);
+   */ 
 
-
-   /*char *pathname = "inputs/test1";
+   char *pathname = "inputs/test1";
    int tarFd = open("outputs/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
-   /*Test 2- header work, expcept for gid , uname
+   struct stat buff;
+    stat(pathname, &buff);
+   /*Test 2- header work, expcept for gid , uname*/
     get_stats(pathname, &header_entry);
     print_header(&header_entry);
-
-*/
     return 0;
 
 }

@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pwd.h>
+#include <grp.h>
 #include <time.h>
 /*===================Header function and vars=====================================*/
 #define NAME_LEN 100
@@ -65,8 +67,7 @@ void get_stats(const char *pathname, headerEntry *header_entry);
 void print_header(headerEntry *hdr);
 
 void reset_header_entry(headerEntry *entry);
-
-uint64_t hash_fieldHeader(char *feild, int LENGTH);
+uint64_t hash_fieldHeader(uint8_t *field, int LENGTH);
 
 void get_chksum(headerEntry *hdr);
 
