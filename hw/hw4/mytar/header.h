@@ -32,6 +32,8 @@
 
 #define BLOCK_SIZE 512
 #define MAX_8_BYTES 8
+#define OCTAL 8
+#define ASCII_OFFSET 48
 
 typedef struct header{
     uint8_t name[NAME_LEN];
@@ -53,22 +55,19 @@ typedef struct header{
 }headerEntry;
 
 
+/*=============UTILITY FUNCTIONS=================================*/
 void print_err(char *msg);
-
-/*get_name : gets the name of the pathname with nothing in front*/
-void get_name_prefix(char *pathname, headerEntry *header_entry);
-    
-void get_typeflags(char *pathname, headerEntry *header_entry);
-
-void get_linkname(char *pathname, headerEntry *header_entry);
-
-void get_stats(const char *pathname, headerEntry *header_entry);
-
-void print_header(headerEntry *hdr);
-
-void reset_header_entry(headerEntry *entry);
 uint64_t hash_fieldHeader(uint8_t *field, int LENGTH);
-
+void dec_to_oct_asciiString(uint64_t *buff, unsigned long value ,int LENGTH);
+int insert_special_int(char *where, size_t size, int32_t val);
+/*=================================================================*/
+/*=================HEADER FUNCTIONS================================*/
+void get_name_prefix(char *pathname, headerEntry *header_entry);
+void get_typeflags(char *pathname, headerEntry *header_entry);
+void get_linkname(char *pathname, headerEntry *header_entry);
 void get_chksum(headerEntry *hdr);
-
+void get_stats(const char *pathname, headerEntry *header_entry);
+void reset_header_entry(headerEntry *entry);
+void print_header(headerEntry *hdr);
+/*===========================================================*/
 #endif
