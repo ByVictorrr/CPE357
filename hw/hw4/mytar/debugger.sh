@@ -1,4 +1,5 @@
-
-gdb -x debugger.gdb mytar
-valgrind ./mytar cf outputs/TreePrefix inputs/TreePrefix
+rm header
+gcc -o header header.c
+#gdb -x debugger.gdb header
+valgrind header
 

@@ -96,8 +96,7 @@ void get_name_prefix(char *pathname, headerEntry *header_entry)
            prefix[i] = pathname[i];
        }
        /*2.2 - here i is where we start inputting pathname[i] to name*/
-       printf("i = %d\n", i);
-       strcpy(name, pathname+i);
+       strncpy(name, pathname+i, strlen(pathname+i));
     }
             
     strncpy(header_entry->name, name, NAME_LEN);
@@ -176,41 +175,59 @@ void get_typeflags(char *pathname, headerEntry *header_entry){
    }
 }
 
+void get_uname_gname(struct passwd *pass, struct group *grp, headerEntry *hdr)
+{
+    if(strlen(pass->pw_name) > UNAME_LEN|| strlen(grp->gr_name)  > GNAME_LEN)
+    {
+        perror("error the uname or the group name is too long");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(hdr->uname, pass->pw_name, UNAME_LEN);
+    memcpy(hdr->gname, grp->gr_name, GNAME_LEN);
+}
+   
 void get_stats(const char *pathname, headerEntry *header_entry)
 {
    struct stat file_info;
    struct passwd *pass;
    struct group *grp;
 
+   /*Step 0 - reset header fields to all null*/
+   reset_header_entry(header_entry);
+
+   /*Step 1 - get file information for mode and shit*/
    if(lstat(pathname, &file_info) == -1)
        print_err("stat err, {in get_stats function");
 
-
-    pass=getpwuid(file_info.st_uid);
-    grp=getgrgid(file_info.st_gid);
-
-   /*Setting each member in header struct to that of pathname attribute*/
+   /*Field 1,2 : name and prefix*/
    get_name_prefix(pathname, header_entry);
-
-   dec_to_oct_asciiString(header_entry->mode,&file_info.st_mode, MODE_LEN);
-   dec_to_oct_asciiString(header_entry->gid, &file_info.st_gid, GID_LEN);
-   dec_to_oct_asciiString(header_entry->size, &file_info.st_size, SIZE_LEN);
-   dec_to_oct_asciiString(header_entry->mtime, &file_info.st_mtime, MTIME_LEN);
+   /*Field 3 : mode*/
+   dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN);
+   /*Field 4 : gid*/
+   dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN);
+   /*Field 5 : size*/
+   dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN);
+   /*Field 6 : mtime*/
+   dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN);
+   /*Field 7 : typeflag*/
    get_typeflags(pathname, header_entry);
 
+   /*Field 8: linkname*/
    if(header_entry->typeflag == '2')
        get_linkname(pathname, header_entry);
    else
        memset(header_entry->linkname, '\0', LINKNAME_LEN);
-    
+    /*Field 9: magic*/ 
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
+    /*Field 10: version*/
     memset(header_entry->version, '\0', VERSION_LEN);
-    strncat(header_entry->uname, pass->pw_name, UID_LEN);
-    strncat(header_entry->gname, grp->gr_name, GID_LEN);
-
+    /*Field 11: devmajor*/
    dec_to_oct_asciiString(header_entry->devmajor, '\0', DEVMAJOR_LEN);
+    /*Field 12: devminor*/
    dec_to_oct_asciiString(header_entry->devminor, '\0', DEVMINOR_LEN);
-
+   /*Field 13, 14: uname and gname*/
+   get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
+   /*Field 15: checksum*/
    get_chksum(&header_entry);
 
 }
@@ -255,28 +272,106 @@ memset(hdr->devminor , '\0', DEVMINOR_LEN);
 memset(hdr->prefix , '\0', PREFIX_LEN);
 }
 
+/*============DEBUGGGING FUNCTION===================*/
+void print_field(uint8_t *field, int size)
+{
+    int i;
+    printf("field = ");
+    for(i=0; i<size; i++)
+        printf("%c", (char)field[i]);
+    printf("\n");
+}
+void print_perms(mode_t st_mode){
+
+    char access[11] = {'\0'};
+
+	if (S_IRUSR & st_mode)
+		access[1] = 'r';
+	else
+		access[1] = '-';
+
+	if (S_IWUSR & st_mode)
+		access[2] = 'w';
+	else
+		access[2] = '-';
+
+	if (S_IXUSR & st_mode)
+		access[3] = 'x';
+	else
+		access[3] = '-';
+
+	/*group*/
+	if(S_IRGRP & st_mode )
+		access[4] = 'r';
+	else
+		access[4] = '-';
+
+	if (S_IWGRP & st_mode )
+		access[5] = 'w';
+	else
+		access[5] = '-';
+
+	if(S_IXGRP & st_mode )
+		access[6] = 'x';
+	else
+		access[6] = '-';
+
+	/*owner*/
+	if(S_IROTH & st_mode )
+		access[7] = 'r';
+	else
+		access[7] = '-';
+	if(S_IWOTH & st_mode )
+		access[8] = 'w';
+	else
+		access[8] = '-';
+	if(S_IXOTH & st_mode )
+		access[9] = 'x';
+	else
+		access[9] = '-';
+	
+	/*step 6.2 - get setuid and setgid*/
+	if (S_ISUID & st_mode)
+		access[3] = 's';
+	if (S_ISGID & st_mode)
+		access[6] = 's';
+
+	printf("Acess: %s\n", access);
+ }
+/*================================================*/
 
 int main(int argc, char **argv)
 {
     headerEntry header_entry;
-
-    /*Test 1- name works*/
+    reset_header_entry(&header_entry);
+    /*Test 1- prefix and name ==================================================================================================================`
     char *pathname = "/victor/delaplaine/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
+    reset_header_entry(&header_entry);
     get_name_prefix(pathname, &header_entry);
     printf("strlen(pathname) = %d\n", strlen(pathname));
     printf("strlen(name) = %d\n", strlen(header_entry.name));
     printf("strlen(prefix) = %d\n", strlen(header_entry.prefix));
-
     printf("name = : %s\n", header_entry.name);
     printf("prefix = : %s\n", header_entry.prefix);
-/*
-   char *pathname = "inputs/header/test1";
+    /======================================================================================================================================*
+
+    /*Test 2-  get_stats*/
    int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
-   struct stat buff;
-    /*stat(pathname, &buff);/*
-    get_stats(pathname, &header_entry);
-    print_header(&header_entry);
-    */
+   char *pathname = "inputs/header/test1";
+   struct stat file_info;
+   if(stat("inputs/header/test1", &file_info)< 0){
+       perror("stat err");
+       exit(EXIT_FAILURE);
+   }
+   print_perms(file_info.st_mode);
+
+   dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN);
+   print_field(header_entry.mode, MODE_LEN);
+
+   /*get_stats(pathname, &header_entry);*/
+   /*print_header(&header_entry);*/
+
+   /*Test 3 - write the field of the header to a file*/
     return 0;
 
 }
