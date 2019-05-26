@@ -9,16 +9,9 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MAX_FLAG 5   /* maximum number of option flags */
+#define MAX_FLAG 6   /* maximum number of option flags */
 #define MIN_ARGS 3   /* mim number of args needed to run program */
 #define FILE_INDX 2  /* path starts from the 3rd argument */
-#define C 0     /* C flag index*/
-#define T 1     /* T flag index*/
-#define X 2     /* X flag index*/
-#define V 3     /* V flag index*/
-#define S 4     /* S flag index*/
-
-
 
 
 /* Two formats: TAR format and USTAR format (extensive) */
@@ -45,6 +38,3 @@
 #define DIRTYPE  '5'            /* directory */
 #define FIFOTYPE '6'            /* FIFO special */
 #define CONTTYPE '7'            /* reserved */
-
-
-#endif

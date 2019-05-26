@@ -1,22 +1,22 @@
 #include "mytar.h"
 #include "creat.h"
 
-enum boolean{FALSE,TRUE};
-
+#define TRUE 1
+#define FALSE 0
 
 
 
 
 
 /*[valid bit|c|t|x|v|f|S]*/
-int *get_option(char *options)
+int* get_option(int *options)
 {
-	int *option_int = (int *)calloc(OPTION_SIZE+1, sizeof(int);
-	const int c = 1, t = 2, x = 3, v = 4, f = 5, S=6;
+	int *option_int = (int *)calloc(MAX_FLAG+1, sizeof(int));
+	const int c = 1, t = 2, x = 3, v = 4, f = 5, S = 6;
 
 	option_int[0] = TRUE;
 
-	for(int i = 0; i< OPTION_SIZE; i++)
+	for(int i = 0; i< MAX_FLAG; i++)
 	{	
 		switch(options[i])		
 		{
@@ -53,11 +53,11 @@ int *get_option(char *options)
 	else if(option_int[c]+option_int[t]+option_int[x] == 0)
 	{
 		/*only f was givent */
-		perrror("you must choose one of the options x,t,c same time\n");
+		perror("you must choose one of the options x,t,c same time\n");
 		exit(EXIT_FAILURE);
 	}
 	
-	return option;
+	return options;
 }
 
 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		/*Case 1 : creation and file*/
 		if (option[1] == TRUE && option[5] == TRUE)
 		{
-		    creat_archieve()
+		    creat_archieve();
 
 		}
 		/*Case 2 : creation, file, and verbosity*/
