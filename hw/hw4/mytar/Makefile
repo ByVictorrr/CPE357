@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm
 MAIN = mytar
-OBJ =  entry.o header.o table.o
+OBJ =  entry.o header.o 
 
 all : $(MAIN)
 
@@ -11,8 +11,8 @@ $(MAIN) : $(OBJ)
 #creat.o : creat.c
 	#$(CC) $(CFLAGS) -c creat.c
 
-table.o : table.c
-	$(CC) $(CFLAGS) -c table.c
+#table.o : table.c
+#	$(CC) $(CFLAGS) -c table.c
 
 
 entry.o : entry.c entry.h
