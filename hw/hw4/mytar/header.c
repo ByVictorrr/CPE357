@@ -47,7 +47,7 @@ int insert_special_int(char *where, size_t size, int32_t val) {
     } 
     else {
         /* game on....*/
-        memset(where, 0, size);
+       memset(where, 0, size);
         *(int32_t *)(where+size-sizeof(val)) = htonl(val);
         *where |= 0x80; /* set that high–order bit */
     }
@@ -138,20 +138,19 @@ void get_chksum(headerEntry *hdr)
 void get_linkname(char *pathname, headerEntry *header_entry)
 {
     struct stat file_info;
-    char c, buff[LINKNAME_LEN];
+    char c;
+    uint8_t buff[LINKNAME_LEN];
     int fd, i, n;
     
     memset(buff, '\0', LINKNAME_LEN);
     if(lstat(pathname, &buff) == -1)
         print_err("stat error in get_linkname");
-    if((fd = open(pathname, O_RDONLY)) == -1)
-        print_err("open err in get_linkname");
     /*Step 1 - read from the symlink the pathname of the link*/
-    for(i = 0; (n=read(fd, &c, 1)) > 0 || i<= LINKNAME_LEN-1; i++)
-    {
-        buff[i] = c;
-    }
-    memcpy(header_entry->linkname, buff, LINKNAME_LEN);
+    if(readlink(pathname, buff, LINKNAME_LEN) < 0)
+        print_err("readlink error");
+
+    memset(buff+strlen(buff), '\0', LINKNAME_LEN-(strlen(buff)));
+    memcpy(header_entry->linkname, buff, LINKNAME_LEN-1);
  }
 
 void get_typeflags(char *pathname, headerEntry *header_entry){
@@ -222,11 +221,11 @@ void get_stats(const char *pathname, headerEntry *header_entry)
     /*Field 10: magic*/ 
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
     /*Field 11: version*/
-    memset(header_entry->version, '\0', VERSION_LEN);
+    memset(header_entry->version, "00", VERSION_LEN);
     /*Field 12: devmajor*/
-   dec_to_oct_asciiString(header_entry->devmajor, '\0', DEVMAJOR_LEN);
+   dec_to_oct_asciiString(header_entry->devmajor, "00", DEVMAJOR_LEN);
     /*Field 13: devminor*/
-   dec_to_oct_asciiString(header_entry->devminor, '\0', DEVMINOR_LEN);
+   dec_to_oct_asciiString(header_entry->devminor, "00", DEVMINOR_LEN);
    /*Field 14, 15: uname and gname*/
    get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
    /*Field 16: checksum*/
@@ -409,7 +408,6 @@ int main(int argc, char **argv)
 
     print_field("linkname", header_entry.linkname, LINKNAME_LEN);
    
-
 /*=================================================================================================/*
 /*=======================Test 5- get_stats ====================================================*/
    printf("\nTest 5 - get_stats\n");

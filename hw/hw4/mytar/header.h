@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <syscall.h>
 #include <stdint.h>
 #include <stdlib.h>
