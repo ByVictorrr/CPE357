@@ -71,7 +71,7 @@ void add_entry(const char *pathname, int tarFd, headerEntry header)
 }
 
 
-
+/*
 int main(int argc, char **argv)
 {
     headerEntry header_entry;
@@ -84,3 +84,4 @@ int main(int argc, char **argv)
     return 0;
 
 }
+*/

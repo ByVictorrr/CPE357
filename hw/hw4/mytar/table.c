@@ -1,5 +1,8 @@
 #include "header.h"
-#include "mytar.h"
+#include "entry.h"
+#include <stdlib.h>
+#define SYMTYPE '2'
+
 static unsigned int OctToInt(const char* str, unsigned int len) {
 	unsigned int res = 0;
 	unsigned int i;
@@ -18,8 +21,8 @@ static unsigned int OctToInt(const char* str, unsigned int len) {
 }
 
 
-void print_table(struct headerEntry* header, int verbose){
-	const mode_t mode = OctToInt (header->mode, 7);
+void print_table(headerEntry* header, int verbose){
+	const mode_t mode = OctToInt ((char*) header->mode, 7);
 	char ownergr[20];
 	struct tm * time;
 	time_t mtime;
@@ -43,10 +46,10 @@ void print_table(struct headerEntry* header, int verbose){
 			'\0'
 			};
 		/* Writing Permission 10 Owner/Group 17 */
-		strcpy(ownergr, header-> uname);
-		strcat(ownergr, header-> gname);
+		strcpy(ownergr, (char *)header-> uname);
+		strcat(ownergr, (char *)header-> gname);
 		printf("%s %-17s", str, ownergr);	
-		printf("%+8s", header -> size);
+		printf("%+8s", (char *)header -> size);
 		mtime = OctToInt(header -> mtime, 11);
 		time = localtime(&mtime);
 		printf(" %4d-%02d-%02d %02d:%02d ", time -> tm_year + 1900, time -> tm_mon + 1, time -> tm_mday, time -> tm_hour, time -> tm_min);
@@ -82,7 +85,7 @@ int table(char *path, int verbose)
   fseek(tar, 0, SEEK_END);
   len = ftell(tar);
   fseek(tar, 0, SEEK_SET);
-  struct headerEntry fileHeader;
+  headerEntry fileHeader;
   while (ftell(tar) < len)
   {
     fread(&fileHeader, sizeof(fileHeader), 1, tar);
@@ -90,10 +93,22 @@ int table(char *path, int verbose)
       print_table(&fileHeader, verbose);
     if (fileHeader.typeflag != '5')
     {
-      int content_length = atoi(fileHeader.size) + makeBlockSize(atoi(fileHeader.size));
+      int content_length = atoi(fileHeader.size) + makeBlockSize(atoi((char *)fileHeader.size));
       fseek(tar, content_length, SEEK_CUR);
     }
   }
   fclose(tar);
   return 0;
+}
+
+int main(){
+ 	
+	  headerEntry header_entry;
+
+    char *pathname = "inputs/header/test2";
+    char *tarPath = "outputs/header/test2.tar";
+    int tarFd = open(tarPath, O_RDWR | O_CREAT | O_TRUNC , 0666);
+    add_entry(pathname, tarFd, header_entry);
+		table(tarPath, 1);
+	return 0;
 }
