@@ -209,16 +209,19 @@ void get_stats(const char *pathname, headerEntry *header_entry)
    /*Field 1,2 : name and prefix*/
    get_name_prefix(pathname, header_entry);
    /*Field 3 : mode*/
-   memset(header_entry->mode, '0', MODE_LEN);
+   memset(header_entry->mode, '0', MODE_LEN-1);
    dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN,1);
-   memset(header_entry->mode+(MODE_LEN-1), '\0', 1);
-   /*Field 4 : uid*/
+     /*Field 4 : uid*/
+   memset(header_entry->uid, '0', UID_LEN-1);
    dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN,0);
    /*Field 5 : gid*/
+   memset(header_entry->gid, '0', GID_LEN-1);
    dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN,0);
    /*Field 6 : size*/
+   memset(header_entry->size, '0', SIZE_LEN-1);
    dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN,0);
    /*Field 7 : mtime*/
+   memset(header_entry->mtime, '0', MTIME_LEN-1);
    dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN,0);
    /*Field 8 : typeflag*/
    get_typeflags(pathname, header_entry);
@@ -228,17 +231,19 @@ void get_stats(const char *pathname, headerEntry *header_entry)
        get_linkname(pathname, header_entry);
    else
        memset(header_entry->linkname, '\0', LINKNAME_LEN);
+
     /*Field 10: magic*/ 
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
     /*Field 11: version*/
     memset(header_entry->version, '0', VERSION_LEN);
     /*Field 12: devmajor*/
-     memset(header_entry->devmajor, '0', 2);
+     memset(header_entry->devmajor, '\0', 2);
     /*Field 13: devminor*/
-     memset(header_entry->devminor, '0', 2);
+     memset(header_entry->devminor, '\0', 2);
    /*Field 14, 15: uname and gname*/
    get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
    /*Field 16: checksum*/
+   memset(header_entry->mtime, '0', MTIME_LEN-1);
    get_chksum(header_entry);
 
 }
@@ -267,8 +272,8 @@ void reset_header_entry(headerEntry *hdr)
 {
 memset(hdr->name, '\0', NAME_LEN);
 memset(hdr->mode , '\0', MODE_LEN);
-memset(hdr->uid , '\0', UID_LEN);
-memset(hdr->gid , '\0', GID_LEN);
+memset(hdr->uid , '0', UID_LEN);
+memset(hdr->gid , '0', GID_LEN);
 memset(hdr->size , '\0', SIZE_LEN);
 memset(hdr->mtime , '\0', MTIME_LEN);
 memset(hdr->chksum , '\0', CHKSUM_LEN);
@@ -355,13 +360,12 @@ void print_perms(mode_t st_mode){
     printf("\n");
  }
 /*================================================*/
-/*
 int main(int argc, char **argv)
 {
 
     headerEntry header_entry;
     reset_header_entry(&header_entry);
-    */
+
     /*===================================Test 1- prefix and name ============================================================================*/
     /*
     printf("Test 1 - name and prefix\n");
@@ -377,7 +381,7 @@ int main(int argc, char **argv)
     /*======================================================================================================================================*/
 
     /*=======================Test 2-  mode====================================================*/
-    /*
+
     printf("Test 2 - mode\n");
    int tarFd = open("outputs/header/test2.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    char *pathname = "inputs/header/test2";
@@ -390,12 +394,12 @@ int main(int argc, char **argv)
    print_perms(file_info.st_mode);
    dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);
    print_field("mode",header_entry.mode, MODE_LEN);
-   */
+   
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
  /*  printf("\nTest 3 - uid, gid, mtime, size\n");
    dec_to_oct_asciiString(header_entry.uid,file_info.st_uid, UID_LEN);
-   dec_to_oct_asciiString(header_entry.gid,file_info.st_gid, GID_LEN);
+   dec_to_oct_asciiString(hader_entry.gid,file_info.st_gid, GID_LEN);
    dec_to_oct_asciiString(header_entry.size, file_info.st_size, SIZE_LEN);
    dec_to_oct_asciiString(header_entry.mtime, file_info.st_mtime, MTIME_LEN);
 
@@ -422,3 +426,5 @@ int main(int argc, char **argv)
     get_stats(pathname, &header_entry);
     print_header(&header_entry);*/
 /*===========================================================================================*/
+return 0;
+}
