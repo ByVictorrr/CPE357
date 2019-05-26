@@ -60,6 +60,14 @@ void print_table(struct headerEntry* header, int verbose){
 		}
 	}
 }
+int makeBlockSize(int x)
+{
+  if (x == 512)
+    return 0;
+  else
+    return (512 - (x % 512));
+}
+
 
 int table(char *path, int verbose)
 {

@@ -54,7 +54,7 @@ typedef struct header{
     uint8_t prefix[PREFIX_LEN];
 }headerEntry;
 
-#include "header.h"
+
 
 /*============DEBUGGGING FUNCTION===================*/
 void print_field(char *field_name, uint8_t *field, int size);
