@@ -8,7 +8,7 @@ void print_err(char *msg)
 }
 
 /*dec_to_oct_asciiString: convert value -> octal value stores that in buff[i]*/
-void dec_to_oct_asciiString(uint64_t *buff, unsigned long value ,int LENGTH)
+void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH)
 {
     int i, org_value = value;
     uint64_t copy[LENGTH];
@@ -203,31 +203,33 @@ void get_stats(const char *pathname, headerEntry *header_entry)
    get_name_prefix(pathname, header_entry);
    /*Field 3 : mode*/
    dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN);
-   /*Field 4 : gid*/
+   /*Field 4 : uid*/
+   dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN);
+   /*Field 5 : gid*/
    dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN);
-   /*Field 5 : size*/
+   /*Field 6 : size*/
    dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN);
-   /*Field 6 : mtime*/
+   /*Field 7 : mtime*/
    dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN);
-   /*Field 7 : typeflag*/
+   /*Field 8 : typeflag*/
    get_typeflags(pathname, header_entry);
 
-   /*Field 8: linkname*/
+   /*Field 9: linkname*/
    if(header_entry->typeflag == '2')
        get_linkname(pathname, header_entry);
    else
        memset(header_entry->linkname, '\0', LINKNAME_LEN);
-    /*Field 9: magic*/ 
+    /*Field 10: magic*/ 
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
-    /*Field 10: version*/
+    /*Field 11: version*/
     memset(header_entry->version, '\0', VERSION_LEN);
-    /*Field 11: devmajor*/
+    /*Field 12: devmajor*/
    dec_to_oct_asciiString(header_entry->devmajor, '\0', DEVMAJOR_LEN);
-    /*Field 12: devminor*/
+    /*Field 13: devminor*/
    dec_to_oct_asciiString(header_entry->devminor, '\0', DEVMINOR_LEN);
-   /*Field 13, 14: uname and gname*/
+   /*Field 14, 15: uname and gname*/
    get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
-   /*Field 15: checksum*/
+   /*Field 16: checksum*/
    get_chksum(&header_entry);
 
 }
@@ -261,7 +263,7 @@ memset(hdr->gid , '\0', GID_LEN);
 memset(hdr->size , '\0', SIZE_LEN);
 memset(hdr->mtime , '\0', MTIME_LEN);
 memset(hdr->chksum , '\0', CHKSUM_LEN);
-hdr->typeflag = -1;
+hdr->typeflag = 0;
 memset(hdr->linkname , '\0', LINKNAME_LEN);
 memset(hdr->magic , '\0', MAGIC_LEN);
 memset(hdr->version , '\0', VERSION_LEN);
@@ -273,17 +275,19 @@ memset(hdr->prefix , '\0', PREFIX_LEN);
 }
 
 /*============DEBUGGGING FUNCTION===================*/
-void print_field(uint8_t *field, int size)
+void print_field(char *field_name, uint8_t *field, int size)
 {
     int i;
-    printf("field = ");
+    printf("\n%s = ", field_name);
     for(i=0; i<size; i++)
         printf("%c", (char)field[i]);
     printf("\n");
 }
 void print_perms(mode_t st_mode){
 
+
     char access[11] = {'\0'};
+    int i;
 
 	if (S_IRUSR & st_mode)
 		access[1] = 'r';
@@ -336,15 +340,21 @@ void print_perms(mode_t st_mode){
 	if (S_ISGID & st_mode)
 		access[6] = 's';
 
-	printf("Acess: %s\n", access);
+    printf("access = ");
+    for(i = 0; i< 11; i++)
+        printf("%c", access[i]);
+    printf("\n");
  }
 /*================================================*/
 
 int main(int argc, char **argv)
 {
+
     headerEntry header_entry;
     reset_header_entry(&header_entry);
-    /*Test 1- prefix and name ==================================================================================================================`
+    /*===================================Test 1- prefix and name ============================================================================*/
+    /*
+    printf("Test 1 - name and prefix\n");
     char *pathname = "/victor/delaplaine/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
     reset_header_entry(&header_entry);
     get_name_prefix(pathname, &header_entry);
@@ -353,25 +363,59 @@ int main(int argc, char **argv)
     printf("strlen(prefix) = %d\n", strlen(header_entry.prefix));
     printf("name = : %s\n", header_entry.name);
     printf("prefix = : %s\n", header_entry.prefix);
-    /======================================================================================================================================*
+    /*
+    /*======================================================================================================================================*/
 
-    /*Test 2-  get_stats*/
+    /*=======================Test 2-  mode====================================================*/
+    printf("Test 2 - mode\n");
    int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
-   char *pathname = "inputs/header/test1";
+   char *pathname = "inputs/header/test2";
    struct stat file_info;
-   if(stat("inputs/header/test1", &file_info)< 0){
+   if(stat(pathname, &file_info )< 0){
        perror("stat err");
        exit(EXIT_FAILURE);
    }
    print_perms(file_info.st_mode);
-
    dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN);
-   print_field(header_entry.mode, MODE_LEN);
+   print_field("mode",header_entry.mode, MODE_LEN);
+/*====================================================================================================*/
+/*=======================Test 3- gid, size, mtime ====================================================*/
+   printf("\nTest 3 - uid, gid, mtime, size\n");
+    /*Field 4 : uid*/
+   dec_to_oct_asciiString(header_entry.uid,file_info.st_uid, UID_LEN);
+   /*Field 5 : gid*/
+   dec_to_oct_asciiString(header_entry.gid,file_info.st_gid, GID_LEN);
+   /*Field 6 : size*/
+   dec_to_oct_asciiString(header_entry.size, file_info.st_size, SIZE_LEN);
+   /*Field 7 : mtime*/
+   dec_to_oct_asciiString(header_entry.mtime, file_info.st_mtime, MTIME_LEN);
 
-   /*get_stats(pathname, &header_entry);*/
-   /*print_header(&header_entry);*/
+    print_field("gid",header_entry.gid, GID_LEN);
+    print_field("uid", header_entry.uid, UID_LEN);
+    print_field("size", header_entry.size, SIZE_LEN);
+    print_field("mtime", header_entry.mtime, MTIME_LEN);
+/*===========================================================================================*/
+/*========================Test 4 - typeflag, linkname======================================================*/
+   printf("\nTest 4 - typeflag, and linkname\n");
 
-   /*Test 3 - write the field of the header to a file*/
-    return 0;
+   get_typeflags(pathname, &header_entry);
+
+    /*printf("typeflag = %c", header_entry.typeflag);*/
+
+   if(header_entry.typeflag == '2')
+       get_linkname(pathname, &header_entry);
+   else
+       memset(header_entry.linkname, '\0', LINKNAME_LEN);
+
+    print_field("linkname", header_entry.linkname, LINKNAME_LEN);
+   
+
+/*=================================================================================================/*
+/*=======================Test 5- get_stats ====================================================*/
+   printf("\nTest 5 - get_stats\n");
+    get_stats(pathname, &header_entry);
+    print_header(&header_entry);
+/*===========================================================================================*/
+   return 0;
 
 }

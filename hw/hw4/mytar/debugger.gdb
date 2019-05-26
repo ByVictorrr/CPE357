@@ -1,6 +1,5 @@
 #usage: gdb -x debugger.gdb ./prog
-b 99
+b 359
 r ./header
 tui enable
-q
 
