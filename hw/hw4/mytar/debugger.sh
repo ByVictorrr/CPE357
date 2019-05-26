@@ -1,5 +1,4 @@
-rm header
-gcc -g -o header header.c
-gdb -x debugger.gdb header
-valgrind header
+make clean &&  make
+gdb -x debugger.gdb mytar
+valgrind ./mytar
 
