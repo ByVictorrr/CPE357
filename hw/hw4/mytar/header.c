@@ -11,17 +11,20 @@ void print_err(char *msg)
 void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH, int type_field)
 {
     int i, org_value = value;
+    int type_interval;
     uint64_t copy[LENGTH];
 
     /*Not a mode type*/
-    if(type_field == 0)
+    if(type_field == 0){
         i = LENGTH -2;
-    else
-        i = LENGTH -4;
+        type_interval = -1 ;
+    }
+    else{
+        i = LENGTH -2;
+        type_interval = 2;
+    }
 
-
-
-    for(; value != 0 && i> -1; i--, value /= OCTAL)
+    for(; value != 0 && i> type_interval; i--, value /= OCTAL)
     {
         buff[i] = (value % OCTAL) + ASCII_OFFSET;
         if(value != 0 && i==0)
@@ -206,7 +209,9 @@ void get_stats(const char *pathname, headerEntry *header_entry)
    /*Field 1,2 : name and prefix*/
    get_name_prefix(pathname, header_entry);
    /*Field 3 : mode*/
+   memset(header_entry->mode, '0', MODE_LEN);
    dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN,1);
+   memset(header_entry->mode+(MODE_LEN-1), '\0', 1);
    /*Field 4 : uid*/
    dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN,0);
    /*Field 5 : gid*/
@@ -356,6 +361,7 @@ int main(int argc, char **argv)
 
     headerEntry header_entry;
     reset_header_entry(&header_entry);
+    */
     /*===================================Test 1- prefix and name ============================================================================*/
     /*
     printf("Test 1 - name and prefix\n");
@@ -371,17 +377,20 @@ int main(int argc, char **argv)
     /*======================================================================================================================================*/
 
     /*=======================Test 2-  mode====================================================*/
-    /*printf("Test 2 - mode\n");
-   int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
+    /*
+    printf("Test 2 - mode\n");
+   int tarFd = open("outputs/header/test2.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    char *pathname = "inputs/header/test2";
    struct stat file_info;
    if(stat(pathname, &file_info )< 0){
        perror("stat err");
        exit(EXIT_FAILURE);
    }
+   get_stats(pathname, &header_entry);
    print_perms(file_info.st_mode);
-   dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN);
-   print_field("mode",header_entry.mode, MODE_LEN);*/
+   dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);
+   print_field("mode",header_entry.mode, MODE_LEN);
+   */
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
  /*  printf("\nTest 3 - uid, gid, mtime, size\n");
@@ -413,4 +422,3 @@ int main(int argc, char **argv)
     get_stats(pathname, &header_entry);
     print_header(&header_entry);*/
 /*===========================================================================================*/
-  /* return 0;*/
