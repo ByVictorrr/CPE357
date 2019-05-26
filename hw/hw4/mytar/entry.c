@@ -76,8 +76,8 @@ int main(int argc, char **argv)
 {
     headerEntry header_entry;
 
-    char *pathname = "inputs/header/test1";
-    char *tarPath = "outputs/header/test1.tar";
+    char *pathname = "inputs/header/test2";
+    char *tarPath = "outputs/header/test2.tar";
     int tarFd = open(tarPath, O_RDWR | O_CREAT | O_TRUNC , 0666);
     add_entry(pathname, tarFd, header_entry);
 
