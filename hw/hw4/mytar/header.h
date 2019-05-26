@@ -55,8 +55,13 @@ typedef struct header{
     uint8_t prefix[PREFIX_LEN];
 }headerEntry;
 
+#include "header.h"
 
+/*============DEBUGGGING FUNCTION===================*/
+void print_field(char *field_name, uint8_t *field, int size);
+void print_perms(mode_t st_mode);
 /*=============UTILITY FUNCTIONS=================================*/
+int insert_special_int(char *where, size_t size, int32_t val);
 void print_err(char *msg);
 uint64_t hash_fieldHeader(uint8_t *field, int LENGTH);
 void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH);
@@ -66,6 +71,7 @@ int insert_special_int(char *where, size_t size, int32_t val);
 void get_name_prefix(char *pathname, headerEntry *header_entry);
 void get_typeflags(char *pathname, headerEntry *header_entry);
 void get_linkname(char *pathname, headerEntry *header_entry);
+void get_uname_gname(struct passwd *pass, struct group *grp, headerEntry *hdr);
 void get_chksum(headerEntry *hdr);
 void get_stats(const char *pathname, headerEntry *header_entry);
 void reset_header_entry(headerEntry *entry);

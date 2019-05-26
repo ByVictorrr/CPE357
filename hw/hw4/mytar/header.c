@@ -133,6 +133,7 @@ void get_chksum(headerEntry *hdr)
 
     /*Encode checkSum into a ASCII octal number*/
     dec_to_oct_asciiString(hdr->chksum, checkSum, CHKSUM_LEN);
+
 }
 
 void get_linkname(char *pathname, headerEntry *header_entry)
@@ -219,15 +220,15 @@ void get_stats(const char *pathname, headerEntry *header_entry)
     /*Field 10: magic*/ 
     strncpy(header_entry->magic, "ustar", MAGIC_LEN);
     /*Field 11: version*/
-    memset(header_entry->version, "00", VERSION_LEN);
+    memset(header_entry->version, '0', VERSION_LEN);
     /*Field 12: devmajor*/
-   dec_to_oct_asciiString(header_entry->devmajor, "00", DEVMAJOR_LEN);
+     memset(header_entry->devmajor, '0', 2);
     /*Field 13: devminor*/
-   dec_to_oct_asciiString(header_entry->devminor, "00", DEVMINOR_LEN);
+     memset(header_entry->devminor, '0', 2);
    /*Field 14, 15: uname and gname*/
    get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
    /*Field 16: checksum*/
-   get_chksum(&header_entry);
+   get_chksum(header_entry);
 
 }
 
@@ -235,8 +236,8 @@ void print_header(headerEntry *hdr)
 {
     printf(" char name[]: %s\n", hdr->name );
     printf(" mode_t mode: 0%04o\n",hdr->mode );
-    printf(" uid_t uid: %d\n", (int)hdr->uid );
-    printf(" gid_t gid: %d\n", (int)hdr->gid );
+    printf(" uid_t uid: %d\n", (unsigned int)hdr->uid );
+    printf(" gid_t gid: %d\n", (unsigned int)hdr->gid );
     printf(" size_t size: %d\n", (int)hdr->size );
     printf(" time_t mtime: %d --- %s", (int)hdr->mtime, ctime(&hdr->mtime));
     printf(" int chksum: %d\n", hdr->chksum );
@@ -343,7 +344,7 @@ void print_perms(mode_t st_mode){
     printf("\n");
  }
 /*================================================*/
-
+/*
 int main(int argc, char **argv)
 {
 
@@ -364,7 +365,7 @@ int main(int argc, char **argv)
     /*======================================================================================================================================*/
 
     /*=======================Test 2-  mode====================================================*/
-    printf("Test 2 - mode\n");
+    /*printf("Test 2 - mode\n");
    int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    char *pathname = "inputs/header/test2";
    struct stat file_info;
@@ -374,30 +375,24 @@ int main(int argc, char **argv)
    }
    print_perms(file_info.st_mode);
    dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN);
-   print_field("mode",header_entry.mode, MODE_LEN);
+   print_field("mode",header_entry.mode, MODE_LEN);*/
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
-   printf("\nTest 3 - uid, gid, mtime, size\n");
-    /*Field 4 : uid*/
+ /*  printf("\nTest 3 - uid, gid, mtime, size\n");
    dec_to_oct_asciiString(header_entry.uid,file_info.st_uid, UID_LEN);
-   /*Field 5 : gid*/
    dec_to_oct_asciiString(header_entry.gid,file_info.st_gid, GID_LEN);
-   /*Field 6 : size*/
    dec_to_oct_asciiString(header_entry.size, file_info.st_size, SIZE_LEN);
-   /*Field 7 : mtime*/
    dec_to_oct_asciiString(header_entry.mtime, file_info.st_mtime, MTIME_LEN);
 
     print_field("gid",header_entry.gid, GID_LEN);
     print_field("uid", header_entry.uid, UID_LEN);
     print_field("size", header_entry.size, SIZE_LEN);
-    print_field("mtime", header_entry.mtime, MTIME_LEN);
+    print_field("mtime", header_entry.mtime, MTIME_LEN);*/
 /*===========================================================================================*/
 /*========================Test 4 - typeflag, linkname======================================================*/
-   printf("\nTest 4 - typeflag, and linkname\n");
+   /*printf("\nTest 4 - typeflag, and linkname\n");
 
    get_typeflags(pathname, &header_entry);
-
-    /*printf("typeflag = %c", header_entry.typeflag);*/
 
    if(header_entry.typeflag == '2')
        get_linkname(pathname, &header_entry);
@@ -405,13 +400,11 @@ int main(int argc, char **argv)
        memset(header_entry.linkname, '\0', LINKNAME_LEN);
 
     print_field("linkname", header_entry.linkname, LINKNAME_LEN);
-   
+  */ 
 /*=================================================================================================/*
 /*=======================Test 5- get_stats ====================================================*/
-   printf("\nTest 5 - get_stats\n");
+   /*printf("\nTest 5 - get_stats\n");
     get_stats(pathname, &header_entry);
-    print_header(&header_entry);
+    print_header(&header_entry);*/
 /*===========================================================================================*/
-   return 0;
-
-}
+  /* return 0;*/

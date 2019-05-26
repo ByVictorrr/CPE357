@@ -1,15 +1,15 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm
 MAIN = mytar
-OBJ = mytar.o creat.o entry.o header.o 
+OBJ =  entry.o header.o 
 
 all : $(MAIN)
 
 $(MAIN) : $(OBJ) 
 	$(CC) $(CFLAGS) -o $(MAIN) $(OBJ)
 
-creat.o : creat.c
-	$(CC) $(CFLAGS) -c creat.c
+#creat.o : creat.c
+	#$(CC) $(CFLAGS) -c creat.c
 
 entry.o : entry.c entry.h
 	$(CC) $(CFLAGS) -c entry.c

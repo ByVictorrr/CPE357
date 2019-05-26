@@ -42,10 +42,12 @@ void write_header(int tarFd , headerEntry header)
 void add_entry(char *pathname, int tarFd , headerEntry header)
 {
     int currFd;
-    int num_writes, num_to_pad;
+    int num_writes = 0, num_to_pad = 0;;
     uint8_t padder[BLOCK_SIZE] = {'\0'};
     uint8_t c;
 
+   /*Step 0 - initalize everything for the file given the pathname*/
+   get_stats(pathname, &header);
    /*Step 1 - First write 1 block - header to the tar file */
    write_header(tarFd, header);
    /*Step 2 -  2nd open that file with pathname and then */
@@ -53,7 +55,7 @@ void add_entry(char *pathname, int tarFd , headerEntry header)
        print_err("open error in add_entry");
    }
    /*step 3 - write to tarFd while reading contents*/
-   while(read(currFd, &c, 1) != 0)
+   while(read(currFd, &c, 1) < 0)
    {
        /*write that to the file*/
        write(tarFd, &c, 1);
@@ -74,18 +76,9 @@ int main(int argc, char **argv)
 {
     headerEntry header_entry;
 
-    /*Test 1- name works
-    get_name(argv[1], &header_entry);
-    printf("pathname = : %s", header_entry.name);
-    */
-
-    char *pathname = "inputs/test1";
-    int tarFd = open("outputs/test1.tar", O_RDONLY| O_TRUNC | O_WRONLY);
-   /*Test 2- header work, expcept for gid , uname*/
-    
-    get_stats(pathname, &header_entry);
-    print_header(&header_entry);
-        add_entry(pathname, tarFd, header_entry);
+    char *pathname = "inputs/header/test1";
+    int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_CREAT | O_TRUNC | O_WRONLY , 0666);
+    add_entry(pathname, tarFd, header_entry);
 
     return 0;
 
