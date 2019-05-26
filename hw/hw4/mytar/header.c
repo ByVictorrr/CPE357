@@ -8,14 +8,20 @@ void print_err(char *msg)
 }
 
 /*dec_to_oct_asciiString: convert value -> octal value stores that in buff[i]*/
-void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH)
+void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH, int type_field)
 {
     int i, org_value = value;
     uint64_t copy[LENGTH];
 
-    memset(buff, '\0', LENGTH);
+    /*Not a mode type*/
+    if(type_field == 0)
+        i = LENGTH -2;
+    else
+        i = LENGTH -4;
 
-    for(i = LENGTH-2 ; value != 0 && i> -1; i--, value /= OCTAL)
+
+
+    for(; value != 0 && i> -1; i--, value /= OCTAL)
     {
         buff[i] = (value % OCTAL) + ASCII_OFFSET;
         if(value != 0 && i==0)
@@ -132,7 +138,7 @@ void get_chksum(headerEntry *hdr)
     checkSum += hash_fieldHeader(hdr->prefix , PREFIX_LEN);
 
     /*Encode checkSum into a ASCII octal number*/
-    dec_to_oct_asciiString(hdr->chksum, checkSum, CHKSUM_LEN);
+    dec_to_oct_asciiString(hdr->chksum, checkSum, CHKSUM_LEN, 0);
 
 }
 
@@ -200,15 +206,15 @@ void get_stats(const char *pathname, headerEntry *header_entry)
    /*Field 1,2 : name and prefix*/
    get_name_prefix(pathname, header_entry);
    /*Field 3 : mode*/
-   dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN);
+   dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN,1);
    /*Field 4 : uid*/
-   dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN);
+   dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN,0);
    /*Field 5 : gid*/
-   dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN);
+   dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN,0);
    /*Field 6 : size*/
-   dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN);
+   dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN,0);
    /*Field 7 : mtime*/
-   dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN);
+   dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN,0);
    /*Field 8 : typeflag*/
    get_typeflags(pathname, header_entry);
 
