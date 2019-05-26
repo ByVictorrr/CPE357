@@ -12,7 +12,6 @@ void creat_archive(char **argv, int options) {
    char c;
    struct stat info_file;
    
-
    /*Step 1 - get info about the file/directory to be compresed (path) */
    if (lstat(argv[3], &info_file) == -1)
        print_err("lstat: error in creat_archieve");
