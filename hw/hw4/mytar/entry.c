@@ -53,10 +53,8 @@ void add_entry(char *pathname, int tarFd , headerEntry header)
    if((currFd = open(pathname, O_RDONLY)) == -1){
        print_err("open error in add_entry");
    }
-   /*step 3 - write to tarFd while reading contents*/
    while(read(currFd, &c, 1) < 0)
    {
-       /*write that to the file*/
        write(tarFd, &c, 1);
        num_writes++;
    }
@@ -76,8 +74,9 @@ int main(int argc, char **argv)
     headerEntry header_entry;
 
     char *pathname = "inputs/header/test1";
-    int tarFd = open("outputs/header/test1.tar", O_RDONLY| O_CREAT | O_TRUNC | O_WRONLY , 0666);
-    add_entry(pathname, tarFd, header_entry);
+    char *tarPath = "outputs/header/test1.tar";
+    int tarFd = open(tarFd,O_RDONLY| O_CREAT | O_TRUNC | O_WRONLY , 0666);
+    add_entry(pathname, 1, header_entry);
 
     return 0;
 
