@@ -143,14 +143,12 @@ void get_linkname(char *pathname, headerEntry *header_entry)
     int fd, i, n;
     
     memset(buff, '\0', LINKNAME_LEN);
-    if(lstat(pathname, &buff) == -1)
-        print_err("stat error in get_linkname");
     /*Step 1 - read from the symlink the pathname of the link*/
     if(readlink(pathname, buff, LINKNAME_LEN) < 0)
         print_err("readlink error");
 
-    memset(buff+strlen(buff), '\0', LINKNAME_LEN-(strlen(buff)));
-    memcpy(header_entry->linkname, buff, LINKNAME_LEN-1);
+    memset(buff+strlen((char*)buff), '\0', LINKNAME_LEN-(strlen((char*)buff)));
+    memcpy(header_entry->linkname, buff, LINKNAME_LEN);
  }
 
 void get_typeflags(char *pathname, headerEntry *header_entry){
