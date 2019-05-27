@@ -360,12 +360,13 @@ void print_perms(mode_t st_mode){
     printf("\n");
  }
 /*================================================*/
+/*
 int main(int argc, char **argv)
 {
 
     headerEntry header_entry;
     reset_header_entry(&header_entry);
-
+*/
     /*===================================Test 1- prefix and name ============================================================================*/
     /*
     printf("Test 1 - name and prefix\n");
@@ -381,7 +382,7 @@ int main(int argc, char **argv)
     /*======================================================================================================================================*/
 
     /*=======================Test 2-  mode====================================================*/
-
+/*
     printf("Test 2 - mode\n");
    int tarFd = open("outputs/header/test2.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    char *pathname = "inputs/header/test2";
@@ -394,6 +395,7 @@ int main(int argc, char **argv)
    print_perms(file_info.st_mode);
    dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);
    print_field("mode",header_entry.mode, MODE_LEN);
+   */
    
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
@@ -426,5 +428,5 @@ int main(int argc, char **argv)
     get_stats(pathname, &header_entry);
     print_header(&header_entry);*/
 /*===========================================================================================*/
-return 0;
-}
+/*return 0;
+}*/
