@@ -11,6 +11,7 @@
 #define BLOCK_SIZE 512
 
 
+
 void write_header(int tarFd , headerEntry header)
 {
     uint16_t padd_header = '\0';
@@ -38,13 +39,14 @@ void write_header(int tarFd , headerEntry header)
 }
 
 /*Assuming the tar - output file is opened*/
-void add_entry(const char *pathname, int tarFd, headerEntry header)
+void add_entry(const char *pathname, int tarFd)
 {
     int currFd;
     int num_writes = 0, num_to_pad = 0;;
     uint8_t padder = {'\0'};
     char c;
 
+    headerEntry header;
    /*Step 0 - initalize everything for the file given the pathname*/
    get_stats(pathname, &header);
    /*Step 1 - First write 1 block - header to the tar file */
@@ -70,18 +72,14 @@ void add_entry(const char *pathname, int tarFd, headerEntry header)
    
 }
 
-
-/*
 int main(int argc, char **argv)
 {
-    headerEntry header_entry;
-
-    char *pathname = "inputs/header/test2";
-    char *tarPath = "outputs/header/test2.tar";
+   
+    char *pathname = "inputs/header/test1";
+    char *tarPath = "outputs/header/test1.tar";
     int tarFd = open(tarPath, O_RDWR | O_CREAT | O_TRUNC , 0666);
-    add_entry(pathname, tarFd, header_entry);
+    add_entry(pathname, tarFd);
 
     return 0;
 
 }
-*/

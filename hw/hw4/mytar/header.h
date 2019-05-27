@@ -63,7 +63,6 @@ void print_perms(mode_t st_mode);
 int insert_special_int(char *where, size_t size, int32_t val);
 void print_err(char *msg);
 uint64_t hash_fieldHeader(uint8_t *field, int LENGTH);
-void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH, int type_field);
 int insert_special_int(char *where, size_t size, int32_t val);
 /*=================================================================*/
 /*=================HEADER FUNCTIONS================================*/

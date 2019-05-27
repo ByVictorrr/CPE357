@@ -1,5 +1,5 @@
-#usage: gdb -x debugger.gdb ./prog
-b 60
-r ./mytar
+#usage: gdb -x debugger.gdb ./pro
+b 397
+r 
 tui enable
 

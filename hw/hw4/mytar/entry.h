@@ -15,7 +15,7 @@
 
 
 void write_header(int tarFd , headerEntry header);
-void add_entry(char *pathname, int tarFd , headerEntry header);
+void add_entry(char *pathname, int tarFd);
 
 
 #endif

@@ -7,30 +7,6 @@ void print_err(char *msg)
     exit(EXIT_FAILURE);
 }
 
-/*dec_to_oct_asciiString: convert value -> octal value stores that in buff[i]*/
-void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH, int type_field)
-{
-    int i, org_value = value;
-    int type_interval;
-    uint64_t copy[LENGTH];
-
-    /*Not a mode type*/
-    if(type_field == 0){
-        i = LENGTH -2;
-        type_interval = -1 ;
-    }
-    else{
-        i = LENGTH -2;
-        type_interval = 2;
-    }
-
-    for(; value != 0 && i> type_interval; i--, value /= OCTAL)
-    {
-        buff[i] = (value % OCTAL) + ASCII_OFFSET;
-        if(value != 0 && i==0)
-            insert_special_int(buff, LENGTH, org_value);
-    }
-}
 uint64_t hash_fieldHeader(uint8_t *field, int LENGTH){
     int i;
     uint64_t res = 0;
@@ -141,8 +117,7 @@ void get_chksum(headerEntry *hdr)
     checkSum += hash_fieldHeader(hdr->prefix , PREFIX_LEN);
 
     /*Encode checkSum into a ASCII octal number*/
-    dec_to_oct_asciiString(hdr->chksum, checkSum, CHKSUM_LEN, 0);
-
+	sprintf(hdr->chksum, "%0*o ", CHKSUM_LEN, checkSum);
 }
 
 void get_linkname(char *pathname, headerEntry *header_entry)
@@ -189,62 +164,58 @@ void get_uname_gname(struct passwd *pass, struct group *grp, headerEntry *hdr)
         perror("error the uname or the group name is too long");
         exit(EXIT_FAILURE);
     }
-    memcpy(hdr->uname, pass->pw_name, UNAME_LEN);
-    memcpy(hdr->gname, grp->gr_name, GNAME_LEN);
+	sprintf(hdr->uname, "%s", pass->pw_name);
+	sprintf(hdr->gname, "%s", grp->gr_name);
 }
    
-void get_stats(const char *pathname, headerEntry *header_entry)
+void get_stats(const char *pathname, headerEntry *hdr)
 {
    struct stat file_info;
    struct passwd *pass;
    struct group *grp;
 
    /*Step 0 - reset header fields to all null*/
-   reset_header_entry(header_entry);
+	reset_header_entry(hdr);
 
    /*Step 1 - get file information for mode and shit*/
    if(lstat(pathname, &file_info) == -1)
        print_err("stat err, {in get_stats function");
 
    /*Field 1,2 : name and prefix*/
-   get_name_prefix(pathname, header_entry);
+   get_name_prefix(pathname, hdr);
    /*Field 3 : mode*/
-   memset(header_entry->mode, '0', MODE_LEN-1);
-   dec_to_oct_asciiString(header_entry->mode,file_info.st_mode, MODE_LEN,1);
-     /*Field 4 : uid*/
-   memset(header_entry->uid, '0', UID_LEN-1);
-   dec_to_oct_asciiString(header_entry->uid,file_info.st_uid, UID_LEN,0);
+	sprintf(hdr->mode, "%06o ", (int)file_info.st_mode);
+    /*Field 4 : uid*/
+	sprintf(hdr->uid, "%06d ", (int)file_info.st_uid);
    /*Field 5 : gid*/
-   memset(header_entry->gid, '0', GID_LEN-1);
-   dec_to_oct_asciiString(header_entry->gid,file_info.st_gid, GID_LEN,0);
+	sprintf(hdr->gid, "%06d ", (int)file_info.st_gid);
+
    /*Field 6 : size*/
-   memset(header_entry->size, '0', SIZE_LEN-1);
-   dec_to_oct_asciiString(header_entry->size, file_info.st_size, SIZE_LEN,0);
+   sprintf(hdr->size, "%0*o", 11, (int)file_info.st_size);
    /*Field 7 : mtime*/
-   memset(header_entry->mtime, '0', MTIME_LEN-1);
-   dec_to_oct_asciiString(header_entry->mtime, file_info.st_mtime, MTIME_LEN,0);
+   sprintf(hdr->mtime, "%0*o", 11, (int)file_info.st_mtime);
    /*Field 8 : typeflag*/
-   get_typeflags(pathname, header_entry);
+   get_typeflags(pathname, hdr);
 
    /*Field 9: linkname*/
-   if(header_entry->typeflag == '2')
-       get_linkname(pathname, header_entry);
+   if(hdr->typeflag == '2')
+       get_linkname(pathname, hdr);
    else
-       memset(header_entry->linkname, '\0', LINKNAME_LEN);
+       memset(hdr->linkname, '\0', LINKNAME_LEN);
+
 
     /*Field 10: magic*/ 
-    strncpy(header_entry->magic, "ustar", MAGIC_LEN);
+ 	sprintf(hdr->magic, "%s", "ustar");
     /*Field 11: version*/
-    memset(header_entry->version, '0', VERSION_LEN);
+	snprintf(hdr->version, 2, "%s", "00");
     /*Field 12: devmajor*/
-     memset(header_entry->devmajor, '\0', 2);
+     memset(hdr->devmajor, '\0', 2);
     /*Field 13: devminor*/
-     memset(header_entry->devminor, '\0', 2);
+     memset(hdr->devminor, '\0', 2);
    /*Field 14, 15: uname and gname*/
-   get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), header_entry);
+    get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), hdr);
    /*Field 16: checksum*/
-   memset(header_entry->mtime, '0', MTIME_LEN-1);
-   get_chksum(header_entry);
+   get_chksum(hdr);
 
 }
 
@@ -360,13 +331,14 @@ void print_perms(mode_t st_mode){
     printf("\n");
  }
 /*================================================*/
+/*
 int main(int argc, char **argv)
 {
 
     headerEntry header_entry;
     reset_header_entry(&header_entry);
-
-    /*===================================Test 1- prefix and name ============================================================================*/
+	*/
+/*===================================Test 1- prefix and name ============================================================================*/
     /*
     printf("Test 1 - name and prefix\n");
     char *pathname = "/victor/delaplaine/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
@@ -381,8 +353,8 @@ int main(int argc, char **argv)
     /*======================================================================================================================================*/
 
     /*=======================Test 2-  mode====================================================*/
-
-    printf("Test 2 - mode\n");
+/*
+	printf("Test 2 - mode\n");
    int tarFd = open("outputs/header/test2.tar", O_RDONLY| O_TRUNC | O_WRONLY);
    char *pathname = "inputs/header/test2";
    struct stat file_info;
@@ -393,20 +365,17 @@ int main(int argc, char **argv)
    get_stats(pathname, &header_entry);
    print_perms(file_info.st_mode);
    dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);
-   print_field("mode",header_entry.mode, MODE_LEN);
-   
+  /* print_field("mode",header_entry.mode, MODE_LEN);*/
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
- /*  printf("\nTest 3 - uid, gid, mtime, size\n");
-   dec_to_oct_asciiString(header_entry.uid,file_info.st_uid, UID_LEN);
-   dec_to_oct_asciiString(hader_entry.gid,file_info.st_gid, GID_LEN);
-   dec_to_oct_asciiString(header_entry.size, file_info.st_size, SIZE_LEN);
-   dec_to_oct_asciiString(header_entry.mtime, file_info.st_mtime, MTIME_LEN);
+/*
+   printf("\nTest 3 - uid, gid, mtime, size\n");
 
     print_field("gid",header_entry.gid, GID_LEN);
     print_field("uid", header_entry.uid, UID_LEN);
     print_field("size", header_entry.size, SIZE_LEN);
-    print_field("mtime", header_entry.mtime, MTIME_LEN);*/
+    print_field("mtime", header_entry.mtime, MTIME_LEN);
+	*/
 /*===========================================================================================*/
 /*========================Test 4 - typeflag, linkname======================================================*/
    /*printf("\nTest 4 - typeflag, and linkname\n");
@@ -426,5 +395,3 @@ int main(int argc, char **argv)
     get_stats(pathname, &header_entry);
     print_header(&header_entry);*/
 /*===========================================================================================*/
-return 0;
-}
