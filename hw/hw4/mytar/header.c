@@ -32,12 +32,67 @@ int insert_special_int(char *where, size_t size, int32_t val) {
     } 
     else {
         /* game on....*/
-       memset(where, 0, size);
+        memset(where, 0, size);
         *(int32_t *)(where+size-sizeof(val)) = htonl(val);
         *where |= 0x80; /* set that high–order bit */
     }
     return err; 
 }
+
+void dec_to_oct_asciiString(uint8_t *hdr_field, unsigned long value ,int LENGTH, int what)
+{
+    int i, org_value = value;
+    char **name = {"mode", "uid", "gid", "size", "mtime", "chksum"};
+    int type_interval;
+    char copy[LENGTH];
+    int size;
+
+    if(what == 0){
+    sprintf(copy, "%0*o", (int)LENGTH-1, value);
+    size = strlen(copy);
+
+    if(size > LENGTH - 1)
+    {
+        printf("inserting special int");
+        insert_special_int(hdr_field, LENGTH, value);
+    }else{
+        memmove(hdr_field, copy, LENGTH);
+    }
+    }else{
+        /*mode*/
+    for(i=LENGTH-2; value != 0 && i> 2; i--, value /= OCTAL)
+    {
+        hdr_field[i] = (value % OCTAL) + ASCII_OFFSET;
+        if(value != 0 && i==0)
+            insert_special_int(hdr_field, LENGTH, org_value);
+    }
+   }
+    print_field("field", hdr_field,LENGTH);
+}
+/*
+void dec_to_oct_asciiString(uint8_t *buff, unsigned long value ,int LENGTH, int type_field)
+{
+    int i, org_value = value;
+    int type_interval;
+    uint64_t copy[LENGTH];
+
+    if(type_field == 0){
+        i = LENGTH -2;
+        type_interval = -1 ;
+    }
+    else{
+        i = LENGTH -2;
+        type_interval = 2;
+    }
+
+    for(; value != 0 && i> type_interval; i--, value /= OCTAL)
+    {
+        buff[i] = (value % OCTAL) + ASCII_OFFSET;
+        if(value != 0 && i==0)
+            insert_special_int(buff, LENGTH, org_value);
+    }
+}
+*/
 /*===================================================================*/
 
 /*get_name : gets the name of the pathname with nothing in front
@@ -98,14 +153,13 @@ void get_chksum(headerEntry *hdr)
     uint8_t init_chkSum[CHKSUM_LEN] = {' '};
     uint64_t checkSum = 0;
 
-    checkSum = hash_fieldHeader(init_chkSum, CHKSUM_LEN);
+    /*checkSum = hash_fieldHeader(init_chkSum, CHKSUM_LEN);*/
     checkSum += hash_fieldHeader(hdr->name, NAME_LEN);
     checkSum += hash_fieldHeader(hdr->mode, MODE_LEN);
     checkSum += hash_fieldHeader(hdr->uid, UID_LEN );
     checkSum += hash_fieldHeader(hdr->gid , GID_LEN);
     checkSum += hash_fieldHeader(hdr->size , SIZE_LEN);
     checkSum += hash_fieldHeader(hdr->mtime, MTIME_LEN);
-    checkSum += hash_fieldHeader(hdr->chksum , CHKSUM_LEN);
     checkSum += hdr->typeflag;
     checkSum += hash_fieldHeader(hdr->linkname , LINKNAME_LEN);
     checkSum += hash_fieldHeader(hdr->magic , MAGIC_LEN);
@@ -115,9 +169,15 @@ void get_chksum(headerEntry *hdr)
     checkSum += hash_fieldHeader(hdr->devmajor , DEVMAJOR_LEN);
     checkSum += hash_fieldHeader(hdr->devminor , DEVMINOR_LEN);
     checkSum += hash_fieldHeader(hdr->prefix , PREFIX_LEN);
+    int i;
+    for(i = 0 ; i<CHKSUM_LEN; i++)
+        checkSum += ' ';
+
+    memset(hdr->chksum, '\0', CHKSUM_LEN);
+    memset(hdr->chksum, '0', CHKSUM_LEN-1);
 
     /*Encode checkSum into a ASCII octal number*/
-	sprintf(hdr->chksum, "%0*o ", CHKSUM_LEN, checkSum);
+	dec_to_oct_asciiString(hdr->chksum, checkSum, CHKSUM_LEN, 0);
 }
 
 void get_linkname(char *pathname, headerEntry *header_entry)
@@ -149,23 +209,37 @@ void get_typeflags(char *pathname, headerEntry *header_entry){
    }
    else if(S_ISREG(file_info.st_mode))
    {
-       header_entry->typeflag = '\0';
+       header_entry->typeflag = '0';
    }
    else if(S_ISLNK(file_info.st_mode))
    {
        header_entry->typeflag = '2';
    }
 }
-
+void get_mtime(headerEntry *hdr){
+    memset(hdr->mtime, '0', MTIME_LEN - 1);
+}
 void get_uname_gname(struct passwd *pass, struct group *grp, headerEntry *hdr)
 {
+
+    uint8_t buff[UNAME_LEN], buf[GNAME_LEN];
     if(strlen(pass->pw_name) > UNAME_LEN|| strlen(grp->gr_name)  > GNAME_LEN)
+
     {
         perror("error the uname or the group name is too long");
         exit(EXIT_FAILURE);
-    }
-	sprintf(hdr->uname, "%s", pass->pw_name);
-	sprintf(hdr->gname, "%s", grp->gr_name);
+        }
+    memset(hdr -> uname, '\0', UNAME_LEN);
+    memset(hdr -> gname, '\0', GNAME_LEN);
+    memcpy(hdr -> uname, pass->pw_name, strlen(pass->pw_name));
+    printf("%s - uname", (char *)pass->pw_name);
+    memcpy(hdr -> gname, grp -> gr_name, strlen(grp-> gr_name));
+    printf("%s - gname", (char *)grp->gr_name);
+
+    /*
+	dec_to_oct_asciiString(hdr->uname, "%s", pass->pw_name);
+	dec_to_oct_asciiString(hdr->gname, "%s", grp->gr_name);
+    */
 }
    
 void get_stats(const char *pathname, headerEntry *hdr)
@@ -175,7 +249,6 @@ void get_stats(const char *pathname, headerEntry *hdr)
    struct group *grp;
 
    /*Step 0 - reset header fields to all null*/
-	reset_header_entry(hdr);
 
    /*Step 1 - get file information for mode and shit*/
    if(lstat(pathname, &file_info) == -1)
@@ -184,16 +257,27 @@ void get_stats(const char *pathname, headerEntry *hdr)
    /*Field 1,2 : name and prefix*/
    get_name_prefix(pathname, hdr);
    /*Field 3 : mode*/
-	sprintf(hdr->mode, "%06o ", (int)file_info.st_mode);
-    /*Field 4 : uid*/
-	sprintf(hdr->uid, "%06d ", (int)file_info.st_uid);
-   /*Field 5 : gid*/
-	sprintf(hdr->gid, "%06d ", (int)file_info.st_gid);
+    memset(hdr->mode, '\0', MODE_LEN);
+    memset(hdr->mode, '0', MODE_LEN-1);
+	dec_to_oct_asciiString(hdr->mode, (int)file_info.st_mode, MODE_LEN,1);
 
+    /*Field 4 : uid*/
+    memset(hdr->uid, '\0', UID_LEN);
+    /*memset(hdr->uid, '0', UID_LEN-1);*/
+	dec_to_oct_asciiString(hdr->uid, file_info.st_uid, UID_LEN,0);
+   /*Field 5 : gid*/
+    memset(hdr->gid, '\0', GID_LEN);
+    /*memset(hdr->uid, '0', GID_LEN-1);(*/
+	dec_to_oct_asciiString(hdr->gid, file_info.st_gid, GID_LEN,0);
+    /*Field 8 : typeflag*/
+   get_typeflags(pathname, hdr);
    /*Field 6 : size*/
-   sprintf(hdr->size, "%0*o", 11, (int)file_info.st_size);
+    memset(hdr->size, '0', SIZE_LEN-1);
+    if(hdr->typeflag == '0') 
+        dec_to_oct_asciiString(hdr->size, (int)file_info.st_size, SIZE_LEN,0);
    /*Field 7 : mtime*/
-   sprintf(hdr->mtime, "%0*o", 11, (int)file_info.st_mtime);
+    memset(hdr->mtime, '0', MTIME_LEN-1);
+   dec_to_oct_asciiString(hdr->mtime,(int)file_info.st_mtime, MTIME_LEN,0);
    /*Field 8 : typeflag*/
    get_typeflags(pathname, hdr);
 
@@ -203,16 +287,17 @@ void get_stats(const char *pathname, headerEntry *hdr)
    else
        memset(hdr->linkname, '\0', LINKNAME_LEN);
 
-
     /*Field 10: magic*/ 
- 	sprintf(hdr->magic, "%s", "ustar");
+ 	memcpy(hdr->magic, "ustar", MAGIC_LEN);
     /*Field 11: version*/
-	snprintf(hdr->version, 2, "%s", "00");
+	memset(hdr->version, '0', VERSION_LEN);
     /*Field 12: devmajor*/
-     memset(hdr->devmajor, '\0', 2);
+     memset(hdr->devmajor, '\0', DEVMAJOR_LEN);
     /*Field 13: devminor*/
-     memset(hdr->devminor, '\0', 2);
+     memset(hdr->devminor, '\0', DEVMINOR_LEN);
    /*Field 14, 15: uname and gname*/
+   memset(hdr->gname, '\0', GNAME_LEN);
+   memset(hdr->uname, '\0', UNAME_LEN);
     get_uname_gname(getpwuid(file_info.st_uid), getgrgid(file_info.st_gid), hdr);
    /*Field 16: checksum*/
    get_chksum(hdr);
@@ -242,11 +327,13 @@ void print_header(headerEntry *hdr)
 void reset_header_entry(headerEntry *hdr)
 {
 memset(hdr->name, '\0', NAME_LEN);
-memset(hdr->mode , '\0', MODE_LEN);
+memset(hdr->mode , '0', MODE_LEN);
+memset(hdr->mode + MODE_LEN, '\0', 1);
 memset(hdr->uid , '0', UID_LEN);
 memset(hdr->gid , '0', GID_LEN);
 memset(hdr->size , '\0', SIZE_LEN);
 memset(hdr->mtime , '\0', MTIME_LEN);
+memset(hdr->mtime, '0', MTIME_LEN - 1);
 memset(hdr->chksum , '\0', CHKSUM_LEN);
 hdr->typeflag = 0;
 memset(hdr->linkname , '\0', LINKNAME_LEN);
@@ -334,10 +421,9 @@ void print_perms(mode_t st_mode){
 /*
 int main(int argc, char **argv)
 {
-
     headerEntry header_entry;
-    reset_header_entry(&header_entry);
-	*/
+    /*reset_header_entry(&header_entry);*/
+
 /*===================================Test 1- prefix and name ============================================================================*/
     /*
     printf("Test 1 - name and prefix\n");
@@ -364,7 +450,7 @@ int main(int argc, char **argv)
    }
    get_stats(pathname, &header_entry);
    print_perms(file_info.st_mode);
-   dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);
+   /*dec_to_oct_asciiString(header_entry.mode, file_info.st_mode, MODE_LEN, 1);*/
   /* print_field("mode",header_entry.mode, MODE_LEN);*/
 /*====================================================================================================*/
 /*=======================Test 3- gid, size, mtime ====================================================*/
@@ -375,7 +461,7 @@ int main(int argc, char **argv)
     print_field("uid", header_entry.uid, UID_LEN);
     print_field("size", header_entry.size, SIZE_LEN);
     print_field("mtime", header_entry.mtime, MTIME_LEN);
-	*/
+*/	
 /*===========================================================================================*/
 /*========================Test 4 - typeflag, linkname======================================================*/
    /*printf("\nTest 4 - typeflag, and linkname\n");
@@ -390,8 +476,10 @@ int main(int argc, char **argv)
     print_field("linkname", header_entry.linkname, LINKNAME_LEN);
   */ 
 /*=================================================================================================*/
-/*=======================Test 5- get_stats ====================================================*/
-   /*printf("\nTest 5 - get_stats\n");
+/*=======================Test 5- mtime ====================================================*/
+ /*   char *pathname = "inputs/header/test3";
+   printf("\nTest 5 - mtime\n");
     get_stats(pathname, &header_entry);
-    print_header(&header_entry);*/
+    print_header(&header_entry);
 /*===========================================================================================*/
+    /*return 1;*/
