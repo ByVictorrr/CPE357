@@ -11,6 +11,7 @@
 #define BLOCK_SIZE 512
 
 
+
 void write_header(int tarFd , headerEntry header)
 {
     uint16_t padd_header = '\0';
@@ -70,7 +71,6 @@ void add_entry(const char *pathname, int tarFd)
    }
    
 }
-
 
 int main(int argc, char **argv)
 {
