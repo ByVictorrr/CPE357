@@ -18,6 +18,7 @@ void write_header(int tarFd , headerEntry header)
 
     write(tarFd, header.name, NAME_LEN);
     write(tarFd, header.mode, MODE_LEN);
+    printf("uid: = %s", (char*)header.uid);
     write(tarFd, header.uid, UID_LEN);
     write(tarFd, header.gid, GID_LEN);
     write(tarFd, header.size, SIZE_LEN);
@@ -42,7 +43,7 @@ void write_header(int tarFd , headerEntry header)
 void add_entry(const char *pathname, int tarFd)
 {
     int currFd;
-    int num_writes = 0, num_to_pad = 0;;
+    int num_writes = 0, num_to_pad = 0;
     uint8_t padder = {'\0'};
     char c;
 
@@ -69,14 +70,15 @@ void add_entry(const char *pathname, int tarFd)
       num_to_pad = BLOCK_SIZE-num_to_pad;
       write(tarFd, &padder, num_to_pad);
    }
-   
+   close(tarFd);
+   close(pathname);
 }
 
 int main(int argc, char **argv)
 {
    
-    char *pathname = "inputs/header/test1";
-    char *tarPath = "outputs/header/test1.tar";
+    char *pathname = "inputs/header/test2";
+    char *tarPath = "outputs/header/test2.tar";
     int tarFd = open(tarPath, O_RDWR | O_CREAT | O_TRUNC , 0666);
     add_entry(pathname, tarFd);
 
