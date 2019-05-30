@@ -29,7 +29,7 @@ void sig_handler(int signo)
 {
 	if (signo == SIGALRM){
 		printf("killing child process\n");
-		exit(EXIT_FAILURE);
+		exit(0);
 	}
 	
 }
