@@ -40,52 +40,40 @@ int main(int argc, char **argv)
 {
 	/*Step 1 - parse command line args*/
 	int i, j, indicator; /*incator - tells if we what progv we are storing into*/
-	char *prog1[INIT_SIZE], *prog2[INIT_SIZE];
 	char **progv1, **progv2;
-	int argc_progv1 = -1, argc_progv2 = 0;
+	int argc_progv1 = 0, argc_progv2 = 0;
 
 	int pipes[2], status;
 
 	pid_t child1, child2;
-
 
 	if(argc == 1){
 		printf("usage: pipeit <prog1 [options]> \\; <prog2 [options]>\n");
 		exit(0);
 	}
 	/*Malloc check*/
-	for(indicator = PROG1, i = PROG1; argv[i] != NULL; i++){
-		
-		if(strcmp(argv[i], ";")  == 0) {
-			indicator = PROG2;
-			j = i+1;
-		}else{ /*store argv into prog1*/
-			if(indicator == PROG1){
-				prog1[i-1] = argv[i];
-				argc_progv1++;
-			}else{
-				prog2[i-j] = argv[i]; 
-				argc_progv2++;
-			}
-		}
-	}
-	prog1[argc_progv1] = NULL;
-	prog2[argc_progv2] = NULL;
-
-	debug_progv(prog1, argc_progv1+1);
-	debug_progv(prog2, argc_progv2+1);
-
-	if((progv1 = (char **)malloc(sizeof(char)*argc_progv1+1)) == NULL || (progv2 = (char **)malloc(sizeof(char)*argc_progv2+1)) == NULL ){
+	if((progv1 = (char **)malloc(sizeof(char)*INIT_SIZE)) == NULL || (progv2 = (char **)malloc(sizeof(char)*INIT_SIZE)) == NULL ){
 		perror("malloc erro");
 		exit(EXIT_FAILURE);
 	}
 
-	memcpy(progv1, prog1, argc_progv1+1);
-	memcpy(progv2, prog2, argc_progv2+1);
-
-	debug_progv(prog1, argc_progv1+1);
-	debug_progv(prog2, argc_progv2+1);
-
+	for(indicator = PROG1, i = PROG1+1; argv[i] != NULL; i++){
+		
+		if(strcmp(argv[i], ";")  == 0) {
+			indicator = PROG2;
+			j = i+1;
+		}else{ /*store argv into progv1*/
+			if(indicator == PROG1){
+				progv1[i-1] = argv[i];
+				argc_progv1++;
+			}else{
+				progv2[i-j] = argv[i]; 
+				argc_progv2++;
+			}
+		}
+	}
+	progv1[argc_progv1] = NULL;
+	progv2[argc_progv2] = NULL;
 
 
 	/*Step 2 - pipe(pipes) , then fork() two times, then exec*/
@@ -101,16 +89,16 @@ int main(int argc, char **argv)
 			perror(progv1[0]);
 			exit(-1);
 		}
+		exit(0);
 	}else{ /*parent*/
 		wait(&status);
 		if(WEXITSTATUS(status) !=0){
-			printf("Process %d exited with an error value\n", child1);
+			printf("\nProcess %d exited with an error value\n", child1);
 		}else{
-			printf("Process %d suceeded\n", child1);
+			printf("\nProcess %d suceeded\n", child1);
 		}	
 	}
 	
-	printf("before 2nd fork");
 	safe_fork(&child2);
 
 	if(child2 == 0){
@@ -121,12 +109,13 @@ int main(int argc, char **argv)
 			perror(progv2[0]);
 			exit(-1);
 		}
+		exit(0);
 	}else{ /*parent*/
 		wait(&status);
 		if(WEXITSTATUS(status) !=0){
-			printf("Process %d exited with an error value\n", child1);
+			printf("\nProcess %d exited with an error value\n", child1);
 		}else{
-			printf("Process %d suceeded\n", child1);
+			printf("\nProcess %d suceeded\n", child1);
 		}	
 	
 	}
