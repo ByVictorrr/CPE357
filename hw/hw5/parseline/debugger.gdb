@@ -1,4 +1,3 @@
 #usage: gdb -x debugger.gdb ./pro
-b 92
-b 102
+b 188
 tui enable

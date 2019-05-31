@@ -87,6 +87,23 @@ void free_everyThing(char ***progs, int progs_size, char **progv, int progv_size
 	}
 
 }
+void clear_progv(char *** progv, int size)
+{
+	int i;
+	for(i = 0; i< size; i++){
+		memset(progv[0][i], '\0', size);
+	}
+}
+void memset_progs(char ***progs_nth, char **progv, int size)
+{
+	int i;
+	/* Step 1 - copy all the values to progv -> progs[ */
+	for(i = 0; i< size; i++){
+		strcpy(progs_nth[0][i], progv[i]);
+	}
+}
+
+
 /*===================================================*/
 
 
@@ -115,10 +132,9 @@ char ***get_progs_with_options(char *line){
 
 	for( i = 0, word_ptr = 0, progv_ptr = 0, progs_ptr = 0; line[i] != '\0'; i++){
 			/*Case 1- new word*/
-			if(line[i] == ' ' && line[i+1] != '|'){
+			if(line[i] == ' ' && line[i+1] != '|' && word_buff[0] != '\0'){
 				/*Step 1 - add this word to the progv*/
 				strcpy(progv_buff[progv_ptr], word_buff);
-				print_progv(progv_buff, PROGV_MAX);
 				progv_ptr++;
 				/*========reset word============= */
 				memset(word_buff,'\0', WORD_MAX);
@@ -128,11 +144,16 @@ char ***get_progs_with_options(char *line){
 			}else if(line[i] == ' ' && line[i+1] == '|'){
 				strcpy(progv_buff[progv_ptr], word_buff);
 				print_progv(progv_buff, PROGV_MAX);
-				memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);
+				/*memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);*/
+				/*memset_progs(progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
+				int f;
+				for(f = 0; f< PROGV_MAX; f++){
+					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
+				}
 				progs_ptr++;
 				/*=====reset word and progv =======*/
 				memset(word_buff, '\0', WORD_MAX);
-				memset(progv_buff, NULL, PROGV_MAX);
+				clear_progv(&progv_buff, PROGV_MAX);
 				word_ptr = 0; /* new word  */
 				progv_ptr = 0;
 				/*=============================== */
@@ -154,6 +175,18 @@ char ***get_progs_with_options(char *line){
 					word_ptr++;
 				}
 			}
+	}/* for loop */
+	/* store the last progv in to progs */
+	if(word_buff[0] != '\0'){
+		strcpy(progv_buff[progv_ptr], word_buff);
+		print_progv(progv_buff, PROGV_MAX);
+		/*memset_progs(&progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
+		int f;
+		for(f = 0; f< PROGV_MAX; f++){
+			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
+		}
+
+		progs_ptr++;
 	}
 	return progs_buff;
 }
