@@ -15,10 +15,8 @@ int argc = 0;
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
-	if(signo == SIGSEGV){
-		printf("segfault at \n");
-	}
-	exit(EXIT_FAILURE);
+	if(signo == SIGSEGV)
+		exit(EXIT_FAILURE);
 }
 void print_progv(char **progv, int size){
 	int i;
@@ -127,8 +125,6 @@ void memset_progs(char ***progs_nth, char **progv, int size)
 	}
 }
 
-
-
 /*===================================================*/
 
 /*==============Parsing functions=================== */
@@ -184,7 +180,7 @@ char ***get_progs_with_options(char *line){
 				/*memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				/*memset_progs(progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				int f;
-				for(f = 0; f< progv_ptr; f++){
+				for(f = 0; f< PROGV_MAX; f++){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
 
@@ -264,6 +260,7 @@ void get_pipes(int num_pipes, int **(pipes)[2]){
 		}
 	}
 }
+void close_uncess_pipes(int i);
 
 /*======================================================================== */
 
@@ -291,31 +288,57 @@ int main()
 	printf("num pipes - %d\n", num_pipes);
 	printf("argc - %d\n", argc);
 	
+	/*For test 1 - is good */
+	/*For Test 2 - is good */
+	/*For Test 3 - not getting -la  */
 	
 	/*==============Test 2 - exec command =====================*/
 	pid_t child;
 	int ptr_child = 0;
 	int *(pipes)[2];
-	int i;
+	int i, fd_std_out;
 	
 	if(num_pipes > 0){
-
+		/*allocat n pipes */
 		get_pipes(num_pipes, &pipes);
 
-	/*for(i = num_pipes+1; i> 0; i--){*/
+	for(i = 0; i < num_pipes+1; i++){
+		printf("prog = %s , i = %d, child = %d\n", progs[i][0], i, child);
 		if((child = fork()) < 0){
 			perror("bad fork");
 			exit(EXIT_FAILURE);
 		}else if(child == 0){
-			/*close(pipes[num_pipes][0]);*/
-			/*dup2(pipes[num_pipes][1], STDOUT_FILENO);*/
-			if(execv(progs[num_pipes-1][0], progs[num_pipes-1]) < 0){
+			printf("i = %d\n", i);
+			/*if the very first process */
+			if (i == 0){
+			    close(pipes[0][0]);
+				dup2(pipes[0][1], STDOUT_FILENO);
+			/* general case */
+			}else{
+				/* last program  */
+				if(i == num_pipes){
+					/*return saved stdout to its process */
+					close(pipes[i-1][1]);
+					dup2(pipes[i-1][0], STDIN_FILENO);
+				}else{
+					/*Read from last process */
+					close(pipes[i-1][1]);
+					dup2(pipes[i-1][0], STDIN_FILENO);
+					/*Write to the the next process */
+					close(pipes[i][0]);
+					dup2(pipes[i][1], STDOUT_FILENO);
+				}
+			}	
+			if(execv(progs[i][0], progs[i]) < 0){
 				exit(EXIT_FAILURE);
 			}	
+		exit(0);
 		}else{
 			wait(NULL);
 		}
-	}
+	}/* for loop */
+	printf("hi");
+}
 
 	return 0;
 }
