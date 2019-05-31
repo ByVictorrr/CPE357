@@ -17,3 +17,9 @@
 
 	* Delimiter of progv_i: | 
 	* > or < is stores in the leftmost program
+	* wait for any child before SIGINT 
+
+## Test
+	* ls > out a b   -> list a b 
+	* a.out < a < b -. err
+	* command line error reports 
