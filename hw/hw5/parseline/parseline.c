@@ -260,6 +260,7 @@ void get_pipes(int num_pipes, int **(pipes)[2]){
 		}
 	}
 }
+void close_uncess_pipes(int i);
 
 /*======================================================================== */
 
@@ -312,8 +313,9 @@ int main()
 			if (i == 0){
 			    close(pipes[0][0]);
 				dup2(pipes[0][1], STDOUT_FILENO);
+			/* general case */
 			}else{
-				/*last program  */
+				/* last program  */
 				if(i == num_pipes){
 					/*return saved stdout to its process */
 					close(pipes[i-1][1]);
@@ -332,9 +334,10 @@ int main()
 			}	
 		exit(0);
 		}else{
-			waitpid(child, NULL, 0);
+			wait(NULL);
 		}
 	}/* for loop */
+	printf("hi");
 }
 
 	return 0;
