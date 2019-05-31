@@ -13,4 +13,7 @@
 	* > : std out redirection (file name has to be valid)
 	* | : connects std out => std in of eac program
 		* assume each program sourounded  
+## Logic
 
+	* Delimiter of progv_i: | 
+	* > or < is stores in the leftmost program
