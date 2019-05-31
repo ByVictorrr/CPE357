@@ -38,7 +38,7 @@ char *read_long_line(int inFd)
 
 	/*case 2: reading the whole file */
 	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
-
+	memset(pbuff, '\0', MAXCHAR);
 	while((read(inFd, &c, sizeof(char))) > 0)
 	{
 	   /* print_binary(c);

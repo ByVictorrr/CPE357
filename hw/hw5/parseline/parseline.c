@@ -1,18 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <wait.h>
 #include <regex.h>
 #include <signal.h>
+#include <unistd.h>
 #include "readLongLine.h"
 #define WORD_MAX 10
 #define PROGV_MAX 10
 #define PROGS_MAX 10
 
-int i;
+/*====================GLOBAL VARS===============================*/
+int argc = 0;
 
+/* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
 	if(signo == SIGSEGV){
-		printf("segfault at - %d\n", i);
+		printf("segfault at \n");
 	}
 	exit(EXIT_FAILURE);
 }
@@ -25,6 +29,24 @@ void print_progv(char **progv, int size){
 }
 
 /* ================================================ */
+
+/*=================SAFE FUNCTION==================== */
+void safe_fork(pid_t *pid)
+{
+	if((*pid = fork()) < 0){
+		perror("fork err");
+		exit(EXIT_FAILURE);
+	}
+}
+void safe_pipe(int pipes[2])
+{
+	if(pipe(pipes) < 0){
+		perror("pipe err");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/*=================================================== */
 
 /*==============Utility Functions====================*/
 void init_word_buff(char **p, int word_size)
@@ -61,6 +83,8 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 	}
 
 }
+
+
 /* TODO : not working currently */
 void free_everyThing(char ***progs, int progs_size, char **progv, int progv_size, char *word, int word_size){
 	int i, j, k;
@@ -104,10 +128,20 @@ void memset_progs(char ***progs_nth, char **progv, int size)
 }
 
 
+
 /*===================================================*/
 
+/*==============Parsing functions=================== */
+int count_pipes(char *line){
 
-
+	int i;
+	int num_pipes = 0;
+	for( i = 0; line[i] != '\0'; i++){
+		if(line[i] == '|')
+			num_pipes++;
+	}
+	return num_pipes;
+}
 
 /*get_progs_with_options: gets a line inputed from user 
  *
@@ -119,10 +153,13 @@ void memset_progs(char ***progs_nth, char **progv, int size)
 
 /*Treat > and < part of the the progn */
 /*   */
+
+/* TODO : account for | | isnt a valid comand */
 char ***get_progs_with_options(char *line){
 
 	char ***progs_buff, **progv_buff, *word_buff;
 	int  word_ptr, progv_ptr, progs_ptr;
+	int i;
 	/* i - line ptr */
 
 	/*Step 0 - initalize mem for all buffers */
@@ -147,22 +184,31 @@ char ***get_progs_with_options(char *line){
 				/*memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				/*memset_progs(progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				int f;
-				for(f = 0; f< PROGV_MAX; f++){
+				for(f = 0; f< progv_ptr; f++){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
+
+				progs_buff[progs_ptr][progv_ptr+1] = NULL;
 				progs_ptr++;
 				/*=====reset word and progv =======*/
 				memset(word_buff, '\0', WORD_MAX);
 				clear_progv(&progv_buff, PROGV_MAX);
+				argc += progv_ptr + 1;
 				word_ptr = 0; /* new word  */
 				progv_ptr = 0;
 				/*=============================== */
+			/*Case 3 - if prog1 [options]| prog2 [options]: exit not a valid input */
+			}else if(line[i] != ' ' && line[i+1] == '|'){
+				
+				/* free everything  */
+				printf("not a valid input");
+				exit(EXIT_FAILURE);
 			/*Case 3 - not a new program or word*/
 			}else{
 				
 				if(line[i] == '|'){
 					/* dont add it to the word */
-					if(line[i+1] != ' '){ 
+					if(line[i+1] == ' ' && line[i+2] == '|'){ 
 						printf("Not a valid command\n");
 						/*free_everyThing(word_buff, progv_buff, progs_buff);*/
 						exit(EXIT_FAILURE);
@@ -170,6 +216,9 @@ char ***get_progs_with_options(char *line){
 						/* dont add anything in the buffer */
 						printf("dont do anything");
 					}
+				}else if(line[i] == ' '){
+					/* dont add anything in the buffer */
+					printf("dont do anything");
 				}else{
 					word_buff[word_ptr] = line[i];
 					word_ptr++;
@@ -185,26 +234,88 @@ char ***get_progs_with_options(char *line){
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 		}
-
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
+		argc += progv_ptr+1;
 		progs_ptr++;
 	}
 	return progs_buff;
 }
+/*======================================================================== */
 
-int main(int argc, char **argv)
+
+
+
+/*====================Shell/Exec function============================= */
+
+typedef int pipe_t [2];
+
+void get_pipes(int num_pipes, int **(pipes)[2]){
+
+	int i;
+	if(num_pipes == 0){
+		return NULL;
+	}else{	
+		if((*pipes = (pipe_t*)malloc(sizeof(pipe_t)*num_pipes)) == NULL){
+			perror("malloc err");
+			exit(EXIT_FAILURE);
+		}
+		for(i = 0; i<num_pipes; i++){
+			safe_pipe(*pipes);
+		}
+	}
+}
+
+/*======================================================================== */
+
+
+int main()
 {
 	char ***progs;
 	int fdTest;
 	char *line;
+	int num_pipes;
 
-	fdTest = open("inputs/test1", O_RDWR);
+	/*============== Test 1 - parse comand line ===============*/
+	fdTest = open("inputs/test3", O_RDWR);
 	line = read_long_line(fdTest);
 
 	if(signal(SIGSEGV, handle_SEGFAULT) == SIG_ERR) {
 	    fputs("An error occurred while setting a signal handler.\n", stderr);
 		exit(EXIT_FAILURE);
 	}
+
 	progs=get_progs_with_options(line);
+	/* assums that get_pros_with_options handles | next to a char and exits */
+	num_pipes = count_pipes(line);
+	
+	printf("num pipes - %d\n", num_pipes);
+	printf("argc - %d\n", argc);
+	
+	
+	/*==============Test 2 - exec command =====================*/
+	pid_t child;
+	int ptr_child = 0;
+	int *(pipes)[2];
+	int i;
+	
+	if(num_pipes > 0){
+
+		get_pipes(num_pipes, &pipes);
+
+	/*for(i = num_pipes+1; i> 0; i--){*/
+		if((child = fork()) < 0){
+			perror("bad fork");
+			exit(EXIT_FAILURE);
+		}else if(child == 0){
+			/*close(pipes[num_pipes][0]);*/
+			/*dup2(pipes[num_pipes][1], STDOUT_FILENO);*/
+			if(execv(progs[num_pipes-1][0], progs[num_pipes-1]) < 0){
+				exit(EXIT_FAILURE);
+			}	
+		}else{
+			wait(NULL);
+		}
+	}
 
 	return 0;
 }
