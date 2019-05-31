@@ -1,1 +1,1 @@
-/bin/ls -la | /bin/grep victo
+/bin/ls -l | /bin/grep tm
