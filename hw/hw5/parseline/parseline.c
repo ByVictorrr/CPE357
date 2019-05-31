@@ -7,9 +7,12 @@
 #define PROGV_MAX 10
 #define PROGS_MAX 10
 
+int i;
+
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
 	if(signo == SIGSEGV){
+		printf("segfault at - %d\n", i);
 	}
 	exit(EXIT_FAILURE);
 }
@@ -58,8 +61,32 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 	}
 
 }
+/* TODO : not working currently */
+void free_everyThing(char ***progs, int progs_size, char **progv, int progv_size, char *word, int word_size){
+	int i, j, k;
+	if(word != NULL)
+		free(word);
 
 
+	for(i = 0; i< progv_size; i++){
+			for (j = 0; j< word_size; j++){
+				free(progv[j][i]);
+			}
+			free(progv[j]);
+		}
+
+
+	for(k = 0; k < progs_size; k++){
+		for(i = 0; i< progv_size; i++){
+			for (j = 0; j< word_size; j++){
+				free(progs[k][j][i]);
+			}
+			free(progs[k][j]);
+		}
+		free(progs[k]);
+	}
+
+}
 /*===================================================*/
 
 
@@ -78,7 +105,7 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 char ***get_progs_with_options(char *line){
 
 	char ***progs_buff, **progv_buff, *word_buff;
-	int i, word_ptr, progv_ptr, progs_ptr;
+	int  word_ptr, progv_ptr, progs_ptr;
 	/* i - line ptr */
 
 	/*Step 0 - initalize mem for all buffers */
@@ -111,8 +138,21 @@ char ***get_progs_with_options(char *line){
 				/*=============================== */
 			/*Case 3 - not a new program or word*/
 			}else{
-				word_buff[word_ptr] = line[i];
-				word_ptr++;
+				
+				if(line[i] == '|'){
+					/* dont add it to the word */
+					if(line[i+1] != ' '){ 
+						printf("Not a valid command\n");
+						/*free_everyThing(word_buff, progv_buff, progs_buff);*/
+						exit(EXIT_FAILURE);
+					}else{
+						/* dont add anything in the buffer */
+						printf("dont do anything");
+					}
+				}else{
+					word_buff[word_ptr] = line[i];
+					word_ptr++;
+				}
 			}
 	}
 	return progs_buff;
