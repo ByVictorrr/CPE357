@@ -94,12 +94,12 @@ void free_progv_buff(char **ptr_progv, int size){
 }
 
 void free_prog_buff(char ***prog, int progv_size, int progs_size){
+	int k;
 	for(k = 0; k < progs_size; k++){
 		free_progv_buff(prog[k], progv_size);
 	}
 }
 
-}
 void clear_progv(char *** progv, int size)
 {
 	int i;
@@ -305,12 +305,13 @@ int main()
 			    close(pipes[0][0]);
 				dup2(pipes[0][1], STDOUT_FILENO);
 			/* general case */
-			}else{
+			}
+			else{
 				/* last program  */
 				if(i == num_pipes){
 					/*return saved stdout to its process */
-					close(pipes[i-1][1]);
-					dup2(pipes[i-1][0], STDIN_FILENO);
+					close(pipes[i-1][1]); /*close stdout*/
+					dup2(pipes[i-1][0], STDIN_FILENO);/*dup stdin*/
 				}else{
 					/*Read from last process */
 					close(pipes[i-1][1]);
@@ -323,8 +324,9 @@ int main()
 			if(execv(progs[i][0], progs[i]) < 0){
 				exit(EXIT_FAILURE);
 			}	
-		exit(0);
-		}else{
+			exit(0);
+		}
+		else{
 			wait(NULL);
 		}
 	}/* for loop */
