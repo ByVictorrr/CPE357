@@ -27,6 +27,7 @@ int main(int argc, char **argv)
 	int c, pipes1[2], pipes2[2], pipes3[3];
 	pid_t child1, child2;
 	int fd_in_parent;
+	int i;
 
 	/*Step 1- initalize all the pipes*/
 	safe_pipe(pipes1);
@@ -34,10 +35,10 @@ int main(int argc, char **argv)
 	safe_pipe(pipes3);
 
 	/*Step 2 - get input for P*/
-	while ((c = getchar())!= EOF){
+	for(i = 0; (c = getchar()) != EOF ; i++){
 		c = atoi(&c);
 	/*Step 3 - fork 1st  children*/
-	safe_fork(&child1);
+		safe_fork(&child1);
 
 /*=================CHILD 1=============================*/
 	if(child1 == 0){
@@ -87,7 +88,10 @@ int main(int argc, char **argv)
 		/*restore the fd_in_parent - so we can read from getch() */
 	}
 	
+	printf("%d - loop %d\n", c, i);
 }/*while loop*/
 
-	exit(0);
+	return 0;
 }
+
+

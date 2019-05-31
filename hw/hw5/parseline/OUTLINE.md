@@ -9,6 +9,8 @@
 ## GRAMMAR
 
 	* CMD : cmd [options] [arg1...[argn]]
-	* < : std in redirection
-	* > : std out redirection
-	*
+	* < : std in redirection (file name has to be valid) (doesnt have to be at the end);
+	* > : std out redirection (file name has to be valid)
+	* | : connects std out => std in of eac program
+		* assume each program sourounded  
+
