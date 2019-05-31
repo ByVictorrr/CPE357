@@ -82,31 +82,22 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 
 }
 
+void free_word_buff(char *ptr_word){
+	free(ptr_word);
+}
 
-/* TODO : not working currently */
-void free_everyThing(char ***progs, int progs_size, char **progv, int progv_size, char *word, int word_size){
-	int i, j, k;
-	if(word != NULL)
-		free(word);
-
-
-	for(i = 0; i< progv_size; i++){
-			for (j = 0; j< word_size; j++){
-				free(progv[j][i]);
-			}
-			free(progv[j]);
-		}
-
-
-	for(k = 0; k < progs_size; k++){
-		for(i = 0; i< progv_size; i++){
-			for (j = 0; j< word_size; j++){
-				free(progs[k][j][i]);
-			}
-			free(progs[k][j]);
-		}
-		free(progs[k]);
+void free_progv_buff(char **ptr_progv, int size){
+	int k;
+	for(k = 0; k < size; k++){
+		free_word_buff(ptr_progv[k]);
 	}
+}
+
+void free_prog_buff(char ***prog, int progv_size, int progs_size){
+	for(k = 0; k < progs_size; k++){
+		free_progv_buff(prog[k], progv_size);
+	}
+}
 
 }
 void clear_progv(char *** progv, int size)
@@ -339,6 +330,8 @@ int main()
 	}/* for loop */
 	printf("hi");
 }
+	free_prog_buff(progs,PROGV_MAX,PROGS_MAX);
+	free(pipes);
 
 	return 0;
 }
