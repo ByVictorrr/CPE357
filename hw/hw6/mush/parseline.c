@@ -1,5 +1,4 @@
-#include "readLongLine.h"
-#include "parse.h"
+#include "parseline.h"
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
@@ -14,29 +13,10 @@ void print_progv(char **progv, int size){
 			printf("progv[%d] = %s\n", i, progv[i]);
 }
 
-/* ================================================ */
-
-/*=================SAFE FUNCTION==================== */
-void safe_fork(pid_t *pid)
-{
-	if((*pid = fork()) < 0){
-		perror("fork err");
-		exit(EXIT_FAILURE);
-	}
-}
-void safe_pipe(int pipes[2])
-{
-	if(pipe(pipes) < 0){
-		perror("pipe err");
-		exit(EXIT_FAILURE);
-	}
-}
-
 /*=================================================== */
 
 /*==============Utility Functions====================*/
-void init_word_buff(char **p, int word_size)
-{
+void init_word_buff(char **p, int word_size){
 	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL)
 	{
 		perror("malloc err");
@@ -44,8 +24,7 @@ void init_word_buff(char **p, int word_size)
 	}
 	memset(*p, '\0', word_size);
 }
-void init_progv_buff(char ***p, int progv_size, int word_size)
-{
+void init_progv_buff(char ***p, int progv_size, int word_size){
 	int i;
 	if( (*p = (char **)malloc(sizeof(char*)*progv_size)) == NULL)
 	{
@@ -56,7 +35,7 @@ void init_progv_buff(char ***p, int progv_size, int word_size)
 		init_word_buff(&p[0][i], word_size);
 	}
 }
-void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
+void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	int i;
 	if( (*p = (char ***)malloc(sizeof(char**)*progs_size)) == NULL)
 	{
@@ -163,7 +142,7 @@ stage_t *new_stages(char ***progs, int size){
 			parse_progv(progs[i], &stages[i]);
 		}
 	}
-	free_prog_buff(progs);
+	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 
 	return stages;
 }
@@ -237,7 +216,7 @@ char ***get_progs_with_options(char *line){
 				/*=====reset word and progv =======*/
 				memset(word_buff, '\0', WORD_MAX);
 				clear_progv(&progv_buff, PROGV_MAX);
-				argc += progv_ptr + 1;
+				progs_argc += progv_ptr + 1;
 				word_ptr = 0; /* new word  */
 				progv_ptr = 0;
 				/*=============================== */
@@ -279,7 +258,7 @@ char ***get_progs_with_options(char *line){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 		}
 		progs_buff[progs_ptr][progv_ptr+1] = NULL;
-		argc += progv_ptr+1;
+		progs_argc += progv_ptr+1;
 		progs_ptr++;
 	}
 

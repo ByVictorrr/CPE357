@@ -1,16 +1,16 @@
 #include "parseline.h"
-#include "readLoneLine.h"
+#include "readLongLine.h"
+
+typedef int pipe_t [2];
 
 /*==================Safe Function ========================= */
-void safe_pipe(int pipes[2])
-{
+void safe_pipe(int pipes[2]){
 	if(pipe(pipes) < 0){
 		perror("pipe err");
 		exit(EXIT_FAILURE);
 	}
 }
-void safe_fork(pid_t *pid)
-{
+void safe_fork(pid_t *pid){
 	if((*pid = fork()) < 0){
 		perror("fork err");
 		exit(EXIT_FAILURE);
@@ -19,7 +19,6 @@ void safe_fork(pid_t *pid)
 /*=================================================== */
 /*====================Shell/Exec function============================= */
 
-typedef int pipe_t [2];
 
 void get_pipes(int num_pipes, pipe_t **pipes){
 	int i;
@@ -69,13 +68,6 @@ int main()
 	fdTest = open("inputs/test5", O_RDWR);
 	line = read_long_line(fdTest);
 
-	/*  
-	if(signal(SIGSEGV, handle_SEGFAULT) == SIG_ERR) {
-	    fputs("An error occurred while setting a signal handler.\n", stderr);
-		exit(EXIT_FAILURE);
-	}
-	*/
-
 	progs=get_progs_with_options(line);
 	/* assums that get_pros_with_options handles | next to a char and exits */
 	num_pipes = count_pipes(line);
@@ -86,14 +78,7 @@ int main()
 	/*For test 1 - is good */
 	/*For Test 2 - is good */
 	/*For Test 3 - not getting -la  */
-	/*===============Test 3 - stage testing ================= */
 	 stage_t *stages = new_stages(progs, num_pipes+1);
-
-
-
-
-	/*========================================================*/
-
 
 	/*==============Test 2 - exec command =====================*/
 	pid_t child;
@@ -106,7 +91,7 @@ int main()
 	printf(" pipes[2][0] - %d ", pipes[2][0]);
 	close_uncess_pipes(num_pipes, 4, pipes);
 	/*printf(" %d ", pipes);*/
-	
+
 /*===========================================================================================*/
 	return 0;
 }

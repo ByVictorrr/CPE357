@@ -1,5 +1,9 @@
+#ifndef PARSELINE_H
+#define PARSELINE_H
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wait.h>
 #include <regex.h>
 #include <signal.h>
@@ -23,18 +27,12 @@ typedef struct stage{
 
 
 /*====================GLOBAL VARS===============================*/
-int argc = 0;
+int progs_argc = 0;
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void print_progv(char **progv, int size);
 
 /* ================================================ */
-
-/*=================SAFE FUNCTION==================== */
-void safe_fork(pid_t *pid);
-void safe_pipe(int pipes[2]);
-
-/*=================================================== */
 
 /*==============Utility Functions====================*/
 void init_word_buff(char **p, int word_size);
@@ -48,19 +46,14 @@ void memset_progs(char ***progs_nth, char **progv, int size);
 /*===================================================*/
 
 /*==============Parsing functions=================== */
-
 void parse_progv(char **progv, stage_t *stage);
-
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size);
-
 void print_stage(stage_t *stages, int size);
 /*=========================================================*/
-
 int count_pipes(char *line);
-
 char ***get_progs_with_options(char *line);
 /*======================================================================== */
 
-
+#endif
 
