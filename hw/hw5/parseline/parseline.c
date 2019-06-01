@@ -83,21 +83,29 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 }
 
 void free_word_buff(char *ptr_word){
-	free(ptr_word);
+	if(ptr_word != NULL)
+		free(ptr_word);
 }
 
 void free_progv_buff(char **ptr_progv, int size){
 	int k;
 	for(k = 0; k < size; k++){
-		free_word_buff(ptr_progv[k]);
+		if(ptr_progv[k] != NULL)
+			free_word_buff(ptr_progv[k]);
 	}
+	if(ptr_progv != NULL)
+		free(ptr_progv);
 }
 
 void free_prog_buff(char ***prog, int progv_size, int progs_size){
 	int k;
 	for(k = 0; k < progs_size; k++){
-		free_progv_buff(prog[k], progv_size);
+		if(prog[k] != NULL)
+			free_progv_buff(prog[k], progv_size);
 	}
+	if(prog != NULL)
+		free(prog);
+	
 }
 
 void clear_progv(char *** progv, int size)
@@ -225,6 +233,11 @@ char ***get_progs_with_options(char *line){
 		argc += progv_ptr+1;
 		progs_ptr++;
 	}
+
+	/*free_word_buff(word_buff);
+	free_progv_buff(progv_buff, PROGV_MAX);
+	*/
+
 	return progs_buff;
 }
 /*======================================================================== */
@@ -234,15 +247,14 @@ char ***get_progs_with_options(char *line){
 
 /*====================Shell/Exec function============================= */
 
-typedef int pipe_t [2];
+/*typedef int pipe_t [2];*/
 
 void get_pipes(int num_pipes, int **(pipes)[2]){
-
 	int i;
 	if(num_pipes == 0){
 		return NULL;
 	}else{	
-		if((*pipes = (pipe_t*)malloc(sizeof(pipe_t)*num_pipes)) == NULL){
+		if((*pipes = (int**)malloc(sizeof(int[2])*num_pipes)) == NULL){
 			perror("malloc err");
 			exit(EXIT_FAILURE);
 		}
@@ -251,7 +263,29 @@ void get_pipes(int num_pipes, int **(pipes)[2]){
 		}
 	}
 }
-void close_uncess_pipes(int i);
+
+
+
+void close_uncess_pipes(int num_pipes, int ith_prog, int **(pipes)[2]){
+	int i;
+	int right, left;
+	printf(" %d ", pipes);
+	if(num_pipes  == 0)
+		printf("no pipes therefore cant close any\n");
+
+		/*Case 1 - not able to close any pipes to the left of ith_pipe*/
+		if(!(ith_prog -2 < 0)){
+			close(*pipes[ith_prog-2][0]);
+			close(*pipes[ith_prog-2][1]);
+			close_uncess_pipes(num_pipes, ith_prog-1, pipes);
+		}
+		/*Case 2 - not able to close any pipes to right of the ith_progs*/
+		if(ith_prog + 1 < num_pipes){
+			close(*pipes[ith_prog+1][0]);
+			close(*pipes[ith_prog+1][1]);
+			close_uncess_pipes(num_pipes, ith_prog+1, pipes);
+		}/*cant close pipes */
+}
 
 /*======================================================================== */
 
@@ -264,7 +298,7 @@ int main()
 	int num_pipes;
 
 	/*============== Test 1 - parse comand line ===============*/
-	fdTest = open("inputs/test3", O_RDWR);
+	fdTest = open("inputs/test4", O_RDWR);
 	line = read_long_line(fdTest);
 
 	if(signal(SIGSEGV, handle_SEGFAULT) == SIG_ERR) {
@@ -288,52 +322,13 @@ int main()
 	int ptr_child = 0;
 	int *(pipes)[2];
 	int i, fd_std_out;
+/*=========================Test 3 - close uncess pipes======================================*/
+	get_pipes(num_pipes, &pipes);
+	/*=============== Close =================*/
+	printf(" %d ", pipes);
+	close_uncess_pipes(num_pipes, 4, &pipes);
+	printf(" %d ", pipes);
 	
-	if(num_pipes > 0){
-		/*allocat n pipes */
-		get_pipes(num_pipes, &pipes);
-
-	for(i = 0; i < num_pipes+1; i++){
-		printf("prog = %s , i = %d, child = %d\n", progs[i][0], i, child);
-		if((child = fork()) < 0){
-			perror("bad fork");
-			exit(EXIT_FAILURE);
-		}else if(child == 0){
-			printf("i = %d\n", i);
-			/*if the very first process */
-			if (i == 0){
-			    close(pipes[0][0]);
-				dup2(pipes[0][1], STDOUT_FILENO);
-			/* general case */
-			}
-			else{
-				/* last program  */
-				if(i == num_pipes){
-					/*return saved stdout to its process */
-					close(pipes[i-1][1]); /*close stdout*/
-					dup2(pipes[i-1][0], STDIN_FILENO);/*dup stdin*/
-				}else{
-					/*Read from last process */
-					close(pipes[i-1][1]);
-					dup2(pipes[i-1][0], STDIN_FILENO);
-					/*Write to the the next process */
-					close(pipes[i][0]);
-					dup2(pipes[i][1], STDOUT_FILENO);
-				}
-			}	
-			if(execv(progs[i][0], progs[i]) < 0){
-				exit(EXIT_FAILURE);
-			}	
-			exit(0);
-		}
-		else{
-			wait(NULL);
-		}
-	}/* for loop */
-	printf("hi");
-}
-	free_prog_buff(progs,PROGV_MAX,PROGS_MAX);
-	free(pipes);
-
+/*===========================================================================================*/
 	return 0;
 }
