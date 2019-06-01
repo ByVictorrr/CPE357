@@ -9,6 +9,16 @@
 #define PROGV_MAX 10
 #define PROGS_MAX 10
 #define CMD_LINE_MAX 10
+#define cd_limit() do {printf("command too long");} 
+#define pipe_limit() do{printf("pipeline too deep");}    
+#define empty_stage() do{printf("invalid null command");}   
+#define many_arg(a) do{printf(#a": too many arguments");}   
+#define bad_input(a) do{printf(#a": bad input redirection");}   
+#define bad_output(a) do{printf(#a": bad output redirection");}   
+#define ambiguous_input(a) do{printf(#a": ambiguous input");}
+#define ambiguous_output(a) do{printf(#a": ambiguous output");}
+           
+      
 
 enum boolean{FALSE,TRUE};
 /*====================GLOBAL VARS===============================*/
@@ -312,6 +322,8 @@ int main(){
 	 stage_t *stages = new_stages(progs, num_pipes+1);
 
 	/*========================================================*/
-
+	free(line);
+	free_prog_buff(progs,PROGV_MAX,PROGS_MAX);
+	free(pipes);
 	return 0;
 }
