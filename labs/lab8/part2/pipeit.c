@@ -13,7 +13,7 @@
 #define INIT_SIZE 100
 
 enum progSection{PROG1, PROG2};
-
+extern char ** environ;
 void safe_fork(pid_t *pid)
 {
 	if((*pid = fork()) < 0){
@@ -85,40 +85,30 @@ int main(int argc, char **argv)
 		/*prog 1*/
 		close(pipes[0]);
 		dup2(pipes[1], STDOUT_FILENO);
-		if(execv(progv1[0], progv1) < 0){
+		if(execvpe(progv1[0], progv1, environ) < 0){
 			perror(progv1[0]);
 			exit(-1);
 		}
 		exit(0);
 	}else{ /*parent*/
-		wait(&status);
-		if(WEXITSTATUS(status) !=0){
-			printf("\nProcess %d exited with an error value\n", child1);
-		}else{
-			printf("\nProcess %d suceeded\n", child1);
-		}	
+		safe_fork(&child2);
+		if(child2 == 0){
+			/*prog 2*/
+			close(pipes[1]);
+			dup2(pipes[0], STDIN_FILENO);
+			if(execvpe(progv2[0], progv2, environ)  < 0){
+				perror(progv2[0]);
+				exit(-1);
+			}
+			exit(0);
 	}
-	
-	safe_fork(&child2);
-
-	if(child2 == 0){
-		/*prog 2*/
+		close(pipes[0]);
 		close(pipes[1]);
-		dup2(pipes[0], STDIN_FILENO);
-		if(execv(progv2[0], progv2)  < 0){
-			perror(progv2[0]);
-			exit(-1);
-		}
-		exit(0);
-	}else{ /*parent*/
-		wait(&status);
-		if(WEXITSTATUS(status) !=0){
-			printf("\nProcess %d exited with an error value\n", child1);
-		}else{
-			printf("\nProcess %d suceeded\n", child1);
-		}	
+		wait(NULL);
+		wait(NULL);
 	
 	}
+
 	free(progv1);
 	free(progv2);
 	

@@ -1,30 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <wait.h>
-#include <regex.h>
-#include <signal.h>
-#include <unistd.h>
 #include "readLongLine.h"
-#define WORD_MAX 10
-#define PROGV_MAX 10
-#define PROGS_MAX 10
-#define CMD_LINE_MAX 10
-#define cd_limit() do {printf("command too long");} 
-#define pipe_limit() do{printf("pipeline too deep");}    
-#define empty_stage() do{printf("invalid null command");}   
-#define many_arg(a) do{printf(#a": too many arguments");}   
-#define bad_input(a) do{printf(#a": bad input redirection");}   
-#define bad_output(a) do{printf(#a": bad output redirection");}   
-#define ambiguous_input(a) do{printf(#a": ambiguous input");}
-#define ambiguous_output(a) do{printf(#a": ambiguous output");}
-           
-      
-
-enum boolean{FALSE,TRUE};
-/*====================GLOBAL VARS===============================*/
-int argc = 0;
+#include "parse.h"
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
+void handle_SEGFAULT(int signo){
+	if(signo == SIGSEGV)
+		exit(EXIT_FAILURE);
+}
 void print_progv(char **progv, int size){
 	int i;
 	char empty[PROGV_MAX] = {'\0','\0','\0','\0','\0','\0','\0','\0','\0','\0'};
@@ -32,19 +13,42 @@ void print_progv(char **progv, int size){
 		if(strcmp(progv[i], empty) != 0)
 			printf("progv[%d] = %s\n", i, progv[i]);
 }
+
 /* ================================================ */
 
+/*=================SAFE FUNCTION==================== */
+void safe_fork(pid_t *pid)
+{
+	if((*pid = fork()) < 0){
+		perror("fork err");
+		exit(EXIT_FAILURE);
+	}
+}
+void safe_pipe(int pipes[2])
+{
+	if(pipe(pipes) < 0){
+		perror("pipe err");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/*=================================================== */
+
 /*==============Utility Functions====================*/
-void init_word_buff(char **p, int word_size){
-	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL){
+void init_word_buff(char **p, int word_size)
+{
+	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL)
+	{
 		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}
 	memset(*p, '\0', word_size);
 }
-void init_progv_buff(char ***p, int progv_size, int word_size){
+void init_progv_buff(char ***p, int progv_size, int word_size)
+{
 	int i;
-	if( (*p = (char **)malloc(sizeof(char*)*progv_size)) == NULL){
+	if( (*p = (char **)malloc(sizeof(char*)*progv_size)) == NULL)
+	{
 		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}
@@ -52,7 +56,7 @@ void init_progv_buff(char ***p, int progv_size, int word_size){
 		init_word_buff(&p[0][i], word_size);
 	}
 }
-void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
+void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
 	int i;
 	if( (*p = (char ***)malloc(sizeof(char**)*progs_size)) == NULL)
 	{
@@ -64,6 +68,7 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	}
 
 }
+
 void free_word_buff(char *ptr_word){
 	if(ptr_word != NULL)
 		free(ptr_word);
@@ -106,7 +111,7 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 
 /*===================================================*/
 
-/*==============Stage structure shit=================== */
+/*==============Parsing functions=================== */
 
 typedef struct stage{
 	/*command options files */
@@ -123,18 +128,18 @@ void parse_progv(char **progv, stage_t *stage){
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
 		/*Case 1 - just seperate cmd_line string */
 		if(strcmp(progv[i], "<") != 0 && strcmp(progv[i], ">") != 0){
-			stage->cmd_line[cmd_line_ptr] = progv[i];
+			strcpy(stage->cmd_line[cmd_line_ptr],progv[i]);
 			stage->num_args++;
 			cmd_line_ptr++;
 		/*Case 2 - currently at a < or >*/
 		}else{
 			/*Case 2.1 - at a < */
 			if(strcmp(progv[i], "<") == 0 ){
-				stage->in_file = progv[i+1];
+				strcpy(stage->in_file, progv[i+1]);
 				i++;
 			/*Case 2.2 - at a >  */
 			}else{
-				stage->out_file = progv[i+1];
+				strcpy(stage->out_file,progv[i+1]);
 				i++;
 			}
 			
@@ -142,7 +147,6 @@ void parse_progv(char **progv, stage_t *stage){
 	}
 	stage->cmd_line[cmd_line_ptr] = NULL;
 }
-
 
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size){
@@ -168,10 +172,12 @@ stage_t *new_stages(char ***progs, int size){
 			parse_progv(progs[i], &stages[i]);
 		}
 	}
+	free_prog_buff(progs);
+
 	return stages;
 }
 
-/*==============Parsing functions=================== */
+
 /*TODO:  */
 void print_stage(stage_t *stages, int size){
 	int i;
@@ -182,6 +188,8 @@ void print_stage(stage_t *stages, int size){
 	
 	}
 }
+/*=========================================================*/
+
 
 int count_pipes(char *line){
 
@@ -200,6 +208,8 @@ int count_pipes(char *line){
  *
  *programs are deperated by 
  * */ 
+
+
 /*Treat > and < part of the the progn */
 /*   */
 
@@ -295,9 +305,10 @@ char ***get_progs_with_options(char *line){
 	return progs_buff;
 }
 /*======================================================================== */
+	
 
-
-int main(){
+int main()
+{
 	char ***progs;
 	int fdTest;
 	char *line;
@@ -306,6 +317,13 @@ int main(){
 	/*============== Test 1 - parse comand line ===============*/
 	fdTest = open("inputs/test5", O_RDWR);
 	line = read_long_line(fdTest);
+
+	/*  
+	if(signal(SIGSEGV, handle_SEGFAULT) == SIG_ERR) {
+	    fputs("An error occurred while setting a signal handler.\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+	*/
 
 	progs=get_progs_with_options(line);
 	/* assums that get_pros_with_options handles | next to a char and exits */
@@ -317,12 +335,27 @@ int main(){
 	/*For test 1 - is good */
 	/*For Test 2 - is good */
 	/*For Test 3 - not getting -la  */
-	/*===============Test 2 - stage testing ================= */
+	/*===============Test 3 - stage testing ================= */
 	 stage_t *stages = new_stages(progs, num_pipes+1);
 
+
+
+
 	/*========================================================*/
-	free(line);
-	free_prog_buff(progs,PROGV_MAX,PROGS_MAX);
-	free(pipes);
+
+
+	/*==============Test 2 - exec command =====================*/
+	pid_t child;
+	int ptr_child = 0;
+	pipe_t *pipes;
+	int i, fd_std_out;
+/*=========================Test 3 - close uncess pipes======================================*/
+	get_pipes(num_pipes, &pipes);
+	/*=============== Close =================*/
+	printf(" pipes[2][0] - %d ", pipes[2][0]);
+	close_uncess_pipes(num_pipes, 4, pipes);
+	/*printf(" %d ", pipes);*/
+	
+/*===========================================================================================*/
 	return 0;
 }

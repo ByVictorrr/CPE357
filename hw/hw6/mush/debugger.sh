@@ -1,4 +1,4 @@
 make clean && make
-gdb -x debugger.gdb parseline
+gdb -x debugger.gdb mush
 
 

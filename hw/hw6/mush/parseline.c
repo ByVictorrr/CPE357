@@ -1,4 +1,6 @@
 #include "parseline.h"
+
+int progs_argc = 0;
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){

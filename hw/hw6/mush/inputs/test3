@@ -1,1 +1,1 @@
-/bin/ls -l | /bin/grep tm
+ls -l | grep tm
