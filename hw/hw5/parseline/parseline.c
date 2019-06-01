@@ -106,7 +106,6 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 
 /*===================================================*/
 
-
 /*==============Stage structure shit=================== */
 
 typedef struct stage{
