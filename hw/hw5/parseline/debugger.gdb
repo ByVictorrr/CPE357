@@ -1,3 +1,3 @@
 #usage: gdb -x debugger.gdb ./pro
-b main
+b 144 
 tui enable
