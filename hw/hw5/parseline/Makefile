@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic -g -lm
+CFLAGS = -Wall -ansi -pedantic -g -lm -w
 MAIN = parseline
 OBJ =  parseline.o readLongLine.o
 UNIX1_VIC = vdelapla@unix1.csc.calpoly.edu

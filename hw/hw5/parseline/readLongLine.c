@@ -2,7 +2,7 @@
 
 
 /*index of buffer*/
-int index = 0;
+
 
 void print_binary(char x) {
     int b = 128;
@@ -29,6 +29,7 @@ void printbincharpad(char c)
 }
 char *read_long_line(int inFd)
 {
+	int index = 0;
 	char *pbuff, *prev;
 	int sizebuff = MAXCHAR;
 	char c; /*temp is for moving allong pbuff*/
@@ -45,7 +46,8 @@ char *read_long_line(int inFd)
 	    printf(" above is %c \n", c);
 	    */
 		/*case 3: store value of c in buffer */
-		pbuff[index++] = c;
+		*pbuff++ = c;
+		index++;
 		/*case 4: check if an overflow occured in buffer same buff
 		 *		count number of overflows in buff */
 		if ( index >= MAXCHAR-1 )
