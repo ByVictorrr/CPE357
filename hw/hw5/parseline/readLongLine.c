@@ -2,7 +2,7 @@
 
 
 /*index of buffer*/
-
+int index = 0;
 
 void print_binary(char x) {
     int b = 128;
@@ -29,25 +29,27 @@ void printbincharpad(char c)
 }
 char *read_long_line(int inFd)
 {
-	int index = 0;
 	char *pbuff, *prev;
 	int sizebuff = MAXCHAR;
 	char c; /*temp is for moving allong pbuff*/
 
 	/*initalize current size of buffer*/	
 	int onebuff = 0;
-
+	
 	/*case 2: reading the whole file */
 	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
 	memset(pbuff, '\0', MAXCHAR);
 	while((read(inFd, &c, sizeof(char))) > 0)
 	{
+		
 	   /* print_binary(c);
 	    printf(" above is %c \n", c);
 	    */
+	   if(c == '\n'){
+		   return pbuff;
+	   }
 		/*case 3: store value of c in buffer */
-		*pbuff++ = c;
-		index++;
+		pbuff[index++] = c;
 		/*case 4: check if an overflow occured in buffer same buff
 		 *		count number of overflows in buff */
 		if ( index >= MAXCHAR-1 )

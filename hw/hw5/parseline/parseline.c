@@ -7,13 +7,6 @@ void handle_SEGFAULT(int signo){
 	if(signo == SIGSEGV)
 		exit(EXIT_FAILURE);
 }
-void print_progv(char **progv, int size){
-	int i;
-	char empty[PROGV_MAX] = {'\0','\0','\0','\0','\0','\0','\0','\0','\0','\0'};
-	for(i = 0; i< size; i++)
-		if(strcmp(progv[i], empty) != 0)
-			printf("progv[%d] = %s\n", i, progv[i]);
-}
 
 /* ================================================ */
 
@@ -169,19 +162,27 @@ stage_t *new_stages(char ***progs, int size)
 int redirect_is_valid(stage_t* stage)
 {
 	char **cmd_line = stage->cmd_line;
-	int argc = 0;
+	int argc = 0, i = 0, skip = 0;
 	/*pass in {"executable", "[flag|<|>|file|"} */
 	/*check if the redirection is valid
     if valid: return TRUE 
     if not: print input| output redirect error message and return FALSE
     */
-	char *str, skip = 0;
-	int o = 0, i = 0; /* test if there is redundant redirection sign*/
+	char str[CMD_LINE_MAX] = {'\0'};
+	char next[CMD_LINE_MAX] = {'\0'};
+	int o = 0, in = 0; /* test if there is redundant redirection sign*/
 	
 
-	while ((str = *cmd_line)!=NULL)
+	while (cmd_line[i])
 	{
-		cmd_line++;
+		strncpy(str, stage->cmd_line[i], CMD_LINE_MAX);
+		if(stage->cmd_line[i+1]){
+			strncpy(next, stage->cmd_line[i+1], CMD_LINE_MAX);
+		}
+		else{
+			*next = '\0';
+		}
+		
 		if (skip)
 		{
 			skip = 0;
@@ -191,46 +192,47 @@ int redirect_is_valid(stage_t* stage)
 		else if(*str =='>')
 		{
 			printf(" this is a > ");
-			if (*cmd_line == NULL)
+			if (!*next)
 			{
 				return FALSE;
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
-			if (!strcmp(*cmd_line, ">") || !strcmp(*cmd_line, "<"))
+			if (*next == '>' || *next == '<')
 			{
 				return FALSE;
 			}
 			/*----- update Stage's outfile -------*/
-			stage->out_file = *cmd_line;
+			strcpy(stage->out_file, str);
 			skip = 1;
 			o += 1;
 		}
 		else if(*str =='>')
 		{
 			printf(" this is a < ");
-			if (*cmd_line == NULL)
+			if (!*next)
 			{
 				return FALSE;
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
-			if (!strcmp(*cmd_line, ">") || !strcmp(*cmd_line, "<"))
+			if (*next == '>' || *next == '<')
 			{
 				return FALSE;
 			}
 			/*----- update Stage's infile -------*/
-			stage->in_file = *cmd_line;
+			strcpy(stage->in_file, str);
 			skip = 1;
-			i += 1;
+			in += 1;
 		}
 		else
 		{
 			argc += 1;
 		}
+		i++;
 	}
 	/*since we cant have two outfile*/
-	if (i > 1)
+	if (in > 1)
 	{
 		bad_input(cmd_line[0]);
 		return FALSE;
@@ -249,33 +251,41 @@ void print_stage(stage_t *stages, int size)
 {
 	/* takes list of stage entities and size of the list and a cmd line in one line not a list*/
 	int i, j = 0, skip = 0;
+	char *cmd_full, *arg_line;
+/*
 	char cmd_full[CMD_LINE_MAX] = {'\0'};
-	char arg_line[CMD_LINE_MAX] = {'\0'};
-	char** command = NULL;
+	char arg_line[CMD_LINE_MAX] = {'\0'};*/
 	if (stages == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
 	for (i = 0; i < size; i++)
 	{
-
-		command = stages[i].cmd_line;
-		printf("++++HELLO PRINTING STAGE +++++");
-		while(command++){
-
+		init_word_buff(&cmd_full, CMD_LINE_MAX);
+		init_word_buff(&arg_line, CMD_LINE_MAX);
+		/* getting the full command and arguments only 
+		by parsing through and filtering out < > in/out file*/ 
+		while(stages[i].cmd_line[j]){
 			if (skip){
 				skip = 0;
 				continue;
 			}
-			else if(**command =='>'|| **command == '<'){
-				printf("++++<> +++++");
+			else if(*stages[i].cmd_line[j] =='>'|| *stages[j].cmd_line[j] == '<'){
+
 				skip = 1;
 			}	
 			else{
-				sprintf(arg_line+ strlen(arg_line), "\"%s\",", *command);
-			}
-			sprintf(cmd_full+ strlen(cmd_full), "%s ", *command);
-		}
+				sprintf(&arg_line[strlen(arg_line)], "\"%s\",", stages[i].cmd_line[j]);
+				/*strcat(arg_line+strlen(arg_line, " ");*/
+			}/*else */
+			
+			if(strlen(cmd_full) > CMD_LINE_MAX){
+				many_arg(stages[i].cmd_line[0]);
+				exit(1);
+			}			
+			sprintf(&cmd_full[strlen(cmd_full)], "%s ", stages[i].cmd_line[j]);	
+			j++;
+		}	/*for loop*/
 		arg_line[strlen(arg_line)-1] = '\0'; /*take off the comma */
 		cmd_full[strlen(cmd_full)-1] = '\0';
 		printf("\n--------\n");
@@ -283,21 +293,35 @@ void print_stage(stage_t *stages, int size)
 		printf("--------\n");
 		printf("%10s: ", "input");
 		if (stages[i].in_file){
+			if(i>0){
+				ambiguous_input(stages[i].cmd_line[0]);
+			}
 			printf("%s\n", stages[i].in_file);}
-		else if (stages[i].in_file == NULL){
-			printf("original stdin\n");}
-		else if (i > 0){
+		else if (stages[i].in_file == NULL && i > 0){
 			printf("pipe from stage %i\n", i - 1);}
+
+		else{
+			printf("original stdin\n");}
 		printf("%10s: ", "output");
 		if (stages[i].out_file){
+			if(stages[i].pipe_flag){
+				ambiguous_output(stages[i].cmd_line[0]);
+			}
 			printf("%s\n", stages[i].out_file);}
-		else if (stages[i].out_file == NULL){
-			printf("original stdout\n");}
-		else if (i > 0){
+		else if (stages[i].out_file == NULL && stages[i].pipe_flag){
 			printf("pipe to stage %i\n", i + 1);}
+		else {
+			printf("original stdout\n");}
+		
 		printf("%10s: %d\n", "argc", stages[i].num_args);
-		printf("%10s: %s", "argv", arg_line);
-	
+		printf("%10s: %s\n", "argv", arg_line);
+		/*
+		memset(cmd_full, '\0',CMD_LINE_MAX*sizeof(char)); 
+		memset(arg_line, '\0',CMD_LINE_MAX*sizeof(char));
+		*/
+		free(cmd_full);
+		free(arg_line);
+		j = 0;
 	}
 }
 
@@ -352,9 +376,6 @@ char ***get_progs_with_options(char *line){
 			/*Case 2 - new prog */
 			}else if(line[i] == ' ' && line[i+1] == '|'){
 				strcpy(progv_buff[progv_ptr], word_buff);
-				print_progv(progv_buff, PROGV_MAX);
-				/*memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);*/
-				/*memset_progs(progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				int f;
 				for(f = 0; f< PROGV_MAX; f++){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
@@ -384,13 +405,11 @@ char ***get_progs_with_options(char *line){
 						printf("Not a valid command\n");
 						/*free_everyThing(word_buff, progv_buff, progs_buff);*/
 						exit(EXIT_FAILURE);
-					}else{
-						/* dont add anything in the buffer */
-						printf("dont do anything");
 					}
+					/* else -- dont add anything in the buffer*/
 				}else if(line[i] == ' '){
 					/* dont add anything in the buffer */
-					printf("dont do anything");
+					;
 				}else{
 					word_buff[word_ptr] = line[i];
 					word_ptr++;
@@ -400,8 +419,6 @@ char ***get_progs_with_options(char *line){
 	/* store the last progv in to progs */
 	if(word_buff[0] != '\0'){
 		strcpy(progv_buff[progv_ptr], word_buff);
-		print_progv(progv_buff, PROGV_MAX);
-		/*memset_progs(&progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 		int f;
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
@@ -418,19 +435,24 @@ char ***get_progs_with_options(char *line){
 	return progs_buff;
 }
 /*======================================================================== */
-	
+
 
 int main()
 {
 	char ***progs = NULL;
-	int fdTest, num_pipes=0, size, i;
+	int fdTest, num_pipes=0, size, i, flag = 0;
 	char *line = NULL;
-	
 	stage_t *stages;
-
+	/*fdTest = open("inputs/test3", O_RDWR);*/
+	if(1){
+		printf("line: ");
+		flag = 1;
+	}
+	if(flag){
+		line = read_long_line(0);
+	}
+	
 	/*============== Test 1 - parse comand line ===============*/
-	fdTest = open("inputs/test3", O_RDWR);
-	line = read_long_line(fdTest);
 
 	/*  
 	if(signal(SIGSEGV, handle_SEGFAULT) == SIG_ERR) {

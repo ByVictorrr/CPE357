@@ -3,10 +3,10 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
-#define WORD_MAX 10
-#define PROGV_MAX 10
-#define PROGS_MAX 10
-#define CMD_LINE_MAX 10
+#define WORD_MAX 15
+#define PROGV_MAX 15
+#define PROGS_MAX 15
+#define CMD_LINE_MAX 15
 #define cd_limit() printf("command too long");
 #define pipe_limit() printf("pipeline too deep");   
 #define empty_stage() printf("invalid null command");  
