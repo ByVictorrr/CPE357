@@ -30,7 +30,6 @@ void clear_pipe_buff(int fd_read){
 /*=================================================== */
 /*====================Shell/Exec function============================= */
 
-
 void get_pipes(pipe_t *pipes, int size){
 	int i; 
 	if(size > PIPE_MAX){
@@ -41,26 +40,33 @@ void get_pipes(pipe_t *pipes, int size){
 		safe_pipe(&pipes[i]);
 }
 
-void close_uncess_pipes(int num_pipes, int ith_prog, pipe_t pipes[PIPE_MAX]){
+void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
 		printf("no pipes therefore cant close any\n");
-
+/*  
+	if(ith_prog -2 == -1 || ith_prog + 1 == num_pipes){
+		return;
+	}
+*/
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
 	if(ith_prog -2 >= 0){
 		close(pipes[ith_prog-2][0]);
 		close(pipes[ith_prog-2][1]);
-		close_uncess_pipes(num_pipes, ith_prog-1, pipes);
+		close_uncess_pipes(num_pipes, ith_prog-1, org_ith , pipes);
 	}
+
+	if( org_ith != ith_prog)
+	   return;
 	/* Case 2 - not able to close any pipes to right of the ith_progs*/
 	if(ith_prog + 1 <= num_pipes-1){
 		close(pipes[ith_prog+1][0]);
 		close(pipes[ith_prog+1][1]);
-		close_uncess_pipes(num_pipes, ith_prog+1, pipes);
+		close_uncess_pipes(num_pipes, ith_prog+1, org_ith, pipes);
 	}/* cant close pipes */
 }
 /*num_progs = num_pipes+1*/
-void fork_me_bitch(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
+void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
 
 	pid_t child;
 	/*base case   */
@@ -69,19 +75,15 @@ void fork_me_bitch(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[P
 	}else{
 		safe_fork(&child);
 		if(child == 0){
-			close_uncess_pipes(num_pipes, num_progs-1, pipes);
+			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
 			if(num_pipes + 1 == num_progs){
 				printf("last program in pipeline\n");
-				close(pipes[0][0]);
-				close(pipes[0][1]);
-				close(pipes[1][1]);
+				close(pipes[num_progs-2][WRITE]);
 				dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 			/*Case 2 - first program */
 			}else if (num_progs == 1){
 				close(pipes[num_progs-1][READ]);
-				close(pipes[num_progs+1][READ]);
-				close(pipes[num_progs+1][WRITE]);
 				dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
 			/*Case 3 - general case*/
 			}else{
@@ -91,28 +93,22 @@ void fork_me_bitch(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[P
 				dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 				/*close end of pipes reading or righting to */
 			}
-		execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ);
-		exit(EXIT_FAILURE);
+		if(execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ) < 0){
+			perror("exec errr");
+			exit(EXIT_FAILURE);
+		}
 		}else{
-			fork_me_bitch(stages, num_progs-1, num_pipes, pipes);
+			pipe_line(stages, num_progs-1, num_pipes, pipes);
 			/*close everything on the first program  */
-				/*close_uncess_pipes(num_pipes, -1, pipes);*/
-			close(pipes[0][0]);
-			close(pipes[0][1]);
-			close(pipes[1][0]);
-			close(pipes[1][1]); 
+			close_uncess_pipes(num_pipes, -1, -1 ,pipes);
 			wait(NULL);
 		}
 	}
-	printf("fuckme\n");
 	exit(0);
 }
-
-
 /*======================================================================== */
 
-int main()
-{
+int main(int argc, char **argv){
 	char ***progs;
 	int fdTest;
 	char *line;
@@ -141,7 +137,9 @@ int main()
 	stage_t *stages = new_stages(progs, num_pipes+1);
 
 	get_pipes(pipes, num_pipes);
-	fork_me_bitch(stages, num_pipes+1, num_pipes, pipes);
+	pipe_line(stages, num_pipes+1, num_pipes, pipes);
+
+	/* */
 
 	return 0;
 }
