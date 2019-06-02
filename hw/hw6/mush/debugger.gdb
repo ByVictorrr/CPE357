@@ -1,2 +1,4 @@
 #usage: gdb -x debugger.gdb ./pro
-b parseline.c:144
+b 71
+set follow-fork-mode child
+tui enable
