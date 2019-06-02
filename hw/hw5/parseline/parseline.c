@@ -1,5 +1,5 @@
 #include "readLongLine.h"
-#include "parse.h"
+#include "parseline.h"
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
@@ -56,7 +56,7 @@ void init_progv_buff(char ***p, int progv_size, int word_size)
 		init_word_buff(&p[0][i], word_size);
 	}
 }
-void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size)
+void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	int i;
 	if( (*p = (char ***)malloc(sizeof(char**)*progs_size)) == NULL)
 	{
@@ -113,14 +113,7 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 
 /*==============Parsing functions=================== */
 
-typedef struct stage{
-	/*command options files */
-	char **cmd_line;
-	char *in_file;
-	char *out_file;
-	int num_args; /*counts the number of string in cmd_line  */
-	int pipe_flag; /*set if there is a pipe to the right*/
-}stage_t;
+
 
 void parse_progv(char **progv, stage_t *stage){
 	int i;
@@ -172,7 +165,7 @@ stage_t *new_stages(char ***progs, int size){
 			parse_progv(progs[i], &stages[i]);
 		}
 	}
-	free_prog_buff(progs);
+	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 
 	return stages;
 }
@@ -336,26 +329,7 @@ int main()
 	/*For Test 2 - is good */
 	/*For Test 3 - not getting -la  */
 	/*===============Test 3 - stage testing ================= */
-	 stage_t *stages = new_stages(progs, num_pipes+1);
-
-
-
-
-	/*========================================================*/
-
-
-	/*==============Test 2 - exec command =====================*/
-	pid_t child;
-	int ptr_child = 0;
-	pipe_t *pipes;
-	int i, fd_std_out;
-/*=========================Test 3 - close uncess pipes======================================*/
-	get_pipes(num_pipes, &pipes);
-	/*=============== Close =================*/
-	printf(" pipes[2][0] - %d ", pipes[2][0]);
-	close_uncess_pipes(num_pipes, 4, pipes);
-	/*printf(" %d ", pipes);*/
-	
+	 stage_t *stages = new_stages(progs, num_pipes+1);	
 /*===========================================================================================*/
 	return 0;
 }

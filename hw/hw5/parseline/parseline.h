@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <wait.h>
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
