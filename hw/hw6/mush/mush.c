@@ -1,7 +1,9 @@
 #include "parseline.h"
 #include "readLongLine.h"
+#define PIPE_MAX PROGS_MAX - 1
 typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
+
 
 extern char **environ;
 /*==================Safe Function ========================= */
@@ -27,6 +29,77 @@ void clear_pipe_buff(int fd_read){
 
 /*=================================================== */
 /*====================Shell/Exec function============================= */
+
+
+void get_pipes(pipe_t *pipes, int size){
+	int i; 
+	for(i=0; i< size; i++)
+		safe_pipe(&pipes[i]);
+}
+
+void close_uncess_pipes(int num_pipes, int ith_prog, pipe_t pipes[PIPE_MAX]){
+	int i;
+	int right, left;
+	if(num_pipes  == 0)
+		printf("no pipes therefore cant close any\n");
+
+	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
+	if(!(ith_prog -2 < 0)){
+		close(pipes[ith_prog-2][0]);
+		close(pipes[ith_prog-2][1]);
+		close_uncess_pipes(num_pipes, ith_prog-1, pipes);
+	}
+	/* Case 2 - not able to close any pipes to right of the ith_progs*/
+	if(ith_prog + 1 < num_pipes){
+		close(pipes[ith_prog+1][0]);
+		close(pipes[ith_prog+1][1]);
+		close_uncess_pipes(num_pipes, ith_prog+1, pipes);
+	}/* cant close pipes */
+
+}
+/*num_progs = num_pipes+1*/
+void fork_me_bitch(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
+
+	pid_t child;
+	/*base case   */
+	if(num_progs == 0){
+		return;
+	}else{
+		safe_fork(&child);
+		if(child == 0){
+			/*sleep(num_progs);*/
+			close_uncess_pipes(num_pipes, num_progs-1, pipes);
+			/*Case 1 - if the last program, leave stdout alone*/
+			if(num_pipes + 1 == num_progs){
+				printf("last program in pipeline\n");
+				dup2(pipes[num_progs-2][READ], STDIN_FILENO);
+			/*Case 2 - first program */
+			}else if (num_progs == 1){
+				close(pipes[num_progs-1][READ]);
+				dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
+			/*Case 3 - general case*/
+			}else{
+				dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
+				dup2(pipes[num_progs-2][READ], STDOUT_FILENO);
+				/*close end of pipes reading or righting to */
+				close(pipes[num_progs-1][READ]);
+				close(pipes[num_progs-2][WRITE]);
+			}
+		execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ);
+		exit(EXIT_FAILURE);
+		}else{
+			fork_me_bitch(stages, num_progs-1, num_pipes, pipes);
+			/*close everything on the first program  */
+				/*close_uncess_pipes(num_pipes, -1, pipes);*/
+			close(pipes[0][0]);
+			close(pipes[0][1]);
+			wait(NULL);
+		}
+	}
+	printf("fuckme\n");
+	exit(0);
+}
+
 
 /*======================================================================== */
 
@@ -54,75 +127,13 @@ int main()
 	/*==============Test 2 - exec command =====================*/
 	pid_t child;
 	int ptr_child = 0;
-	pipe_t pipes[2];
+	pipe_t pipes[PIPE_MAX];
 	int i, fd_std_out;
 	stage_t *stages = new_stages(progs, num_pipes+1);
-	safe_pipe(pipes[0]);
-	safe_pipe(pipes[1]);
 
-	/*
-	printf("environ\n: - ");
-	while(environ[i]) {
-		  printf("%s\n", environ[i++]); 
-	}
-	*/
+	get_pipes(pipes, num_pipes);
+	fork_me_bitch(stages, num_pipes+1, num_pipes, pipes);
 
-	if(num_pipes > 0){
-		for(i = 0; i < num_pipes+1; i++){
-				
-			if((child = fork()) < 0){
-				perror("bad fork");
-				exit(EXIT_FAILURE);
-			}else if(child == 0){
-				printf("i = %d\n", i);
-				/*if the very first process */
-				if (i == 0){
-					close(STDOUT_FILENO);
-					close(pipes[1][0]);
-					close(pipes[1][1]);
-					close(pipes[0][READ]);
-					dup(pipes[0][WRITE]);
-					close(pipes[0][WRITE]);
-
-					execvpe(stages[i].cmd_line[0], stages[i].cmd_line, environ);
-					exit(EXIT_FAILURE);
-				/* general case */
-				}else{
-					/* last program  */
-					if(i == num_pipes){
-						close(STDIN_FILENO);
-						close(pipes[1][0]);
-						close(pipes[1][1]);
-						/*return saved stdout to its process */
-						close(pipes[0][WRITE]);
-						dup(pipes[0][READ]);
-						close(pipes[0][READ]);
-					}else{
-						/*Read from last process */
-						close(pipes[0][WRITE]);
-						dup2(pipes[0][READ], STDIN_FILENO);
-						/*Write to the the next process */
-						close(pipes[1][READ]);
-						dup2(pipes[1][WRITE], STDOUT_FILENO);
-					}				
-					execvpe(stages[i].cmd_line[0], stages[i].cmd_line, environ);
-					exit(EXIT_FAILURE);
-				}
-			}else{
-				if(i==0){
-					close(pipes[0][0]);
-					close(pipes[0][1]);
-					close(pipes[1][0]);
-					close(pipes[1][1]);
-				}
-				wait(NULL);
-				safe_pipe(pipes[0]);
-				safe_pipe(pipes[1]);
-
-			}
-		}/* for loop */
-		printf("hi");
-	}
 	return 0;
 }
 
