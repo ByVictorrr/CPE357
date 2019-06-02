@@ -205,7 +205,6 @@ char ***get_progs_with_options(char *line){
 			/*Case 2 - new prog */
 			}else if(line[i] == ' ' && line[i+1] == '|'){
 				strcpy(progv_buff[progv_ptr], word_buff);
-				print_progv(progv_buff, PROGV_MAX);
 				/*memcpy(progs_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				/*memset_progs(progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 				int f;
@@ -239,11 +238,9 @@ char ***get_progs_with_options(char *line){
 						exit(EXIT_FAILURE);
 					}else{
 						/* dont add anything in the buffer */
-						printf("dont do anything");
 					}
 				}else if(line[i] == ' '){
 					/* dont add anything in the buffer */
-					printf("dont do anything");
 				}else{
 					word_buff[word_ptr] = line[i];
 					word_ptr++;
@@ -253,7 +250,6 @@ char ***get_progs_with_options(char *line){
 	/* store the last progv in to progs */
 	if(word_buff[0] != '\0'){
 		strcpy(progv_buff[progv_ptr], word_buff);
-		print_progv(progv_buff, PROGV_MAX);
 		/*memset_progs(&progv_buff[progs_ptr], progv_buff, PROGV_MAX);*/
 		int f;
 		for(f = 0; f< PROGV_MAX; f++){

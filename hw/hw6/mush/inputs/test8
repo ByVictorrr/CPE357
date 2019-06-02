@@ -1,0 +1,1 @@
+ls -la | grep -v a | sort -r | sed 's/victor/fuck/'
