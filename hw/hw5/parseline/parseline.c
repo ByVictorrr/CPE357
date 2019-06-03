@@ -1,7 +1,5 @@
 #include "readLongLine.h"
 #include "parseline.h"
-#include <stdint.h>
-#include <stdio.h>
 
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
@@ -43,7 +41,7 @@ void init_word_buff(char **p, int word_size)
 	memset(*p, '\0', word_size);
 }
 
-/* takes in a triple pointer of "programs" that will be malloced and have their word buffer initalized   */
+/* takes in a triple pointer of "programs" that will be   */
 void init_progv_buff(char ***p, int progv_size, int word_size)
 {
 	int i;
@@ -56,8 +54,6 @@ void init_progv_buff(char ***p, int progv_size, int word_size)
 		init_word_buff(&p[0][i], word_size);
 	}
 }
-
-/*   */
 void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	int i;
 	if( (*p = (char ***)malloc(sizeof(char**)*progs_size)) == NULL)
@@ -479,11 +475,7 @@ int main()
 	printf("line: ");
 	fflush(stdout);
 	line = read_long_line(fdTest);
-
-	printf("/n");
-	printf("Line contains at least %s",line);
-
-
+	
 	/*============== Test 1 - parse comand line ===============*/
 
 	/*  
