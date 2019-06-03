@@ -104,6 +104,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 			wait(NULL);
 		}
 	}
+	exit(0);
 }
 /*======================================================================== */
 
@@ -123,49 +124,64 @@ void sig_handler_control_D(int signo){
 
 /*======================================================================== */
 
-/*TODO : fix parsing in parseline, frees, signals*/
-int main(int argc, char **argv){
 
+int main(int argc, char **argv){
 	char ***progs;
+	int fdTest;
 	char *line;
 	int num_pipes;
-	int script_fd;
-	pipe_t pipes[PIPE_MAX];
-	stage_t *stages;
 
+	/*============== Test 1 - parse comand line ===============*/
+	char *path = "inputs/test7";
+	fdTest = open(path, O_RDWR);
+	line = read_long_line(fdTest);
+
+	progs=get_progs_with_options(line);
+	/* assums that get_pros_with_options handles | next to a char and exits */
+	num_pipes = count_pipes(line);
+	
+	printf("num pipes - %d\n", num_pipes);
+	
+	/*For test 1 - is good */
+	/*For Test 2 - is good */
+	/*For Test 3 - not getting -la  */
+	
+	/*==============Test 2 - exec command =====================*/
+	pid_t child;
+	int ptr_child = 0;
+	pipe_t pipes[PIPE_MAX];
+	int i, fd_std_out;
+	stage_t *stages;
+	stages = new_stages(progs, num_pipes+1);
+
+	get_pipes(pipes, num_pipes);
+	pipe_line(stages, num_pipes+1, num_pipes, pipes);
+
+	/*===================main program=======================*/
+	int script_fd;
 	/*Case 0 - see if the input is valid*/
-	if(argc != 1 && argc != 2){
+	if(argc != 1 || argc != 2){
 		perror("usage: mush [shell script]\n");
 		exit(EXIT_FAILURE);
 	}
 	/*Case 1 - see if we have a script inputted  */
 	if(argc == 2){
-		if((script_fd = open(argv[1], O_RDONLY)) < 0){
+		if((fd_open = open(argv[1], O_RDONLY)) < 0){
 			perror(argv[1]);
 		}else{
 			/*run shell scrpt */
-			line = read_long_line(script_fd);
+			line = read_long_line(fdTest);
 			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			get_pipes(pipes, num_pipes);
-			pipe_line(stages, num_pipes+1, num_pipes, pipes);
-			free(line);
+
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
 		/*  */
 		while(1){
-			printf("8-P: ");
-			line = read_long_line(STDIN_FILENO);
-			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			get_pipes(pipes, num_pipes);
-			pipe_line(stages, num_pipes+1, num_pipes, pipes);
-			free(line);
+
 		}
 	}
+
 	/*===================================================*/
 return 0;
 }

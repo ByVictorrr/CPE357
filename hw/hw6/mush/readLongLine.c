@@ -41,7 +41,11 @@ char *read_long_line(int inFd)
 	memset(pbuff, '\0', MAXCHAR);
 	while((read(inFd, &c, sizeof(char))) > 0)
 	{
+
+		if(c=='\n')
+			return pbuff;
 	   /* print_binary(c);
+
 	    printf(" above is %c \n", c);
 	    */
 		/*case 3: store value of c in buffer */
