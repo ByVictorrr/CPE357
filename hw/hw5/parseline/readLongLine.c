@@ -4,60 +4,76 @@
 /*index of buffer*/
 int place = 0;
 
-void print_binary(char x) {
-    int b = 128;
+void print_binary(char x)
+{
+	int b = 128;
 
-    while (b != 0) {
+	while (b != 0)
+	{
 
-        if (b <= x) {
-            x -= b;
-            printf("1");
-        } else
-            printf("0");
+		if (b <= x)
+		{
+			x -= b;
+			printf("1");
+		}
+		else
+			printf("0");
 
-        b = b >> 1;
-    }
+		b = b >> 1;
+	}
 }
 void printbincharpad(char c)
 {
-    int i;
-    for (i = 7; i >= 0; --i)
-    {
-        putchar( (c & (1 << i)) ? '1' : '0' );
-    }
-    putchar('\n');
+	int i;
+	for (i = 7; i >= 0; --i)
+	{
+		putchar((c & (1 << i)) ? '1' : '0');
+	}
+	putchar('\n');
 }
 char *read_long_line(int inFd)
 {
 	char *pbuff, *prev;
 	int sizebuff = MAXCHAR;
 	char c; /*temp is for moving allong pbuff*/
+	int count, i;
 
-	/*initalize current size of buffer*/	
+	/*initalize current size of buffer*/
 	int onebuff = 0;
-	
+
 	/*case 2: reading the whole file */
-	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
+	pbuff = (char *)calloc(MAXCHAR, sizeof(char));
 	memset(pbuff, '\0', MAXCHAR);
-	while((read(inFd, &c, sizeof(char))) > 0)
+	while ((read(inFd, &c, sizeof(char))) > 0)
 	{
-		
-	   /* print_binary(c);
+
+		/* print_binary(c);
 	    printf(" above is %c \n", c);
 	    */
-	   if(c == '\n'){
-		   if(place==0){
-			   fprintf(stderr,"invalid null command");
-			   exit(1);
-		   }
-		   return pbuff;
-	   }
+
+		if (c == '\n')
+		{
+
+			for (i = 0; i < place; i++)
+			{
+				char c = pbuff[i];
+				if (c != 32)
+					count++;
+			}
+			if (count == 0)
+			{
+
+				fprintf(stderr, "invalid null command\n");
+				exit(1);
+			}
+			return pbuff;
+		}
 		/*case 3: store value of c in buffer */
 		pbuff[place++] = c;
 
 		/*case 4: check if an overflow occured in buffer same buff
 		 *		count number of overflows in buff */
-		if ( place >= MAXCHAR-1 )
+		if (place >= MAXCHAR - 1)
 		{
 			/*Size alloationa are alwaysgoing to be mutliples os MAXCHAr*/
 			printf("command too long");
@@ -69,9 +85,9 @@ char *read_long_line(int inFd)
 
 void freeBuffs(char *buff)
 {
-    if(buff != NULL)
-        free(buff);
-    return;
+	if (buff != NULL)
+		free(buff);
+	return;
 }
 
 /*
