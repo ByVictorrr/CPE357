@@ -47,7 +47,7 @@ char *read_long_line(int inFd)
 	    */
 	   if(c == '\n'){
 		   if(place==0){
-			   fprintf(stderr,"there is no input");
+			   fprintf(stderr,"invalid null command");
 			   exit(1);
 		   }
 		   return pbuff;
