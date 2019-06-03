@@ -1,5 +1,7 @@
 #include "readLongLine.h"
 #include "parseline.h"
+#include <stdint.h>
+#include <stdio.h>
 
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
@@ -11,6 +13,7 @@ void handle_SEGFAULT(int signo){
 /* ================================================ */
 
 /*=================SAFE FUNCTION==================== */
+/*takes in a process to be assigned a fork if successful*/
 void safe_fork(pid_t *pid)
 {
 	if((*pid = fork()) < 0){
@@ -29,6 +32,7 @@ void safe_pipe(int pipes[2])
 /*=================================================== */
 
 /*==============Utility Functions====================*/
+/* mallocs a buffer the sice of word_size passed in pointing to p*/
 void init_word_buff(char **p, int word_size)
 {
 	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL)
@@ -38,6 +42,8 @@ void init_word_buff(char **p, int word_size)
 	}
 	memset(*p, '\0', word_size);
 }
+
+/* takes in a triple pointer of "programs" that will be malloced and have their word buffer initalized   */
 void init_progv_buff(char ***p, int progv_size, int word_size)
 {
 	int i;
@@ -50,6 +56,8 @@ void init_progv_buff(char ***p, int progv_size, int word_size)
 		init_word_buff(&p[0][i], word_size);
 	}
 }
+
+/*   */
 void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	int i;
 	if( (*p = (char ***)malloc(sizeof(char**)*progs_size)) == NULL)
@@ -471,7 +479,11 @@ int main()
 	printf("line: ");
 	fflush(stdout);
 	line = read_long_line(fdTest);
-	
+
+	printf("/n");
+	printf("Line contains at least %s",line);
+
+
 	/*============== Test 1 - parse comand line ===============*/
 
 	/*  
