@@ -26,7 +26,7 @@
 char *buff;
 /*===================================================================*/
 
-int placement;
+int place;
 /*================count number of lines==================*/
 
 char *read_long_line(int inFd);
