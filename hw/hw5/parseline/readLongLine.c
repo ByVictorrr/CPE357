@@ -46,7 +46,7 @@ char *read_long_line(int inFd)
 	    printf(" above is %c \n", c);
 	    */
 	   if(c == '\n'){
-		   if(ftell(inFd)<1){
+		   if(strlen(pbuff)==0){
 			   perror("there is no input");
 			   exit(1);
 		   }
