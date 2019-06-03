@@ -46,6 +46,10 @@ char *read_long_line(int inFd)
 	    printf(" above is %c \n", c);
 	    */
 	   if(c == '\n'){
+		   if(ftell(inFd)<1){
+			   perror("there is no input");
+			   exit(1);
+		   }
 		   return pbuff;
 	   }
 		/*case 3: store value of c in buffer */
