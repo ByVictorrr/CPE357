@@ -19,13 +19,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
-#define MAXCHAR 1000 /*inital amt of lines in the buffer*/
+#define MAXCHAR 512 /*inital amt of lines in the buffer*/
 
 
 /*======================lines memory=================================*/
 char *buff;
 /*===================================================================*/
 
+int index;
 /*================count number of lines==================*/
 
 char *read_long_line(int inFd);

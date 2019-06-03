@@ -1,1 +1,1 @@
-prog1 options | prog2 options2 | prog3 | prog4 cool | prog5 | prog6 | prog7 | prog8
+/bin/ls

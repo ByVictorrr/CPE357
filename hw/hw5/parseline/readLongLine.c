@@ -1,6 +1,6 @@
 #include "readLongLine.h"
 
-
+#define cd_limit() printf("command too long");
 /*index of buffer*/
 int index = 0;
 
@@ -55,8 +55,7 @@ char *read_long_line(int inFd)
 		if ( index >= MAXCHAR-1 )
 		{
 			/*Size alloationa are alwaysgoing to be mutliples os MAXCHAr*/
-			sizebuff = sizebuff + MAXCHAR;
-			pbuff = (char*)realloc(pbuff,sizebuff);
+			printf("command too long");
 		}
 	}
 

@@ -1,0 +1,281 @@
+
+------------------------
+Looking for source files
+------------------------
+
+Found: ideas.c parseline.c parseline.h readLongLine.c readLongLine.h
+
+--------------------------------
+Checking for long lines (no program should have any lines > 80 chars)
+(run ~pnico/bin/longlines.pl on your files to check.)
+--------------------------------
+
+Line length ok.
+
+Found: Makefile
+
+------------------------------------
+Building the application: "make parseline"
+------------------------------------
+
+make parseline
+make[1]: Entering directory `/home/chxiao/CPE357/parseline'
+gcc -Wall -ansi -pedantic -g -lm -w -c parseline.c
+gcc -Wall -ansi -pedantic -g -lm -w -c readLongLine.c
+gcc -Wall -ansi -pedantic -g -lm -w -o parseline parseline.o readLongLine.o
+make[1]: Leaving directory `/home/chxiao/CPE357/parseline'
+
+---------------
+checking for executable
+---------------
+
+
+------------------------
+Running the application 
+------------------------
+
+
+--------------------------------------------------------
+Test Results:
+   These are the results of trying your parseline against
+mine on a number of different test cases. 
+
+  The output of your version of parseline is compared to 
+the output of ~pn-cs357/demos/parseline using diff (1).
+If they differ the test case is a failure.
+
+  The test commands are located in /home/pn-cs357/lib/asgn5//Tests/commands and the
+associated data are in /home/pn-cs357/lib/asgn5//Tests/Inputs
+
+  Note:  The early usage tests give bad arguments and expect
+a non-zero exit status and see a message of the form:
+"usage: parseline [ -c ] [ -d ] set1 [ set2 ]" The message
+doesn't have to be exactly the same, but it's looking for the
+word "usage".
+
+  Each command is run with a timeout of 10 seconds, so 
+if your program takes longer than that, it will be interrupted.
+
+
+Tests:
+     1) A__LineTooLong                                         ... ok.
+     2) B__TooManyStages                                       ... ok.
+     3) C__TooManyArgs                                         ... ok.
+     4) 00_Empty                                               ... FAILURE (expected error message on stderr)
+     5) 01_NoArgs                                              ... ok.
+     6) 02_Args                                                ... FAILURE.
+     7) 03_RedirectFrom                                        ... ok.
+     8) 04_RedirectInto                                        ... ok.
+     9) 05_OnePipe                                             ... ok.
+    10) 06_OnePipeArgs                                         ... ok.
+    11) 07_ManyPipes                                           ... FAILURE.
+    12) 08_ManyPipesArgs                                       ... FAILURE.
+    13) 09_RedirectBoth                                        ... ok.
+    14) 10_AmbiguousInput                                      ... ok.
+    15) 11_AmbiguousOutput                                     ... ok.
+    16) 12_NullCmdInPipe                                       ... ok.
+Passed 12 out of 16 tests.
+
+FAILED.
+
+
+
+#############################
+# Failure details are below #
+#############################
+
+
+==========================================
+4) 00_Empty  (FAILURE (expected error message on stderr))
+  cmd: ""
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+    --------
+    Stage 0: ""
+    --------
+         input: original stdin
+        output: original stdout
+          argc: 10
+          argv: 
+
+  --------------------------
+
+==========================================
+6) 02_Args  (FAILURE.)
+  cmd: "ls a b c d e f g "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+    --------
+    Stage 0: ""
+    --------
+         input: original stdin
+        output: original stdout
+          argc: 10
+          argv: 
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls a b c d e f g "
+    --------
+         input: original stdin
+        output: original stdout
+          argc: 8
+          argv: "ls","a","b","c","d","e","f","g"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    3c3
+    < Stage 0: " ls a b c d e f g "
+    ---
+    > Stage 0: ""
+    7,8c7,8
+    <       argc: 8
+    <       argv: "ls","a","b","c","d","e","f","g"
+    ---
+    >       argc: 10
+    >       argv: 
+
+  --------------------------
+
+==========================================
+11) 07_ManyPipes  (FAILURE.)
+  cmd: "ls | cat | cat | cat | cat | cat "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+    --------
+    Stage 0: "ls"
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 1
+          argv: "ls"
+    
+    --------
+    Stage 1: "cat"
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 1
+          argv: "cat"
+    
+    --------
+    Stage 2: "cat"
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 1
+          argv: "ls"
+    
+    --------
+    Stage 1: " cat "
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 1
+          argv: "cat"
+    
+    --------
+    Stage 2: " cat "
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    43c43
+    < Stage 5: " cat "
+    ---
+    > Stage 5: ""
+    47,48c47,48
+    <       argc: 1
+    <       argv: "cat"
+    ---
+    >       argc: 10
+    >       argv: 
+
+  --------------------------
+
+==========================================
+12) 08_ManyPipesArgs  (FAILURE.)
+  cmd: "ls a b c | tee /dev/null | tee /dev/null | tee /dev/null | tee /dev/null "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+    --------
+    Stage 0: "ls a b c"
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 4
+          argv: "ls","a","b","c"
+    
+    --------
+    Stage 1: "tee /dev/null"
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 2
+          argv: "tee","/dev/null"
+    
+    --------
+    Stage 2: "tee /dev/null"
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls a b c "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 4
+          argv: "ls","a","b","c"
+    
+    --------
+    Stage 1: " tee /dev/null "
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 2
+          argv: "tee","/dev/null"
+    
+    --------
+    Stage 2: "  tee /dev/null "
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    35c35
+    < Stage 4: " tee /dev/null "
+    ---
+    > Stage 4: ""
+    39,40c39,40
+    <       argc: 2
+    <       argv: "tee","/dev/null"
+    ---
+    >       argc: 10
+    >       argv: 
+
+  --------------------------

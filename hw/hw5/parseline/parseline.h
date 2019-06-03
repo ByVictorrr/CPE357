@@ -3,18 +3,18 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
-#define WORD_MAX 15
-#define PROGV_MAX 15
-#define PROGS_MAX 15
-#define CMD_LINE_MAX 15
-#define cd_limit() printf("command too long");
-#define pipe_limit() printf("pipeline too deep");   
-#define empty_stage() printf("invalid null command");  
-#define many_arg(a) printf(#a": too many arguments");  
-#define bad_input(a) printf(#a": bad input redirection");  
-#define bad_output(a) printf(#a": bad output redirection");  
-#define ambiguous_input(a) printf(#a": ambiguous input");
-#define ambiguous_output(a) printf(#a": ambiguous output");
+#define WORD_MAX 10
+#define PROGV_MAX 10
+#define PROGS_MAX 10
+#define CMD_LINE_MAX 512
+#define cd_limit() fprintf(stderr, "command too long\n");
+#define pipe_limit() fprintf(stderr, "pipeline too deep\n");   
+#define empty_stage() fprintf(stderr, "invalid null command\n");  
+#define many_arg(a) fprintf(stderr, "%s: too many arguments\n", a);  
+#define bad_input(a) fprintf(stderr, "%s: bad input redirection\n", a);  
+#define bad_output(a) fprintf(stderr, "%s: bad output redirection\n",a);  
+#define ambiguous_input(a) fprintf(stderr, "%s: ambiguous input\n", a);
+#define ambiguous_output(a) fprintf(stderr, "%s: ambiguous output\n", a);
 
 enum boolean{FALSE,TRUE};
 
