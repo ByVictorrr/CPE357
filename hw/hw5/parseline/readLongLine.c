@@ -1,8 +1,8 @@
 #include "readLongLine.h"
 
 #define cd_limit() printf("command too long");
-/*index of buffer*/
-int index = 0;
+/*place of buffer*/
+int place = 0;
 
 void print_binary(char x) {
     int b = 128;
@@ -49,10 +49,10 @@ char *read_long_line(int inFd)
 		   return pbuff;
 	   }
 		/*case 3: store value of c in buffer */
-		pbuff[index++] = c;
+		pbuff[place++] = c;
 		/*case 4: check if an overflow occured in buffer same buff
 		 *		count number of overflows in buff */
-		if ( index >= MAXCHAR-1 )
+		if ( place >= MAXCHAR-1 )
 		{
 			/*Size alloationa are alwaysgoing to be mutliples os MAXCHAr*/
 			printf("command too long");

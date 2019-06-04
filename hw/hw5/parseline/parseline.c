@@ -499,7 +499,7 @@ int main()
 	int fdTest = 0, num_pipes=0, size, i;
 	char *line = NULL;
 	stage_t *stages;
-	fdTest = open("test02", O_RDWR);
+	/*fdTest = open("test02", O_RDWR);*/
 	printf("line: ");
 	fflush(stdout);
 	line = read_long_line(fdTest);
