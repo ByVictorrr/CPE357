@@ -529,6 +529,7 @@ int main()
 	
 	/*For test 1 - is good */
 	/*For Test 2 - is good */
+	/*For Test 3 - not getting -la  */
 	/*===============Test 3 - stage testing ================= */
 	size = num_pipes+1;
 	stages = new_stages(progs, size);
