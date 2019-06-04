@@ -39,30 +39,36 @@ void get_pipes(pipe_t *pipes, int size){
 	for(i=0; i< size; i++)
 		safe_pipe(&pipes[i]);
 }
+void open_pipes(pipe_t *pipes, int size){
+	int i; 
+	if(size > PIPE_MAX){
+		perror("to many pipes");
+		exit(EXIT_FAILURE);
+	}
 
-void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, pipe_t pipes[PIPE_MAX]){
+}
+
+
+void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
 		printf("no pipes therefore cant close any\n");
-/*  
-	if(ith_prog -2 == -1 || ith_prog + 1 == num_pipes){
-		return;
-	}
-*/
+ 
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
-	if(ith_prog -2 >= 0){
+	if(ith_prog -2 >= 0 && left == 1){
 		close(pipes[ith_prog-2][0]);
 		close(pipes[ith_prog-2][1]);
-		close_uncess_pipes(num_pipes, ith_prog-1, org_ith , pipes);
+		close_uncess_pipes(num_pipes, ith_prog-1, org_ith,1, pipes);
+		if( org_ith != ith_prog)
+			return;
+		left = 0;
 	}
 
-	if( org_ith != ith_prog)
-	   return;
 	/* Case 2 - not able to close any pipes to right of the ith_progs*/
-	if(ith_prog + 1 <= num_pipes-1){
+	if(ith_prog + 1 <= num_pipes-1 && left == 0){
 		close(pipes[ith_prog+1][0]);
 		close(pipes[ith_prog+1][1]);
-		close_uncess_pipes(num_pipes, ith_prog+1, org_ith, pipes);
+		close_uncess_pipes(num_pipes, ith_prog+1, org_ith, 0, pipes);
 	}/* cant close pipes */
 }
 /*num_progs = num_pipes+1*/
@@ -75,7 +81,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 	}else{
 		safe_fork(&child);
 		if(child == 0){
-			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, pipes);
+			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, 1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
 			if(num_pipes + 1 == num_progs){
 				printf("last program in pipeline\n");
@@ -100,7 +106,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 		}else{
 			pipe_line(stages, num_progs-1, num_pipes, pipes);
 			/*close everything on the first program  */
-			close_uncess_pipes(num_pipes, -1, -1 ,pipes);
+			close_uncess_pipes(num_pipes, -1, -1 , 0,pipes);
 			wait(NULL);
 		}
 	}
@@ -164,6 +170,7 @@ int main(int argc, char **argv){
 			get_pipes(pipes, num_pipes);
 			pipe_line(stages, num_pipes+1, num_pipes, pipes);
 			free(line);
+			free(stages);
 		}
 	}
 	/*===================================================*/
