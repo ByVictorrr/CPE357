@@ -15,7 +15,7 @@ char *read_long_line(int inFd)
 	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
 	memset(pbuff, '\0', MAXCHAR);
 	
-	printf("8-P: ");
+	write(STDOUT_FILENO, "8-P: ", strlen("8-P: "));
 	while((read(inFd, &c, sizeof(char))) > 0)
 	{
 
