@@ -1,35 +1,10 @@
 #include "readLongLine.h"
 
 
-/*index of buffer*/
-int index = 0;
-
-void print_binary(char x) {
-    int b = 128;
-
-    while (b != 0) {
-
-        if (b <= x) {
-            x -= b;
-            printf("1");
-        } else
-            printf("0");
-
-        b = b >> 1;
-    }
-}
-void printbincharpad(char c)
-{
-    int i;
-    for (i = 7; i >= 0; --i)
-    {
-        putchar( (c & (1 << i)) ? '1' : '0' );
-    }
-    putchar('\n');
-}
 char *read_long_line(int inFd)
 {
-	char *pbuff, *prev;
+	int index = 0;
+	char *pbuff;
 	int sizebuff = MAXCHAR;
 	char c; /*temp is for moving allong pbuff*/
 
@@ -39,6 +14,8 @@ char *read_long_line(int inFd)
 	/*case 2: reading the whole file */
 	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
 	memset(pbuff, '\0', MAXCHAR);
+	
+	write(STDOUT_FILENO, "8-P: ", strlen("8-P: "));
 	while((read(inFd, &c, sizeof(char))) > 0)
 	{
 
@@ -63,33 +40,3 @@ char *read_long_line(int inFd)
 	return pbuff;
 }
 
-void freeBuffs(char *buff)
-{
-    if(buff != NULL)
-        free(buff);
-    return;
-}
-
-/*
-int main(int argc, char *argv[])
-{
-
-	int inFd = open(argv[1], O_RDONLY);
-
-	char *buff_ptr = read_long_line(inFd);
-
-
-	printf("%s\n", buff_ptr);
-	for (;*buff_ptr != '\0'; buff_ptr++)
-	    putchar(*buff_ptr);
-
-
-	close(inFd);
-
-	free(pbuff);
-	free(buff);
-
-	return 0;
-
-}
- */

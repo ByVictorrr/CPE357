@@ -1,4 +1,4 @@
 #usage: gdb -x debugger.gdb ./pro
-b main
-#set follow-fork-mode child
+b 164
+set follow-fork-mode child
 tui enable
