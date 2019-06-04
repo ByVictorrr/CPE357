@@ -411,6 +411,7 @@ char ***get_progs_with_options(char *line){
 			}else if(line[i] == ' ' && line[i+1] == '|'){
 				if(i < WORD_MAX-3 && line[i+3] == '|'){
 					empty_stage();
+					exit(EXIT_FAILURE);
 				}
 				strcpy(progv_buff[progv_ptr], word_buff);
 				int f;
@@ -453,8 +454,19 @@ char ***get_progs_with_options(char *line){
 	}/* for loop */
 	/* store the last progv in to progs */
 	if(word_buff[0] != '\0'){
-        /*printf("program pointer is  %d\n",progv_ptr);*/
+
 		strcpy(progv_buff[progv_ptr], word_buff);
+		int f;
+		for(f = 0; f< PROGV_MAX; f++){
+			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
+			
+		}
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
+		/*ATTENTION: make char* buff[][] null will cause memory lost */
+		argc += progv_ptr+1;
+		progs_ptr++;
+	}
+	else if(progv_buff[0]){
 		int f;
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
@@ -473,16 +485,39 @@ char ***get_progs_with_options(char *line){
 /*======================================================================== */
 
 
+
+void trim_tailing_space(char *str){
+    int i = 0;
+    int index = -1;
+    while(str[i] != '\0')
+    {
+        if(str[i] != ' ' && str[i] != '\t' && str[i] != '\n')
+        {
+            index = i;
+        }
+        i++;
+    }
+
+    /* Mark the next character to last non white space character as NULL */
+    str[index + 1] = '\0';
+}
+
+
 int main()
 {
 	char ***progs = NULL;
 	int fdTest = 0, num_pipes=0, size, i;
 	char *line = NULL;
 	stage_t *stages;
-	/*fdTest = open("test02", O_RDWR);*/
+	fdTest = open("test02", O_RDWR);
 	printf("line: ");
 	fflush(stdout);
 	line = read_long_line(fdTest);
+	if(*line=='\0'){
+		empty_stage();
+		exit(1);
+	}
+	trim_tailing_space(line);
 	
 	/*============== Test 1 - parse comand line ===============*/
 
@@ -504,15 +539,14 @@ int main()
 	
 	/*For test 1 - is good */
 	/*For Test 2 - is good */
-	/*For Test 3 - not getting -la  */
 	/*===============Test 3 - stage testing ================= */
 	size = num_pipes+1;
-    /*investigate stages*/
 	stages = new_stages(progs, size);
 	/*===========================================================================================*/
-	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	print_stage(stages, size);
+	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	free(line);
+	free(stages);
 	
 	return 0;
 }

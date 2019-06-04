@@ -11,7 +11,6 @@ void handle_SEGFAULT(int signo){
 /* ================================================ */
 
 /*=================SAFE FUNCTION==================== */
-/*takes in a process to be assigned a fork if successful*/
 void safe_fork(pid_t *pid)
 {
 	if((*pid = fork()) < 0){
@@ -30,7 +29,6 @@ void safe_pipe(int pipes[2])
 /*=================================================== */
 
 /*==============Utility Functions====================*/
-/* mallocs a buffer the sice of word_size passed in pointing to p*/
 void init_word_buff(char **p, int word_size)
 {
 	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL)
@@ -40,8 +38,6 @@ void init_word_buff(char **p, int word_size)
 	}
 	memset(*p, '\0', word_size);
 }
-
-/* takes in a triple pointer of "programs" that will be   */
 void init_progv_buff(char ***p, int progv_size, int word_size)
 {
 	int i;
@@ -533,7 +529,6 @@ int main()
 	
 	/*For test 1 - is good */
 	/*For Test 2 - is good */
-	/*For Test 3 - not getting -la  */
 	/*===============Test 3 - stage testing ================= */
 	size = num_pipes+1;
 	stages = new_stages(progs, size);
