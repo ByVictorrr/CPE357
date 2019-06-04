@@ -4,7 +4,6 @@ MAIN = parseline
 OBJ =  parseline.o readLongLine.o
 UNIX1_VIC = vdelapla@unix1.csc.calpoly.edu
 UNIX1_CICI = chxiao@unix1.csc.calpoly.edu
-UNIX1_JUSTIN = jevans27@unix1.csc.calpoly.edu
 
 all : $(MAIN)
 
