@@ -111,12 +111,17 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 void parse_progv(char **progv, stage_t *stage)
 {
 
-	int cmd_line_ptr;
-	for (cmd_line_ptr = 0; progv[cmd_line_ptr] != NULL; cmd_line_ptr++)
-	{
-		strcpy(stage->cmd_line[cmd_line_ptr],progv[cmd_line_ptr]);
+	int cmd_line_ptr = 0;
+	
+	if(strcmp(progv[0],"\0")){
+		for (cmd_line_ptr = 0; progv[cmd_line_ptr] != NULL; cmd_line_ptr++)
+		{
+			strcpy(stage->cmd_line[cmd_line_ptr],progv[cmd_line_ptr]);
+			
+		}
 	}
 	stage->cmd_line[cmd_line_ptr] = NULL;
+	
 }
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size)
@@ -130,6 +135,13 @@ stage_t *new_stages(char ***progs, int size)
 		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}
+	/*======EMPTY ARGUMENTS=====*/
+
+	if(!strcmp(progs[0][0],"\0")){
+		empty_stage();
+		exit(1);
+	}
+
 	/*Step 1 - (mallocing)setting up all members of stages */
 	for (i = 0; i < size; i++)
 	{
@@ -143,11 +155,10 @@ stage_t *new_stages(char ***progs, int size)
 			if(i < size -1){
 				stages[i].pipe_flag = 1;
 			}
-			else{
-				
+			else{			
 				stages[i].pipe_flag = 0;
 			}
-			
+			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
 			/*stages[i].in_file = NULL;
 			stages[i].out_file = NULL;*/
 			/*========================================================= */
@@ -230,7 +241,7 @@ int redirect_is_valid(stage_t* stage)
 		}
 		else if(skip!= 1)
 		{
-		
+			
 			argc += 1;
 			skip = 0;
 		}
@@ -327,12 +338,7 @@ void print_stage(stage_t *stages, int size)
 		printf("Stage %d: \"%s\"\n", i, cmd_full);
 		printf("--------\n");
 		printf("%10s: %s", "input", stin);
-
-
-		printf("%10s: %s", "output", stout);
-		
-
-		
+		printf("%10s: %s", "output", stout);	
 		printf("%10s: %d\n", "argc", stages[i].num_args);
 		printf("%10s: %s\n", "argv", arg_line);
 		/*
@@ -375,8 +381,6 @@ int count_pipes(char *line){
 
 /*Treat > and < part of the the progn */
 /*   */
-
-/* TODO : account for | | isnt a valid comand */
 char ***get_progs_with_options(char *line){
 	char ***progs_buff, **progv_buff, *word_buff;
 	int  word_ptr, progv_ptr, progs_ptr;
@@ -399,8 +403,9 @@ char ***get_progs_with_options(char *line){
 				/*=============================== */
 			/*Case 2 - new prog */
 			}else if(line[i] == ' ' && line[i+1] == '|'){
-				if(i < WORD_MAX-3 && line[i+3] == '|'){
+				if(line[i+3] == '|'){
 					empty_stage();
+					exit(1);
 				}
 				strcpy(progv_buff[progv_ptr], word_buff);
 				int f;
@@ -437,13 +442,26 @@ char ***get_progs_with_options(char *line){
 					;
 				}else{
 					word_buff[word_ptr] = line[i];
+					
 					word_ptr++;
 				}
 			}
 	}/* for loop */
 	/* store the last progv in to progs */
 	if(word_buff[0] != '\0'){
+
 		strcpy(progv_buff[progv_ptr], word_buff);
+		int f;
+		for(f = 0; f< PROGV_MAX; f++){
+			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
+			
+		}
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
+		/*ATTENTION: make char* buff[][] null will cause memory lost */
+		argc += progv_ptr+1;
+		progs_ptr++;
+	}
+	else if(progv_buff[0]){
 		int f;
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
@@ -460,17 +478,36 @@ char ***get_progs_with_options(char *line){
 }
 /*======================================================================== */
 
+void trim_tailing_space(char *str){
+    int i = 0;
+    int index = -1;
+    while(str[i] != '\0')
+    {
+        if(str[i] != ' ' && str[i] != '\t' && str[i] != '\n')
+        {
+            index = i;
+        }
+        i++;
+    }
 
+    /* Mark the next character to last non white space character as NULL */
+    str[index + 1] = '\0';
+}
 int main()
 {
 	char ***progs = NULL;
 	int fdTest = 0, num_pipes=0, size, i;
 	char *line = NULL;
 	stage_t *stages;
-	/*fdTest = open("test02", O_RDWR);*/
+	fdTest = open("test02", O_RDWR);
 	printf("line: ");
 	fflush(stdout);
 	line = read_long_line(fdTest);
+	if(*line=='\0'){
+		empty_stage();
+		exit(1);
+	}
+	trim_tailing_space(line);
 	
 	/*============== Test 1 - parse comand line ===============*/
 
@@ -497,9 +534,10 @@ int main()
 	size = num_pipes+1;
 	stages = new_stages(progs, size);
 	/*===========================================================================================*/
-	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	print_stage(stages, size);
+	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	free(line);
+	free(stages);
 	
 	return 0;
 }
