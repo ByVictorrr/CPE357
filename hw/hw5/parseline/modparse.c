@@ -1,6 +1,9 @@
 #include "readLongLine.h"
 #include "parseline.h"
 
+
+/*may try rewrite*/
+
 /* ==================================================== */
 /*================Debuggin fucntions=============== */
 void handle_SEGFAULT(int signo){
@@ -130,8 +133,8 @@ stage_t *new_stages(char ***progs, int size)
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
 	{
+        perror("malloc err");
 		free(stages);
-		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}
 	/*Step 1 - (mallocing)setting up all members of stages */
@@ -392,11 +395,10 @@ char ***get_progs_with_options(char *line){
 	init_word_buff(&word_buff, WORD_MAX);
 	init_progv_buff(&progv_buff, PROGV_MAX, WORD_MAX);
 	init_progs_buff(&progs_buff, PROGS_MAX, PROGV_MAX, WORD_MAX);
+    /*words are all being added in the correct program positon*/
 	for(i = 0, word_ptr = 0, progv_ptr = 0, progs_ptr = 0; line[i] != '\0'; i++){
 			/*Case 1- new word*/  /*causing some words not to be entered?*/
-            /*we are not accounting for newline add this functonality*/
 			if(line[i] == ' ' && line[i+1] != '|' && word_buff[0] != '\0'){
-                printf("word being added is %s\n",word_buff);
 				/*Step 1 - add this word to the progv*/
 				strcpy(progv_buff[progv_ptr], word_buff);
 				progv_ptr++;
@@ -451,6 +453,7 @@ char ***get_progs_with_options(char *line){
 	}/* for loop */
 	/* store the last progv in to progs */
 	if(word_buff[0] != '\0'){
+        /*printf("program pointer is  %d\n",progv_ptr);*/
 		strcpy(progv_buff[progv_ptr], word_buff);
 		int f;
 		for(f = 0; f< PROGV_MAX; f++){
@@ -462,6 +465,7 @@ char ***get_progs_with_options(char *line){
 		argc += progv_ptr+1;
 		progs_ptr++;
 	}
+    /*rm frees here do not allivate issues later*/
 	free_word_buff(word_buff);
 	free_progv_buff(progv_buff, PROGV_MAX);
 	return progs_buff;
@@ -503,6 +507,7 @@ int main()
 	/*For Test 3 - not getting -la  */
 	/*===============Test 3 - stage testing ================= */
 	size = num_pipes+1;
+    /*investigate stages*/
 	stages = new_stages(progs, size);
 	/*===========================================================================================*/
 	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
