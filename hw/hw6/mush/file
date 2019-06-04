@@ -1,0 +1,17 @@
+total 128K
+drwxr-xr-x 2 victor users 4.0K Jun  1 22:55 inputs
+-rw-r--r-- 1 victor users 4.6K Jun  2 02:07 '
+-rw-r--r-- 1 victor users   78 Jun  4 03:42 debugger.gdb
+-rw-r--r-- 1 victor users   46 Jun  1 15:54 debugger.sh
+-rw-r--r-- 1 victor users    0 Jun  4 05:30 file
+-rw-r--r-- 1 victor users  589 Jun  1 01:06 Makefile
+-rwxr-xr-x 1 victor users  34K Jun  4 05:21 mush
+-rw-r--r-- 1 victor users 7.0K Jun  4 05:18 mush.c
+-rw-r--r-- 1 victor users  15K Jun  4 05:19 mush.o
+-rw-r--r-- 1 victor users 6.9K Jun  4 03:02 parseline.c
+-rw-r--r-- 1 victor users 1.8K Jun  2 02:45 parseline.h
+-rw-r--r-- 1 victor users  15K Jun  4 05:14 parseline.o
+-rw-r--r-- 1 victor users  901 Jun  4 05:21 readLongLine.c
+-rw-r--r-- 1 victor users  918 Jun  4 05:19 readLongLine.h
+-rw-r--r-- 1 victor users 5.6K Jun  4 05:21 readLongLine.o
+---x------ 1 victor users    0 Jun  4 05:10 victor
