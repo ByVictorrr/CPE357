@@ -36,7 +36,8 @@ char *read_long_line(int inFd)
 	char *pbuff, *prev;
 	int sizebuff = MAXCHAR;
 	char c; /*temp is for moving allong pbuff*/
-	int count, i;
+	int i;
+	int count =0;
 
 	/*initalize current size of buffer*/
 	int onebuff = 0;
