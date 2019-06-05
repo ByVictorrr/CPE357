@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wait.h>
+#include <sys/wait.h>
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
@@ -42,6 +42,7 @@ void free_progv_buff(char **ptr_progv, int size);
 void free_prog_buff(char ***prog, int progv_size, int progs_size);
 void clear_progv(char *** progv, int size);
 void memset_progs(char ***progs_nth, char **progv, int size);
+void sig_handler_control_C(int signo);
 /*===================================================*/
 
 /*==============Parsing functions=================== */

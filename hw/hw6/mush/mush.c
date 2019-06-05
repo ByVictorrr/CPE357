@@ -79,7 +79,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 	int re_dir = -1;
 	struct sigaction signalint;
 	signalint.sa_handler = sig_handler_control_C;
-	sigemptyset(&signalint.sa_mask)
+	sigemptyset(&signalint.sa_mask);
 	sigemptyset(&old);
     sigemptyset(&new);
 	signalint.sa_flags=0;
