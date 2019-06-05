@@ -5,6 +5,7 @@ typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
 
 
+
 extern char **environ;
 /*==================Safe Function ========================= */
 void safe_pipe(pipe_t *pipes){
@@ -172,10 +173,7 @@ void sig_handler_control_C(int signo){
     printf("\n");
 
 }
-void sig_handler_control_D(int signo){
-	if(signo == SIGKILL){
-	}
-}
+
 
 /*======================================================================== */
 
@@ -248,7 +246,18 @@ int main(int argc, char **argv){
 	int script_fd;
 	pipe_t pipes[PIPE_MAX];
 	stage_t *stages;
+	struct sigaction sa;
+    sigset_t set, old;
+
 	int i;
+
+    sa.sa_handler = sig_handler_control_C;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+    sigemptyset(&set);
+    sigemptyset(&old);
+    sigaddset(&set, SIGINT);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
