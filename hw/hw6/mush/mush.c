@@ -74,14 +74,25 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 /*num_progs = num_pipes+1*/
 void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
 
+	sigset_t old, new;
 	pid_t child;
 	int re_dir = -1;
+	struct sigaction signalint;
+	signalint.sa_handler = sig_handler_control_C;
+	sigemptyset(&signalint.sa_mask)
+	sigemptyset(&old);
+    sigemptyset(&new);
+	signalint.sa_flags=0;
+	sigaction(SIGINT, &signalint, NULL);
+	sigaddset(&new, SIGINT);
 	/*base case   */
 	if(num_progs == 0){
 		return;
 	}else{
+		sigprocmask(SIG_BLOCK, &new, &old);
 		safe_fork(&child);
 		if(child == 0){
+			sigprocmask(SIG_SETMASK, &old, NULL);
 			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, 1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
 			if(num_pipes + 1 == num_progs){
@@ -152,15 +163,20 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 /*================SIGNAL stuff==========================================*/
 
 void sig_handler_control_C(int signo){
-	if(signo == SIGINT){
-
-	}
+	struct sigaction sig;
+    sig.sa_handler = sig_handler_control_C;
+    sigemptyset(&sig.sa_mask);
+    sig.sa_flags = 0;
+    sigaction(SIGINT, &sig, NULL);
+    wait(NULL);
+    printf("\n");
 
 }
 void sig_handler_control_D(int signo){
 	if(signo == SIGKILL){
 	}
 }
+
 /*======================================================================== */
 
 /*=========Redirection functions=========================================*/
