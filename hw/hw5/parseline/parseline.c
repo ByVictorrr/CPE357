@@ -131,7 +131,6 @@ stage_t *new_stages(char ***progs, int size)
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
 	{
-		free(stages);
 		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}
@@ -278,10 +277,10 @@ void print_stage(stage_t *stages, int size)
 	}
 	for (i = 0; i < size; i++)
 	{   
-		init_word_buff(&stin, WORD_MAX+10);
-		init_word_buff(&stout, WORD_MAX+10);
-		init_word_buff(&cmd_full, WORD_MAX);
-		init_word_buff(&arg_line, WORD_MAX);
+		init_word_buff(&stin, WORD_MAX+15);
+		init_word_buff(&stout, WORD_MAX+15);
+		init_word_buff(&cmd_full, WORD_MAX+15);
+		init_word_buff(&arg_line, WORD_MAX+15);
 		/* getting the full command and arguments only 
 		by parsing through and filtering out < > in/out file*/
 		/*======= retrive stdin =====*/ 
