@@ -121,14 +121,12 @@ int redirect_is_valid(stage_t* stage)
 			/*printf(" this is a > ");*/
 			if (!next || !*next)
 			{
-				bad_output(stage->cmd_line[0]);
 				return FALSE;
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
 			if (*next == '>' || *next == '<')
 			{
-				bad_output(stage->cmd_line[0]);
 				return FALSE;
 			}
 			/*----- update Stage's outfile -------*/
@@ -141,15 +139,12 @@ int redirect_is_valid(stage_t* stage)
 			/*printf(" this is a < ");*/
 			if (!*next || !next)
 			{
-				bad_input(stage->cmd_line[0]);
 				return FALSE;
-				
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
 			if (*next == '>' || *next == '<')
 			{
-				bad_input(stage->cmd_line[0]);
 				return FALSE;
 			}
 			/*----- update Stage's infile -------*/
@@ -176,19 +171,7 @@ int redirect_is_valid(stage_t* stage)
 		return FALSE;
 	}
 	stage->num_args = argc;
-	if (*stages[i].in_file){
-		if(i>0){
-			ambiguous_input(stages[i].cmd_line[0]);
-			exit(1);
-		}
-	}
-	if (*stages[i].out_file){
-		/*if there is outfile and also pipe after --> error*/
-		if(stages[i].pipe_flag){
-			ambiguous_output(stages[i].cmd_line[0]);
-			exit(1);
-		}
-	}
+
 	return TRUE;
 }
 
@@ -198,7 +181,7 @@ int redirect_is_valid(stage_t* stage)
 /*==============Parsing functions=================== */
 
 int parse_progv(char **progv, stage_t *stage){
-	int i, in = 0 , o = 0;
+	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
 		/*Case 1 - just seperate cmd_line string */
@@ -213,15 +196,18 @@ int parse_progv(char **progv, stage_t *stage){
 			if(strcmp(progv[i], "<") == 0 ){
 				if (!progv[i+1]|| !*progv[i+1])
 				{
-					return FALSE;
+					bad_input(stage->cmd_line[0]);
+					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
 				if (*progv[i+1] == '>' || *progv[i+1] == '<')
 				{
-					return FALSE;
+					bad_input(stage->cmd_line[0]);
+					return -1;
 				}
 				/*----- update Stage's outfile -------*/
+				init_word_buff(stage->in_file, WORD_MAX);
 				strncpy(stage->in_file, progv[i+1], strlen(progv[i+1]));
 				in += 1;
 				i++;
@@ -229,17 +215,21 @@ int parse_progv(char **progv, stage_t *stage){
 			}else{
 				if (!progv[i+1]|| !*progv[i+1])
 				{
-					return FALSE;
+					bad_output(stage->cmd_line[0]);
+					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
 				if (*progv[i+1] == '>' || *progv[i+1] == '<')
 				{
-					return FALSE;
+					bad_output(stage->cmd_line[0]);
+					return -1;
 				}
 				/*----- update Stage's outfile -------*/
 				
 				o += 1;
+							
+				init_word_buff(stage->out_file, WORD_MAX);
 				strncpy(stage->out_file, progv[i+1], strlen(progv[i+1]));
 				i++;
 			}			
@@ -249,15 +239,28 @@ int parse_progv(char **progv, stage_t *stage){
 	if (in > 1)
 	{
 		bad_input(stage->cmd_line[0]);
-		return FALSE;
+		return -1;
 	}
 	if (o > 1)
 	{
 		bad_output(stage->cmd_line[0]);
-		return FALSE;
+		return -1;
+	}
+	if (stage ->out_file){
+		/*if there is outfile and also pipe after --> error*/
+		if(stage ->pipe_flag){
+			ambiguous_output(stage->cmd_line[0]);
+			return -1;
+		}
+	}
+	if (stage -> in_file){
+		if(i>0){
+			ambiguous_input(stage->cmd_line[0]);
+			return -1;
+		}
 	}
 
-	return TRUE;
+	return 0; 
 }
 
 /*Takes in a progs and creates a size num of stage */
@@ -285,8 +288,7 @@ stage_t *new_stages(char ***progs, int size)
 		{
 			/*=================Setting up ============================  */
 			init_progv_buff(&stages[i].cmd_line, PROGV_MAX, WORD_MAX);
-			init_word_buff(&stages[i].in_file, WORD_MAX);
-			init_word_buff(&stages[i].out_file, WORD_MAX);
+
 			stages[i].num_args = 0;
 			if(i < size -1){
 				stages[i].pipe_flag = 1;
@@ -295,12 +297,18 @@ stage_t *new_stages(char ***progs, int size)
 				stages[i].pipe_flag = 0;
 			}
 			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
-			/*stages[i].in_file = NULL;
-			stages[i].out_file = NULL;*/
+			stages[i].in_file = NULL;
+			stages[i].out_file = NULL;
 			/*========================================================= */
 			/*=============Set Up cmd_line - End with NULL ptr=================*/
 			/*only when i = size -1 when the stage will have pipe_flag == FALSE*/
-			parse_progv(progs[i], &stages[i]);
+
+			if(parse_progv(progs[i], &stages[i])==-1){
+				/*=======================FREESTAGE=============== */
+				return NULL;
+			}
+
+
 			/*============CHECK REDIRECTION < >  EXIT if error=================*/
 			
 			/*============update in, out, num_args================== */
