@@ -64,14 +64,14 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 }
 
 void free_word_buff(char *ptr_word){
-	if(ptr_word != NULL)
+	/*if(ptr_word != NULL)*/
 		free(ptr_word);
 }
 
 void free_progv_buff(char **ptr_progv, int size){
 	int k;
 	for(k = 0; k < size; k++){
-		if(ptr_progv[k] != NULL)
+		/*if(ptr_progv[k] != NULL)*/
 			free_word_buff(ptr_progv[k]);
 	}
 	if(ptr_progv != NULL)
