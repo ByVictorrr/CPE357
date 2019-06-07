@@ -5,6 +5,7 @@
 #define PIPE_MAX PROGS_MAX - 1
 typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
+pid_t child;
 
 
 extern char **environ;
@@ -22,12 +23,16 @@ void safe_fork(pid_t *pid){
 	}
 }
 
-void clear_pipe_buff(int fd_read){
-	char c;
-	while(read(fd_read, &c, sizeof(c)) > 0){
-		printf("%c", c);
+/*================SIGNAL stuff==========================================*/
+
+void sig_handler_control_C(int signo){
+	if(signo == SIGINT){
+		kill(child, SIGKILL);
 	}
+
 }
+/*======================================================================== */
+
 
 /*=================================================== */
 /*====================Shell/Exec function============================= */
@@ -54,7 +59,7 @@ void open_pipes(pipe_t *pipes, int size){
 void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
-		printf("no pipes therefore cant close any\n");
+		return;
  
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
 	if(ith_prog -2 >= 0 && left == 1){
@@ -74,10 +79,10 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 	}/* cant close pipes */
 }
 /*num_progs = num_pipes+1*/
-void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
+void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX], sigset_t *mask){
 
-	pid_t child;
 	int re_dir = -1;
+	sigprocmask(SIG_UNBLOCK, mask, NULL);
 	/*base case   */
 	if(num_progs == 0){
 		return;
@@ -86,20 +91,18 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 		if(child == 0){
 			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, 1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
-			if(num_pipes + 1 == num_progs){
-				printf("last program in pipeline\n");
+			if(num_pipes + 1 == num_progs){	
 				close(pipes[num_progs-2][WRITE]);
 				/*See if any redirectino*/
 				if((re_dir = redir(stages[num_progs-1], num_pipes, pipes[num_progs-2], pipes[num_progs-1], 1)) != -1){	
 					if (re_dir == 2){
-						printf("double redirection");
+						
 					}
 					else if(re_dir == 0){
 						/*read from std in  */
-						printf("reading from file");
+						
 					}else{
 						/*read from std out  */
-						printf("writing to file");
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 					}
 				}else{
@@ -111,19 +114,15 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 				if((re_dir = redir(stages[num_progs-1], num_pipes, pipes[num_progs-2], pipes[num_progs-1], 1)) != -1){
 					/*Case 3.1 - double redirection*/
 					if (re_dir == 2){	
-						printf("double redirection");
+						
 					}
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
-						/*read from std in  */
-						printf("reading from file");
-						close(STDIN_FILENO);
+						/*read from std in  */	
 						dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
 					/*Case 3.3 - > redirection  */
 					}else{
-						/*read from std out  */
-						printf("writing to file");
-						close(pipes[num_progs-1][WRITE]);
+						/*read from std out  */	
 					}
 				}else{
 					dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
@@ -135,17 +134,17 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 				if((re_dir = redir(stages[num_progs-1], num_pipes, pipes[num_progs-2], pipes[num_progs-1], 1)) != -1){
 					/*case 3.1 - double redirection */
 					if (re_dir == 2){
-						printf("double redirection");
+						
 					}
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
 						/*read from std in  */
-						printf("reading from file");
+						
 						dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
 					/*Case 3.3 - > redirection  */
 					}else{
 						/*read from std out  */
-						printf("writing to file");
+						
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 					}
 				}else{
@@ -156,18 +155,19 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 				}
 				/*close end of pipes reading or righting to */
 			}
-		printf("redir = %d", re_dir);
+		
 		if(execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ) < 0){
 			perror("exec errr");
 			exit(EXIT_FAILURE);
 		}
 		}else{
-			pipe_line(stages, num_progs-1, num_pipes, pipes);
+			pipe_line(stages, num_progs-1, num_pipes, pipes, mask);
 			/*close everything on the first program  */
 			close_uncess_pipes(num_pipes, -1, -1 , 0,pipes);
 			wait(NULL);
 		}
 	}
+	sigprocmask(SIG_BLOCK, mask, NULL);
 }
 
 /*==========================CD error checking============================================ */
@@ -208,20 +208,6 @@ void char_double_pointer_to_single_with_space(char **input, char *output){
 		}
 	}
 }
-/*================SIGNAL stuff==========================================*/
-
-void sig_handler_control_C(int signo){
-	if(signo == SIGINT){
-
-	}
-
-}
-void sig_handler_control_D(int signo){
-	if(signo == SIGKILL){
-	}
-}
-/*======================================================================== */
-
 /*=========Redirection functions=========================================*/
 /*Determien if a stage has redirection */
 /*returns values: -1 - no redirection
@@ -241,7 +227,6 @@ int has_redirection(stage_t stage){
 	else if (stage.in_file[0] != '\0')
 		return 0;
 
-	/*printf("stages.out_file_file = %d ", (int)stage.out_file[0]);*/
 	return -1;
 }
 
@@ -298,8 +283,14 @@ int main(int argc, char **argv){
 	stage_t *stages;
 	int i;
 	char cd[WORD_MAX];
-	mode_t u_mask= 0000;
-	umask(u_mask);
+	mode_t f_mask= 0000;
+	umask(f_mask);
+
+	sigset_t s_mask;
+	sigemptyset(&s_mask);
+	sigaddset(&s_mask, SIGINT);
+	sigprocmask(SIG_BLOCK, &s_mask, NULL);
+	signal(SIGINT, sig_handler_control_C);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
@@ -321,7 +312,7 @@ int main(int argc, char **argv){
 				chdir(stages[0].cmd_line[1]);
 			}else{
 				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
 			}
 			free(line);
 			free(stages);
@@ -338,7 +329,7 @@ int main(int argc, char **argv){
 				chdir(stages[0].cmd_line[1]);
 			}else{
 				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
 			}
 			/*Case 1 - num_pipes == 0 ; could be redirection*/
 			free(line);
