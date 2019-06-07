@@ -8,6 +8,14 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
+#define cd_limit() fprintf(stderr, "command too long\n");
+#define pipe_limit() fprintf(stderr, "pipeline too deep\n");   
+#define empty_stage() fprintf(stderr, "invalid null command\n");  
+#define many_arg(a) fprintf(stderr, "%s: too many arguments\n", a);  
+#define bad_input(a) fprintf(stderr, "%s: bad input redirection\n", a);  
+#define bad_output(a) fprintf(stderr, "%s: bad output redirection\n",a);  
+#define ambiguous_input(a) fprintf(stderr, "%s: ambiguous input\n", a);
+#define ambiguous_output(a) fprintf(stderr, "%s: ambiguous output\n", a);
 #define WORD_MAX 10
 #define PROGV_MAX 10
 #define PROGS_MAX 10
