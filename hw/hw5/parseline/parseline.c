@@ -64,14 +64,14 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 }
 
 void free_word_buff(char *ptr_word){
-	/*if(ptr_word != NULL)*/
+	if(ptr_word != NULL)
 		free(ptr_word);
 }
 
 void free_progv_buff(char **ptr_progv, int size){
 	int k;
 	for(k = 0; k < size; k++){
-		/*if(ptr_progv[k] != NULL)*/
+		if(ptr_progv[k] != NULL)
 			free_word_buff(ptr_progv[k]);
 	}
 	if(ptr_progv != NULL)
@@ -412,7 +412,7 @@ char ***get_progs_with_options(char *line){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
 
-				strcpy(progs_buff[progs_ptr][progv_ptr+1], "\0");
+				progs_buff[progs_ptr][progv_ptr+1] = NULL;
 				/*ATTENTION: make char* buff[][] null will cause memory lost */
 				progs_ptr++;
 				/*=====reset word and progv =======*/
@@ -455,7 +455,7 @@ char ***get_progs_with_options(char *line){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 			
 		}
-		strcpy(progs_buff[progs_ptr][progv_ptr+1], "\0");
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
 		/*ATTENTION: make char* buff[][] null will cause memory lost */
 		argc += progv_ptr+1;
 		progs_ptr++;
@@ -466,7 +466,7 @@ char ***get_progs_with_options(char *line){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 			
 		}
-		strcpy(progs_buff[progs_ptr][progv_ptr+1], "\0");
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
 		/*ATTENTION: make char* buff[][] null will cause memory lost */
 		argc += progv_ptr+1;
 		progs_ptr++;
