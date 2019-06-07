@@ -1,0 +1,22 @@
+total 152
+-rwxr-xr-x. 1 chxiao domain users  4654 Jun  7 00:50 '
+-rwxr-xr-x. 1 chxiao domain users    78 Jun  7 00:50 debugger.gdb
+-rwxr-xr-x. 1 chxiao domain users    46 Jun  7 00:50 debugger.sh
+---x------. 1 chxiao domain users     0 Jun  7 02:41 duh
+-rwxr-xr-x. 1 chxiao domain users   870 Jun  7 00:50 file
+---x------. 1 chxiao domain users    14 Jun  7 00:52 file1
+---x------. 1 chxiao domain users     0 Jun  7 00:56 file2
+---x------. 1 chxiao domain users     0 Jun  7 01:15 file3
+---x------. 1 chxiao domain users     5 Jun  7 01:00 foo
+-rw-------. 1 chxiao domain users     0 Jun  7 03:43 hey
+drwxr-xr-x. 2 chxiao domain users  4096 Jun  7 00:50 inputs
+-rwxr-xr-x. 1 chxiao domain users   583 Jun  7 00:50 Makefile
+-rwx------. 1 chxiao domain users 34160 Jun  7 03:40 mush
+-rwxr-xr-x. 1 chxiao domain users  8269 Jun  7 03:35 mush.c
+-rw-------. 1 chxiao domain users 20632 Jun  7 03:35 mush.o
+-rwxr-xr-x. 1 chxiao domain users 10750 Jun  7 03:40 parseline.c
+-rwxr-xr-x. 1 chxiao domain users  2425 Jun  7 03:35 parseline.h
+-rw-------. 1 chxiao domain users 20032 Jun  7 03:40 parseline.o
+-rwxr-xr-x. 1 chxiao domain users   901 Jun  7 00:50 readLongLine.c
+-rwxr-xr-x. 1 chxiao domain users   918 Jun  7 00:50 readLongLine.h
+-rw-------. 1 chxiao domain users  4080 Jun  7 00:50 readLongLine.o
