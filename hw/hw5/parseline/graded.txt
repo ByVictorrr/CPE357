@@ -1,0 +1,77 @@
+
+------------------------
+Looking for source files
+------------------------
+
+Found: ideas.c parseline.c parseline.h readLongLine.c readLongLine.h
+
+--------------------------------
+Checking for long lines (no program should have any lines > 80 chars)
+(run ~pnico/bin/longlines.pl on your files to check.)
+--------------------------------
+
+Line length ok.
+
+Found: Makefile
+
+------------------------------------
+Building the application: "make parseline"
+------------------------------------
+
+make parseline
+make[1]: Entering directory `/home/chxiao/CPE357/parseline'
+make[1]: `parseline' is up to date.
+make[1]: Leaving directory `/home/chxiao/CPE357/parseline'
+
+---------------
+checking for executable
+---------------
+
+
+------------------------
+Running the application 
+------------------------
+
+
+--------------------------------------------------------
+Test Results:
+   These are the results of trying your parseline against
+mine on a number of different test cases. 
+
+  The output of your version of parseline is compared to 
+the output of ~pn-cs357/demos/parseline using diff (1).
+If they differ the test case is a failure.
+
+  The test commands are located in /home/pn-cs357/lib/asgn5//Tests/commands and the
+associated data are in /home/pn-cs357/lib/asgn5//Tests/Inputs
+
+  Note:  The early usage tests give bad arguments and expect
+a non-zero exit status and see a message of the form:
+"usage: parseline [ -c ] [ -d ] set1 [ set2 ]" The message
+doesn't have to be exactly the same, but it's looking for the
+word "usage".
+
+  Each command is run with a timeout of 10 seconds, so 
+if your program takes longer than that, it will be interrupted.
+
+
+Tests:
+     1) A__LineTooLong                                         ... ok.
+     2) B__TooManyStages                                       ... ok.
+     3) C__TooManyArgs                                         ... ok.
+     4) 00_Empty                                               ... ok.
+     5) 01_NoArgs                                              ... ok.
+     6) 02_Args                                                ... ok.
+     7) 03_RedirectFrom                                        ... ok.
+     8) 04_RedirectInto                                        ... ok.
+     9) 05_OnePipe                                             ... ok.
+    10) 06_OnePipeArgs                                         ... ok.
+    11) 07_ManyPipes                                           ... ok.
+    12) 08_ManyPipesArgs                                       ... ok.
+    13) 09_RedirectBoth                                        ... ok.
+    14) 10_AmbiguousInput                                      ... ok.
+    15) 11_AmbiguousOutput                                     ... ok.
+    16) 12_NullCmdInPipe                                       ... ok.
+Passed 16 out of 16 tests.
+
+Passed all tests.
