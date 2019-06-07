@@ -53,7 +53,7 @@ void open_pipes(pipe_t *pipes, int size){
 void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
-		printf("no pipes therefore cant close any\n");
+		/*printf("no pipes therefore cant close any\n");*/
  
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
 	if(ith_prog -2 >= 0 && left == 1){
