@@ -3,9 +3,9 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
-#define WORD_MAX 10
-#define PROGV_MAX 10
-#define PROGS_MAX 10
+#define WORD_MAX 11
+#define PROGV_MAX 11
+#define PROGS_MAX 11
 #define CMD_LINE_MAX 512
 #define cd_limit() fprintf(stderr, "command too long\n");
 #define pipe_limit() fprintf(stderr, "pipeline too deep\n");   
