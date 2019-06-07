@@ -27,10 +27,16 @@ void safe_fork(pid_t *pid){
 
 void sig_handler_control_C(int signo){
 	if(signo == SIGINT){
-		kill(child, SIGKILL);
+		kill(child, SIGTERM);
 	}
-
 }
+void sig_handler_control_D(int signo){
+	if(signo == SIGKILL){
+		/*free everything */
+		exit(0);
+	}
+}
+
 /*======================================================================== */
 
 
@@ -218,13 +224,13 @@ void char_double_pointer_to_single_with_space(char **input, char *output){
 int has_redirection(stage_t stage){
 
 	/*Case 1 - stage has multiple redirection*/
-	if(stage.out_file[0] != '\0' && stage.in_file[0] != '\0')
+	if(stage.out_file != NULL && stage.in_file != NULL)
 		return 2;
 	/*case 2 - stage has only out redirection  */
-	else if(stage.out_file[0] != '\0')
+	else if(stage.out_file != NULL)
 		return 1;
 	/*Case 3 - stage has in redirection  */
-	else if (stage.in_file[0] != '\0')
+	else if (stage.in_file != NULL)
 		return 0;
 
 	return -1;
@@ -272,17 +278,53 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 
 
 
+
+/*for script version for prompt version  */
+void run_shell(int fd, sigset_t *s_mask){
+			stage_t *stages;
+			char *line;
+			char cd[WORD_MAX];
+			int num_pipes;
+			char ***progs;
+			pipe_t pipes[PIPE_MAX];
+start:
+			line = read_long_line(fd);
+			num_pipes = count_pipes(line);
+			/*Error check 1 - to many programs  */
+			if(num_pipes >= PROGV_MAX){
+				pipe_limit();
+				free(line);
+				goto start; 
+			}
+			/*Error check 2 - to many arguments for one program  */
+			if((progs=get_progs_with_options(line)) == NULL){
+				free(line);
+				goto start;
+			}
+			/*Error check 3 - ambigous_output and bad_output and input */
+			if((stages = new_stages(progs, num_pipes+1)) == NULL){
+				free(line);
+				free(progs);
+				goto start;
+			}
+			/*Case 1 - first program is cd */
+			if(is_cd_first(stages, num_pipes+1)){
+				chdir(stages[0].cmd_line[1]);
+			}else{
+				get_pipes(pipes, num_pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes, s_mask);
+			}
+			/*Case 1 - num_pipes == 0 ; could be redirection*/
+			free(line);
+			free(stages);
+}
+
+
+
 /*TODO : fix parsing in parseline, frees, signals*/
 int main(int argc, char **argv){
 
-	char ***progs;
-	char *line;
-	int num_pipes;
 	int script_fd;
-	pipe_t pipes[PIPE_MAX];
-	stage_t *stages;
-	int i;
-	char cd[WORD_MAX];
 	mode_t f_mask= 0000;
 	umask(f_mask);
 
@@ -291,6 +333,7 @@ int main(int argc, char **argv){
 	sigaddset(&s_mask, SIGINT);
 	sigprocmask(SIG_BLOCK, &s_mask, NULL);
 	signal(SIGINT, sig_handler_control_C);
+	signal(SIGKILL, sig_handler_control_D);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
@@ -304,36 +347,13 @@ int main(int argc, char **argv){
 			exit(EXIT_FAILURE);
 		}else{
 			/*run shell scrpt */
-			line = read_long_line(script_fd);
-			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			if(is_cd_first(stages, num_pipes+1)){
-				chdir(stages[0].cmd_line[1]);
-			}else{
-				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
-			}
-			free(line);
-			free(stages);
+			run_shell(script_fd, &s_mask);
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
 		/*  */
 		while(1){
-			line = read_long_line(STDIN_FILENO);
-			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			if(is_cd_first(stages, num_pipes+1)){
-				chdir(stages[0].cmd_line[1]);
-			}else{
-				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
-			}
-			/*Case 1 - num_pipes == 0 ; could be redirection*/
-			free(line);
-			free(stages);
+			run_shell(STDIN_FILENO, &s_mask);
 		}
 	}
 	/*===================================================*/

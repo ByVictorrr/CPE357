@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic -g -lm
+CFLAGS = -Wall -pedantic -g -lm
 MAIN = mush
 OBJ =  mush.o parseline.o readLongLine.o
 UNIX1_VIC = vdelapla@unix1.csc.calpoly.edu
