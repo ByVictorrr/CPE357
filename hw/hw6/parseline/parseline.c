@@ -121,12 +121,14 @@ int redirect_is_valid(stage_t* stage)
 			/*printf(" this is a > ");*/
 			if (!next || !*next)
 			{
+				bad_output(stage->cmd_line[0]);
 				return FALSE;
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
 			if (*next == '>' || *next == '<')
 			{
+				bad_output(stage->cmd_line[0]);
 				return FALSE;
 			}
 			/*----- update Stage's outfile -------*/
@@ -139,12 +141,15 @@ int redirect_is_valid(stage_t* stage)
 			/*printf(" this is a < ");*/
 			if (!*next || !next)
 			{
+				bad_input(stage->cmd_line[0]);
 				return FALSE;
+				
 				/* if > is the last arg - ERROR*/
 			}
 			/*if two redirect signs stack together* - ERROR*/
 			if (*next == '>' || *next == '<')
 			{
+				bad_input(stage->cmd_line[0]);
 				return FALSE;
 			}
 			/*----- update Stage's infile -------*/
@@ -171,7 +176,19 @@ int redirect_is_valid(stage_t* stage)
 		return FALSE;
 	}
 	stage->num_args = argc;
-
+	if (*stages[i].in_file){
+		if(i>0){
+			ambiguous_input(stages[i].cmd_line[0]);
+			exit(1);
+		}
+	}
+	if (*stages[i].out_file){
+		/*if there is outfile and also pipe after --> error*/
+		if(stages[i].pipe_flag){
+			ambiguous_output(stages[i].cmd_line[0]);
+			exit(1);
+		}
+	}
 	return TRUE;
 }
 
