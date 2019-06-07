@@ -91,95 +91,10 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 }
 
 
-
-int redirect_is_valid(stage_t* stage)
-{
-	int argc = 0, i = 0, skip = 0;
-	/*pass in {"executable", "[flag|<|>|file|"} */
-	/*check if the redirection is valid
-    if valid: return TRUE 
-    if not: print input| output redirect error message and return FALSE
-    */
-	char str[WORD_MAX] = {'\0'};
-	char next[WORD_MAX] = {'\0'};
-	int o = 0, in = 0; /* test if there is redundant redirection sign*/
-	
-
-	while (stage->cmd_line[i])
-	{
-		
-		
-		strncpy(str, stage->cmd_line[i], WORD_MAX);
-		if(stage->cmd_line[i+1]){
-			strncpy(next, stage->cmd_line[i+1], WORD_MAX);
-		}
-		else{
-			*next = '\0';
-		}
-		if(!strcmp(str, ">"))
-		{
-			/*printf(" this is a > ");*/
-			if (!next || !*next)
-			{
-				return FALSE;
-				/* if > is the last arg - ERROR*/
-			}
-			/*if two redirect signs stack together* - ERROR*/
-			if (*next == '>' || *next == '<')
-			{
-				return FALSE;
-			}
-			/*----- update Stage's outfile -------*/
-			strncpy(stage->out_file, next, strlen(next));
-			skip = 1;
-			o += 1;
-		}
-		else if(!strcmp(str, "<"))
-		{
-			/*printf(" this is a < ");*/
-			if (!*next || !next)
-			{
-				return FALSE;
-				/* if > is the last arg - ERROR*/
-			}
-			/*if two redirect signs stack together* - ERROR*/
-			if (*next == '>' || *next == '<')
-			{
-				return FALSE;
-			}
-			/*----- update Stage's infile -------*/
-			strncpy(stage->in_file, next, strlen(next));
-			skip = 1;
-			in += 1;
-		}
-		else if(skip!= 1)
-		{
-			argc++;
-			skip = 0;
-		}
-		i++;
-	}
-	/*since we cant have two outfile*/
-	if (in > 1)
-	{
-		bad_input(stage->cmd_line[0]);
-		return FALSE;
-	}
-	if (o > 1)
-	{
-		bad_output(stage->cmd_line[0]);
-		return FALSE;
-	}
-	stage->num_args = argc;
-
-	return TRUE;
-}
-
-
 /*===================================================*/
 
 /*==============Parsing functions=================== */
-
+/*-1 means error*/
 int parse_progv(char **progv, stage_t *stage){
 	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
