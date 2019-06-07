@@ -1,0 +1,380 @@
+
+==========================================
+5) 01_NoArgs  (FAILURE.)
+  cmd: "ls"
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11406) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls"
+    --------
+         input: original stdin
+        output: original stdout
+          argc: 1
+          argv: "ls"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,8d1
+    < --------
+    < Stage 0: " ls"
+    < --------
+    <      input: original stdin
+    <     output: original stdout
+    <       argc: 1
+    <       argv: "ls"
+
+  --------------------------
+
+==========================================
+6) 02_Args  (FAILURE.)
+  cmd: "ls a b c d e f g "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11466) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls a b c d e f g "
+    --------
+         input: original stdin
+        output: original stdout
+          argc: 8
+          argv: "ls","a","b","c","d","e","f","g"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,8d1
+    < --------
+    < Stage 0: " ls a b c d e f g "
+    < --------
+    <      input: original stdin
+    <     output: original stdout
+    <       argc: 8
+    <       argv: "ls","a","b","c","d","e","f","g"
+
+  --------------------------
+
+==========================================
+7) 03_RedirectFrom  (FAILURE.)
+  cmd: "cat < /dev/null"
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11547) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " cat < /dev/null"
+    --------
+         input: /dev/null
+        output: original stdout
+          argc: 1
+          argv: "cat"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,8d1
+    < --------
+    < Stage 0: " cat < /dev/null"
+    < --------
+    <      input: /dev/null
+    <     output: original stdout
+    <       argc: 1
+    <       argv: "cat"
+
+  --------------------------
+
+==========================================
+8) 04_RedirectInto  (FAILURE.)
+  cmd: "cat > /dev/null"
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11611) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " cat > /dev/null"
+    --------
+         input: original stdin
+        output: /dev/null
+          argc: 1
+          argv: "cat"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,8d1
+    < --------
+    < Stage 0: " cat > /dev/null"
+    < --------
+    <      input: original stdin
+    <     output: /dev/null
+    <       argc: 1
+    <       argv: "cat"
+
+  --------------------------
+
+==========================================
+9) 05_OnePipe  (FAILURE.)
+  cmd: "ls | cat"
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11671) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 1
+          argv: "ls"
+    
+    --------
+    Stage 1: " cat"
+    --------
+         input: pipe from stage 0
+        output: original stdout
+          argc: 1
+          argv: "cat"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,16d1
+    < --------
+    < Stage 0: " ls "
+    < --------
+    <      input: original stdin
+    <     output: pipe to stage 1
+    <       argc: 1
+    <       argv: "ls"
+    < 
+    < --------
+    < Stage 1: " cat"
+    < --------
+    <      input: pipe from stage 0
+    <     output: original stdout
+    <       argc: 1
+    <       argv: "cat"
+
+  --------------------------
+
+==========================================
+10) 06_OnePipeArgs  (FAILURE.)
+  cmd: "ls a b c | cat"
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11735) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls a b c "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 4
+          argv: "ls","a","b","c"
+    
+    --------
+    Stage 1: " cat"
+    --------
+         input: pipe from stage 0
+        output: original stdout
+          argc: 1
+          argv: "cat"
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,16d1
+    < --------
+    < Stage 0: " ls a b c "
+    < --------
+    <      input: original stdin
+    <     output: pipe to stage 1
+    <       argc: 4
+    <       argv: "ls","a","b","c"
+    < 
+    < --------
+    < Stage 1: " cat"
+    < --------
+    <      input: pipe from stage 0
+    <     output: original stdout
+    <       argc: 1
+    <       argv: "cat"
+
+  --------------------------
+
+==========================================
+11) 07_ManyPipes  (FAILURE.)
+  cmd: "ls | cat | cat | cat | cat | cat "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11795) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 1
+          argv: "ls"
+    
+    --------
+    Stage 1: " cat "
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 1
+          argv: "cat"
+    
+    --------
+    Stage 2: " cat "
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,48d1
+    < --------
+    < Stage 0: " ls "
+    < --------
+    <      input: original stdin
+    <     output: pipe to stage 1
+    <       argc: 1
+    <       argv: "ls"
+    < 
+    < --------
+    < Stage 1: " cat "
+    < --------
+    <      input: pipe from stage 0
+    <     output: pipe to stage 2
+    <       argc: 1
+    <       argv: "cat"
+    < 
+    < --------
+    < Stage 2: " cat "
+    < --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+
+  --------------------------
+
+==========================================
+12) 08_ManyPipesArgs  (FAILURE.)
+  cmd: "ls a b c | tee /dev/null | tee /dev/null | tee /dev/null | tee /dev/null "
+==========================================
+  --------------------------
+  Submitted's stdout:
+     
+  --------------------------
+  --------------------------
+  Submitted's stderr:
+    Child process (11859) exited due to signal (Segmentation fault).
+
+  --------------------------
+  --------------------------
+  Reference output:
+    
+    --------
+    Stage 0: " ls a b c "
+    --------
+         input: original stdin
+        output: pipe to stage 1
+          argc: 4
+          argv: "ls","a","b","c"
+    
+    --------
+    Stage 1: " tee /dev/null "
+    --------
+         input: pipe from stage 0
+        output: pipe to stage 2
+          argc: 2
+          argv: "tee","/dev/null"
+    
+    --------
+    Stage 2: "  tee /dev/null "
+    --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+  --------------------------
+  --------------------------
+  Diff -bBw (< Reference > Submitted):
+    2,40d1
+    < --------
+    < Stage 0: " ls a b c "
+    < --------
+    <      input: original stdin
+    <     output: pipe to stage 1
+    <       argc: 4
+    <       argv: "ls","a","b","c"
+    < 
+    < --------
+    < Stage 1: " tee /dev/null "
+    < --------
+    <      input: pipe from stage 0
+    <     output: pipe to stage 2
+    <       argc: 2
+    <       argv: "tee","/dev/null"
+    < 
+    < --------
+    < Stage 2: "  tee /dev/null "
+    < --------
+    /home/pnico/bin/iolimit.Linux.x86_64: output line limit (20) exceeded.
+
+  --------------------------
