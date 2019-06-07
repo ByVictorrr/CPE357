@@ -412,7 +412,7 @@ char ***get_progs_with_options(char *line){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
 
-				progs_buff[progs_ptr][progv_ptr+1] = NULL;
+				/*progs_buff[progs_ptr][progv_ptr+1] = NULL;*/
 				/*ATTENTION: make char* buff[][] null will cause memory lost */
 				progs_ptr++;
 				/*=====reset word and progv =======*/
@@ -455,7 +455,7 @@ char ***get_progs_with_options(char *line){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 			
 		}
-		progs_buff[progs_ptr][progv_ptr+1] = NULL;
+		/*progs_buff[progs_ptr][progv_ptr+1] = NULL;*/
 		/*ATTENTION: make char* buff[][] null will cause memory lost */
 		argc += progv_ptr+1;
 		progs_ptr++;
@@ -466,7 +466,7 @@ char ***get_progs_with_options(char *line){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 			
 		}
-		progs_buff[progs_ptr][progv_ptr+1] = NULL;
+		/*progs_buff[progs_ptr][progv_ptr+1] = NULL;*/
 		/*ATTENTION: make char* buff[][] null will cause memory lost */
 		argc += progv_ptr+1;
 		progs_ptr++;
