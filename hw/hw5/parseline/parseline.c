@@ -238,7 +238,7 @@ int redirect_is_valid(stage_t* stage)
 			skip = 1;
 			in += 1;
 		}
-		else if(skip!= 1)
+		else if(skip!= 1 && !strcmp(str, "\0"))
 		{
 			
 			argc += 1;
