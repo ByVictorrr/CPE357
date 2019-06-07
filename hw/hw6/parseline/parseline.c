@@ -181,7 +181,7 @@ int redirect_is_valid(stage_t* stage)
 /*==============Parsing functions=================== */
 
 int parse_progv(char **progv, stage_t *stage){
-	int i, in , o;
+	int i, in = 0 , o = 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
 		/*Case 1 - just seperate cmd_line string */
