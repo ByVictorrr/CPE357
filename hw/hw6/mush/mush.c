@@ -5,13 +5,16 @@
 #define PIPE_MAX PROGS_MAX - 1
 #define SCRIPT 1
 #define INTERACTIVE 0
+#define MODE_REDIRECTION 0600 
+
 
 typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
+enum Kill_handler{DONT_KILL, KILL};
 /*==================Globals var====================  */
 pid_t child;
 extern char **environ;
-struct sigaction sa;
+int kill_flag;
 /*=================================================== */
 /*==================Safe Function ========================= */
 void safe_pipe(pipe_t *pipes){
@@ -29,15 +32,17 @@ void safe_fork(pid_t *pid){
 
 /*================SIGNAL stuff==========================================*/
 
-void sig_handler_control_C_kill_child(int signo){
-	if(signo == SIGINT)
-		kill(child, SIGTERM);
-}
-void sig_handler_control_C_block(int signo){
+void sig_handler_control_C(int signo){
 
 		if(signo == SIGINT){
-			printf("\n8-P: ");
-			sigaction(SIGINT, &sa, NULL);
+			if(kill_flag == DONT_KILL){
+				printf("\n8-P: ");
+				fflush(stdout);
+			}else{
+				kill(child, SIGTERM);
+				fflush(stdout);
+			}
+			signal(SIGINT, sig_handler_control_C);
 		}
 	}
 
@@ -89,17 +94,11 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 }
 
 /*num_progs = num_pipes+1*/
-void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX], struct sigaction *sa){
+void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
 
-	struct sigaction new;
 
 	int re_dir = -1;
-	sigemptyset(&new.sa_mask);
-	sigaddset(&new.sa_mask, SIGINT);
-	new.sa_handler = sig_handler_control_C_kill_child;
-	sigprocmask(SIG_SETMASK, &new.sa_mask, NULL);
-
-
+	
 	/*base case   */
 	if(num_progs == 0){
 		return;
@@ -175,17 +174,14 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 			exit(EXIT_FAILURE);
 		}
 		}else{
-			pipe_line(stages, num_progs-1, num_pipes, pipes, sa);
-			/*set up handler */
-			sigaction(SIGINT, &new, sa);
-
+			kill_flag = KILL;
+			pipe_line(stages, num_progs-1, num_pipes, pipes);
 			/*close everything on the first program  */
 			close_uncess_pipes(num_pipes, -1, -1 , 0,pipes);
 			wait(NULL);
 		}
 	}
-	/*restore signal action  */
-	sigaction(SIGINT, sa, NULL);
+	kill_flag = DONT_KILL;
 }
 
 /*==========================CD error checking============================================ */
@@ -231,7 +227,6 @@ int has_redirection(stage_t stage){
 	return -1;
 }
 
-#define MODE_REDIRECTION 0600 
 int safe_open(char *path, int modes, int flags){
 	int fd;
 	if((fd = open(path, modes, flags)) < 0){
@@ -299,7 +294,7 @@ int count_line_progs(char *line){
 	return count_progs;
 }
 /*for script version for prompt version  */
-void script_shell(FILE *stream, struct sigaction *sa){
+void script_shell(FILE *stream){
 			stage_t *stages;
 			char **line_prog, *line;
 			int num_line_progs;
@@ -339,7 +334,7 @@ void script_shell(FILE *stream, struct sigaction *sa){
 				}
 			}else{
 				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, sa);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes);
 			}
 			/*frees  */
 			free(stages);
@@ -349,7 +344,7 @@ end: ;
 	}
 /*===================================================================*/
 
-void interactive_shell(FILE *stream, struct sigaction *sa){
+void interactive_shell(FILE *stream){
 			stage_t *stages;
 			char *line;
 			char cd[WORD_MAX];
@@ -389,7 +384,7 @@ start:
 				}
 			}else{
 				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, sa);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes);
 			}
 			/*frees  */
 			free(line);
@@ -405,11 +400,8 @@ int main(int argc, char **argv){
 	mode_t f_mask= 0000;
 	umask(f_mask);
 	/* signals */
-	sigemptyset(&sa.sa_mask);
-	sigaddset(&sa.sa_mask, SIGINT);
-	sigprocmask(SIG_SETMASK, &sa.sa_mask, NULL);
-	sa.sa_handler = sig_handler_control_C_block;
-	sigaction(SIGINT, &sa, NULL);
+	kill_flag = DONT_KILL;
+	signal(SIGINT, sig_handler_control_C);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
@@ -423,12 +415,12 @@ int main(int argc, char **argv){
 			exit(EXIT_FAILURE);
 		}else{
 			/*run shell scrpt */
-			script_shell(script, &sa);
+			script_shell(script);
 			fclose(script);
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
-		interactive_shell(stdin, &sa);
+		interactive_shell(stdin);
 	}
 	/*===================================================*/
 return 0;
