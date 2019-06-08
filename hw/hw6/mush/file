@@ -1,17 +1,1 @@
--rw-r--r-- 1 victor users  4654 Jun  7 13:56 '
--rw-r--r-- 1 victor users    54 Jun  7 14:59 debugger.gdb
--rw-r--r-- 1 victor users    46 Jun  7 13:56 debugger.sh
--rw-r--r-- 1 victor users     0 Jun  7 15:06 file
-drwxr-xr-x 2 victor users  4096 Jun  7 13:56 inputs
--rw-r--r-- 1 victor users   583 Jun  7 13:57 Makefile
--rwxr-xr-x 1 victor users 41192 Jun  7 15:06 mush
--rw-r--r-- 1 victor users  9389 Jun  7 15:06 mush.c
--rw-r--r-- 1 victor users  8349 Jun  7 14:48 mush.c?token=AEOHABZ4LAP5UXUDF6XOIYS5AQLCC
--rw-r--r-- 1 victor users 18264 Jun  7 15:06 mush.o
-drwxr-xr-x 2 victor users  4096 Jun  7 14:31 my_old_parseline
--rw-r--r-- 1 victor users  9117 Jun  7 14:49 parseline.c
--rw-r--r-- 1 victor users  2425 Jun  7 14:49 parseline.h
--rw-r--r-- 1 victor users 17384 Jun  7 14:59 parseline.o
--rw-r--r-- 1 victor users   901 Jun  7 13:56 readLongLine.c
--rw-r--r-- 1 victor users   918 Jun  7 13:56 readLongLine.h
--rw-r--r-- 1 victor users  5976 Jun  7 14:59 readLongLine.o
+"hi"

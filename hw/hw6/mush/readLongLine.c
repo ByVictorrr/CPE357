@@ -15,7 +15,9 @@ char *read_long_line(FILE *stream, int interactive)
 	pbuff = (char*)calloc(MAXCHAR, sizeof(char));
 	memset(pbuff, '\0', MAXCHAR);
 	
-	fwrite("8-P: ",1,strlen("8-P: "), stdout);
+	if(interactive == INTERACTIVE){
+		fwrite("8-P: ",1,strlen("8-P: "), stdout);
+	}
 	while((c = getc(stream)) != EOF){
 		/*Case 1 - interactive cmd line mode read until "\n"*/
 		if(interactive == INTERACTIVE){
@@ -30,7 +32,7 @@ char *read_long_line(FILE *stream, int interactive)
 			pbuff = (char*)realloc(pbuff,sizebuff);
 		}
 	}
-	if(c == EOF)
+	if(c == EOF && interactive == INTERACTIVE)
 		exit(EXIT_FAILURE);
 
 	return pbuff;

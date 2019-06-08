@@ -30,17 +30,16 @@ void safe_fork(pid_t *pid){
 /*================SIGNAL stuff==========================================*/
 
 void sig_handler_control_C_kill_child(int signo){
-	if(signo == SIGINT){
+	if(signo == SIGINT)
 		kill(child, SIGTERM);
-	}
 }
 void sig_handler_control_C_block(int signo){
 
 		if(signo == SIGINT){
 			printf("\n8-P: ");
+			sigaction(SIGINT, &sa, NULL);
 		}
-		sigaction(SIGINT, &sa, NULL);
-}
+	}
 
 /*======================================================================== */
 
@@ -57,7 +56,7 @@ void get_pipes(pipe_t *pipes, int size){
 		safe_pipe(&pipes[i]);
 }
 void open_pipes(pipe_t *pipes, int size){
-	int i; 
+
 	if(size > PIPE_MAX){
 		perror("to many pipes");
 		exit(EXIT_FAILURE);
@@ -94,12 +93,13 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 
 	struct sigaction new;
 
-	sigemptyset(&new.sa_mask);
-	sigaddset(SIGINT, &new.sa_mask);
-	sigprocmask(SIG_SETMASK, &new.sa_mask, NULL);
-	new.sa_handler = sig_handler_control_C_kill_child;
-
 	int re_dir = -1;
+	sigemptyset(&new.sa_mask);
+	sigaddset(&new.sa_mask, SIGINT);
+	new.sa_handler = sig_handler_control_C_kill_child;
+	sigprocmask(SIG_SETMASK, &new.sa_mask, NULL);
+
+
 	/*base case   */
 	if(num_progs == 0){
 		return;
@@ -288,8 +288,85 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 }
 /*=========================================================================*/
 
+char **line_script( char * line, int size){
+	int i, j, k;
+	char **script_line;
+	init_progv_buff(&script_line, size, PROGV_MAX);
+	for(i = 0, j=0, k=0; line[i] != '\0'; i++){
+			/*Case 1 - while not a new program*/
+			if(line[i] != '\n'){
+				script_line[j][k] = line[i];
+				k++;
+			/*case 2 - new program */
+			}else{
+				script_line[j][k] = '\0';
+				k=0;
+				j++;
+			}
+	}
+	return script_line;
+}
+int count_line_progs(char *line){
+	int i, count_progs;
+	/*Count each new line and then add a final one for \0 */
+	for(i = 0, count_progs = 0; line[i] != '\0'; i++)
+		if(line[i] == '\n')
+			count_progs++;
+	return count_progs;
+}
 /*for script version for prompt version  */
-void run_shell(FILE *stream, int script, struct sigaction *sa){
+void script_shell(FILE *stream, struct sigaction *sa){
+			stage_t *stages;
+			char **line_prog, *line;
+			int num_line_progs;
+			char cd[WORD_MAX];
+			int num_pipes;
+			char ***progs;
+			pipe_t pipes[PIPE_MAX];
+			int i, j;
+			
+		/*go through each line_prog[i] */
+		for(line = read_long_line(stream, SCRIPT), num_line_progs = count_line_progs(line), 
+			line_prog = line_script(line, num_line_progs) , i  = 0; i < num_line_progs; i++){ 
+			/*free line */
+			if(line != NULL && i == 0)
+				free(line);
+
+			num_pipes = count_pipes(line_prog[i]);
+			/*Error check 1 - to many programs  */
+			if(num_pipes >= PROGV_MAX){
+				pipe_limit();
+				goto end;
+			}
+			/*Error check 2 - to many arguments for one program  */
+			if((progs=get_progs_with_options(line_prog[i])) == NULL){
+				goto end;
+			}
+			/*Error check 3 - ambigous_output and bad_output and input */
+			if((stages = new_stages(progs, num_pipes+1)) == NULL){
+				free(progs);
+				goto end;
+			}
+			/*Case 1 - first program is cd */
+			if(is_cd_first(stages, num_pipes+1)){
+				if(chdir(stages[0].cmd_line[1]) < 0){
+					perror(stages[0].cmd_line[1]);
+					goto end;
+				}
+			}else{
+				get_pipes(pipes, num_pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes, sa);
+			}
+			/*frees  */
+			free(stages);
+end: ;
+			/*For script only run once */
+		}/*for */
+		free_progv_buff(line_prog, count_line_progs);
+	}
+/*===================================================================*/
+
+void interactive_shell(FILE *stream, struct sigaction *sa){
 			stage_t *stages;
 			char *line;
 			char cd[WORD_MAX];
@@ -299,41 +376,34 @@ void run_shell(FILE *stream, int script, struct sigaction *sa){
 			/*set up handler */
 start:
 		while(1){
-			line = read_long_line(stream, script);
+			line = read_long_line(stream, INTERACTIVE);
 			num_pipes = count_pipes(line);
 			/*Error check 1 - to many programs  */
 			if(num_pipes >= PROGV_MAX){
 				pipe_limit();
 				free(line);
-				/*script mode  */
-				if(script == SCRIPT){
-					return;
-				}
 				goto start; 
 			}
 			/*Error check 2 - to many arguments for one program  */
 			if((progs=get_progs_with_options(line)) == NULL){
 				free(line);
-				/*script mode  */
-				if(script == SCRIPT){
-					return;
-				}
-
 				goto start;
 			}
 			/*Error check 3 - ambigous_output and bad_output and input */
 			if((stages = new_stages(progs, num_pipes+1)) == NULL){
 				free(line);
 				free(progs);
-				/*script mode  */
-				if(script == SCRIPT){
-					return;
-				}
 				goto start;
 			}
 			/*Case 1 - first program is cd */
 			if(is_cd_first(stages, num_pipes+1)){
-				chdir(stages[0].cmd_line[1]);
+				if(chdir(stages[0].cmd_line[1]) < 0){	
+					perror(stages[0].cmd_line[1]);	
+					free(line);
+					free(progs);
+					free(stages);
+					goto start;
+				}
 			}else{
 				get_pipes(pipes, num_pipes);
 				pipe_line(stages, num_pipes+1, num_pipes, pipes, sa);
@@ -341,11 +411,9 @@ start:
 			/*frees  */
 			free(line);
 			free(stages);
-			/*For script only run once */
-			if(script == SCRIPT)
-				break;
 		}
 }
+
 
 /*TODO : fix parsing in parseline, frees, signals*/
 int main(int argc, char **argv){
@@ -355,7 +423,7 @@ int main(int argc, char **argv){
 	umask(f_mask);
 	/* signals */
 	sigemptyset(&sa.sa_mask);
-	sigaddset(SIGINT, &sa.sa_mask);
+	sigaddset(&sa.sa_mask, SIGINT);
 	sigprocmask(SIG_SETMASK, &sa.sa_mask, NULL);
 	sa.sa_handler = sig_handler_control_C_block;
 	sigaction(SIGINT, &sa, NULL);
@@ -367,16 +435,16 @@ int main(int argc, char **argv){
 	}
 	/*Case 1 - see if we have a script inputted  */
 	if(argc == 2){
-		if((script = fopen(argv[1], O_RDONLY)) < 0){
+		if((script = fopen(argv[1], "r")) < 0){
 			perror(argv[1]);
 			exit(EXIT_FAILURE);
 		}else{
 			/*run shell scrpt */
-			run_shell(script, SCRIPT, &sa);
+			script_shell(script, &sa);
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
-		run_shell(stdin, INTERACTIVE, &sa);
+		interactive_shell(stdin, &sa);
 	}
 	/*===================================================*/
 return 0;

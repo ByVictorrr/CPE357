@@ -8,6 +8,8 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
+#define SCRIPT 1
+#define INTERACTIVE 0
 #define WORD_MAX 10
 #define PROGV_MAX 8
 #define PROGS_MAX 10
@@ -54,7 +56,7 @@ void sig_handler_control_C(int signo);
 /*===================================================*/
 
 /*==============Parsing functions=================== */
-int parse_progv(char **progv, stage_t *stage);
+int parse_progv(char **progv, stage_t *stage, int prev);
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size);
 void print_stage(stage_t *stages, int size);

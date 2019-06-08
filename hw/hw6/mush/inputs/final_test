@@ -1,0 +1,27 @@
+ls | grep o | sort | wc
+ls Makefile mush > file1
+cat file1
+cat < file1 > file2
+cat file2
+cat > file2 | sort
+ls | more < file2
+a | b | c | d | e | f | g | h | i | j | k
+a b c d e f g h i j k l m n o
+foo
+echo "hi" > foo
+cat foo
+foo
+ls -l foo
+rm foo
+cd foo
+ls > foo
+cd foo
+rm foo
+mkdir foo
+cd foo
+pwd
+8-P
+cat > commands
+/bin/echo -n Hello,
+echo world
+./mush commands

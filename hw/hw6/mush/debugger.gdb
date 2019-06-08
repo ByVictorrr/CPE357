@@ -1,5 +1,5 @@
 #usage: gdb -x debugger.gdb ./pro
 #set follow-fork-mode child
-b main
+b 332 if i == 28
 tui enable
-r
+r inputs/final_test

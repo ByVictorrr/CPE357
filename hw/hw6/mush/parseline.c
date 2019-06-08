@@ -117,8 +117,7 @@ void free_stages(stage_t * stages, int size){
 
 /*==============Parsing functions=================== */
 
-int parse_progv(char **progv, stage_t *stage){
-	static int prev = 0; /* kept the previous one and see if its an ambiguous input */
+int parse_progv(char **progv, stage_t *stage, int prev){
 	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
@@ -193,13 +192,12 @@ int parse_progv(char **progv, stage_t *stage){
 		bad_output(stage->cmd_line[0]);
 		return -1;
 	}
-	prev = 1;
 	return 0; 
 }
 
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size){
-	int i;
+	int i, prev = 0;
 	stage_t *stages;
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
@@ -231,14 +229,11 @@ stage_t *new_stages(char ***progs, int size){
 			else{			
 				stages[i].pipe_flag = 0;
 			}
-			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
-			/* stages[i].in_file = NULL;
-			stages[i].out_file = NULL;*/
-			/*========================================================= */
-			/*=============Set Up cmd_line - End with NULL ptr=================*/
-			/*only when i = size -1 when the stage will have pipe_flag == FALSE*/
 
-			if(parse_progv(progs[i], &stages[i])==-1){
+			if(i >0 ){
+				prev =1;
+			}
+			if(parse_progv(progs[i], &stages[i], prev)==-1){
 				free_stages(stages, size);
 				return NULL;
 			}
@@ -292,10 +287,6 @@ char ***get_progs_with_options(char *line){
 
 	for( i = 0, word_ptr = 0, progv_ptr = 0, progs_ptr = 0; line[i] != '\0'; i++){
 			if (is_long_args(progv_ptr, PROGV_MAX)){
-				/*free_word_buff(word_buff);
-				free_progv_buff(progv_buff, PROGV_MAX);
-				*/
-				/*free progs too */
 				free_word_buff(word_buff);
 				free_prog_buff(progs_buff, PROGV_MAX, PROGS_MAX);
 				free_progv_buff(progv_buff, PROGV_MAX);
@@ -371,7 +362,6 @@ char ***get_progs_with_options(char *line){
 
 	free_word_buff(word_buff);
 	free_progv_buff(progv_buff, PROGV_MAX);
-
 
 	return progs_buff;
 }
