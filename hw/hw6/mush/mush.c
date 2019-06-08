@@ -42,10 +42,7 @@ void sig_handler_control_C_block(int signo){
 		sigaction(SIGINT, &sa, NULL);
 }
 
-
-
 /*======================================================================== */
-
 
 /*=================================================== */
 /*====================Shell/Exec function============================= */
@@ -91,6 +88,7 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 		close_uncess_pipes(num_pipes, ith_prog+1, org_ith, 0, pipes);
 	}/* cant close pipes */
 }
+
 /*num_progs = num_pipes+1*/
 void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX], struct sigaction *sa){
 
@@ -119,7 +117,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 					}
 					else if(re_dir == 0){
 						/*read from std in  */
-						
+
 					}else{
 						/*read from std out  */
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
@@ -132,8 +130,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 				close(pipes[num_progs-1][READ]);
 				if((re_dir = redir(stages[num_progs-1], num_pipes, pipes[num_progs-2], pipes[num_progs-1], 1)) != -1){
 					/*Case 3.1 - double redirection*/
-					if (re_dir == 2){	
-						
+					if (re_dir == 2){
 					}
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
@@ -158,12 +155,10 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
 						/*read from std in  */
-						
 						dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
 					/*Case 3.3 - > redirection  */
 					}else{
 						/*read from std out  */
-						
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 					}
 				}else{
@@ -183,7 +178,6 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 			pipe_line(stages, num_progs-1, num_pipes, pipes, sa);
 			/*set up handler */
 			sigaction(SIGINT, &new, sa);
-
 
 			/*close everything on the first program  */
 			close_uncess_pipes(num_pipes, -1, -1 , 0,pipes);
@@ -242,13 +236,13 @@ void char_double_pointer_to_single_with_space(char **input, char *output){
 int has_redirection(stage_t stage){
 
 	/*Case 1 - stage has multiple redirection*/
-	if(stage.out_file != NULL && stage.in_file != NULL)
+	if(stage.out_file[0] != '\0' && stage.in_file[0] != '\0')
 		return 2;
 	/*case 2 - stage has only out redirection  */
-	else if(stage.out_file != NULL)
+	else if(stage.out_file[0] != '\0')
 		return 1;
 	/*Case 3 - stage has in redirection  */
-	else if (stage.in_file != NULL)
+	else if (stage.in_file[0] != '\0')
 		return 0;
 
 	return -1;
@@ -293,9 +287,6 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 	return has_redirection(stage);
 }
 /*=========================================================================*/
-
-
-
 
 /*for script version for prompt version  */
 void run_shell(FILE *stream, int script, struct sigaction *sa){
@@ -355,7 +346,6 @@ start:
 				break;
 		}
 }
-
 
 /*TODO : fix parsing in parseline, frees, signals*/
 int main(int argc, char **argv){

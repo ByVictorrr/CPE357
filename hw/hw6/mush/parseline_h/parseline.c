@@ -14,9 +14,7 @@ void print_progv(char **progv, int size){
 		if(strcmp(progv[i], empty) != 0)
 			printf("progv[%d] = %s\n", i, progv[i]);
 }
-
 /*=================================================== */
-
 /*==============Utility Functions====================*/
 void init_word_buff(char **p, int word_size){
 	if( (*p = (char *)malloc(sizeof(char)*word_size)) == NULL)
@@ -49,12 +47,10 @@ void init_progs_buff(char ****p, int progs_size, int progv_size, int word_size){
 	}
 
 }
-
 void free_word_buff(char *ptr_word){
 	if(ptr_word != NULL)
 		free(ptr_word);
 }
-
 void free_progv_buff(char **ptr_progv, int size){
 	int k;
 	for(k = 0; k < size; k++){
@@ -64,7 +60,6 @@ void free_progv_buff(char **ptr_progv, int size){
 	if(ptr_progv != NULL)
 		free(ptr_progv);
 }
-
 void free_prog_buff(char ***prog, int progv_size, int progs_size){
 	int k;
 	for(k = 0; k < progs_size; k++){
@@ -75,8 +70,6 @@ void free_prog_buff(char ***prog, int progv_size, int progs_size){
 		free(prog);
 	
 }
-
-
 void clear_progv(char *** progv, int size){
 	int i;
 	for(i = 0; i< size; i++){
@@ -90,35 +83,11 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 		strcpy(progs_nth[0][i], progv[i]);
 	}
 }
-
-
-
-void free_stage(stage_t *stage){
-	if(stage != NULL){
-		if(stage->cmd_line != NULL)
-			free_word_buff(stage->cmd_line);
-		if(stage->in_file != NULL)
-			free_word_buff(stage->in_file);
-		if(stage->out_file != NULL)
-			free_word_buff(stage->out_file);
-		
-	}
-}
-void free_stages(stage_t * stages, int size){
-
-	int i;
-	for(i = 0; i< size; i++)
-		if(stages != NULL)
-			free_stage(&stages[i]);
-
-	free(stages);
-}
 /*===================================================*/
 
-/*==============Parsing functions=================== */
-
+/*==============Stageing (double Parsing functions)=================== */
+/*-1 means error*/
 int parse_progv(char **progv, stage_t *stage){
-	static int prev = 0; /* kept the previous one and see if its an ambiguous input */
 	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
@@ -132,74 +101,77 @@ int parse_progv(char **progv, stage_t *stage){
 		}else{
 			/*Case 2.1 - at a < */
 			if(strcmp(progv[i], "<") == 0 ){
-				if (progv[i+1] == NULL)
+				if (!progv[i+1]|| !*progv[i+1])
 				{
 					bad_input(stage->cmd_line[0]);
 					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
-				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
+				if (*progv[i+1] == '>' || *progv[i+1] == '<')
 				{
-		
 					bad_input(stage->cmd_line[0]);
 					return -1;
 				}
 				/*----- update Stage's outfile -------*/
-				
+				init_word_buff(&stage->in_file, WORD_MAX);
 				strncpy(stage->in_file, progv[i+1], strlen(progv[i+1]));
 				in += 1;
 				i++;
-				if(prev){
-					ambiguous_input(stage->cmd_line[0]);
-					return -1;
-				}
 			/*Case 2.2 - at a >  */
 			}else{
-				if (strcmp(progv[i+1], "\0")==0)
+				if (!progv[i+1]|| !*progv[i+1])
 				{
 					bad_output(stage->cmd_line[0]);
 					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
-				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
+				if (*progv[i+1] == '>' || *progv[i+1] == '<')
 				{
 					bad_output(stage->cmd_line[0]);
 					return -1;
 				}
 				/*----- update Stage's outfile -------*/
 				
-				o += 1;		
+				o += 1;
+							
+				init_word_buff(&stage->out_file, WORD_MAX);
 				strncpy(stage->out_file, progv[i+1], strlen(progv[i+1]));
 				i++;
-				if(stage ->pipe_flag){
-					ambiguous_output(stage->cmd_line[0]);
-					return -1;
-				}
 			}			
 		}
 	}
 	stage->cmd_line[cmd_line_ptr] = NULL;
 	if (in > 1)
 	{
-		fprintf(stderr, "in -- %d  ", in);
 		bad_input(stage->cmd_line[0]);
 		return -1;
 	}
 	if (o > 1)
 	{
-		fprintf(stderr, "out-- %d  ", o);
 		bad_output(stage->cmd_line[0]);
 		return -1;
 	}
-	prev = 1;
+	if (stage ->out_file){
+		/*if there is outfile and also pipe after --> error*/
+		if(stage ->pipe_flag){
+			ambiguous_output(stage->cmd_line[0]);
+			return -1;
+		}
+	}
+	if (stage -> in_file){
+		if(i>0){
+			ambiguous_input(stage->cmd_line[0]);
+			return -1;
+		}
+	}
+
 	return 0; 
 }
-
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size){
-	int i;
+	int i, k;
 	stage_t *stages;
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
@@ -209,9 +181,9 @@ stage_t *new_stages(char ***progs, int size){
 	}
 	/*======EMPTY ARGUMENTS=====*/
 
-	if(progs[0][0][0] == '\0'){
-		free_stages(stages, size);
+	if(!strcmp(progs[0][0],"\0")){
 		empty_stage();
+		/*free stages  */
 		return NULL;
 	}
 
@@ -222,8 +194,7 @@ stage_t *new_stages(char ***progs, int size){
 		{
 			/*=================Setting up ============================  */
 			init_progv_buff(&stages[i].cmd_line, PROGV_MAX, WORD_MAX);
-			init_word_buff(&stages[i].in_file, WORD_MAX);
-			init_word_buff(&stages[i].out_file, WORD_MAX);
+
 			stages[i].num_args = 0;
 			if(i < size -1){
 				stages[i].pipe_flag = 1;
@@ -232,8 +203,8 @@ stage_t *new_stages(char ***progs, int size){
 				stages[i].pipe_flag = 0;
 			}
 			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
-			/* stages[i].in_file = NULL;
-			stages[i].out_file = NULL;*/
+			stages[i].in_file = NULL;
+			stages[i].out_file = NULL;
 			/*========================================================= */
 			/*=============Set Up cmd_line - End with NULL ptr=================*/
 			/*only when i = size -1 when the stage will have pipe_flag == FALSE*/
@@ -242,17 +213,31 @@ stage_t *new_stages(char ***progs, int size){
 				free_stages(stages, size);
 				return NULL;
 			}
+
 		}
 	}
 	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	return stages;
 }
+void free_stage(stage_t *stage){
+	if(stage != NULL){
+		if(stage->cmd_line != NULL)
+			free_word_buff(stage->cmd_line);
+		if(stage->in_file != NULL)
+			free_word_buff(stage->in_file);
+		if(stage->out_file != NULL)
+			free_word_buff(stage->out_file);
+		free(stage);
+	}
+}
+void free_stages(stage_t * stages, int size){
 
+	int i;
+	for(i = 0; i< size; i++)
+		free_stage(&stages[i]);
+}
 /*=========================================================*/
-
-
 int count_pipes(char *line){
-
 	int i;
 	int num_pipes = 0;
 	for( i = 0; line[i] != '\0'; i++){
@@ -261,25 +246,19 @@ int count_pipes(char *line){
 	}
 	return num_pipes;
 }
-
 /*get_progs_with_options: gets a line inputed from user 
  *
  *returns: an array of strings
  *
  *programs are deperated by 
  * */ 
-
-
-
-int is_long_args(int counter, int max)
-{
+int is_long_args(int counter, int max){
 	if(counter >= max){
 		return 1;
 	}
 	return 0;
 }
 char ***get_progs_with_options(char *line){
-
 	char ***progs_buff, **progv_buff, *word_buff;
 	int  word_ptr, progv_ptr, progs_ptr;
 	int i;
@@ -292,13 +271,10 @@ char ***get_progs_with_options(char *line){
 
 	for( i = 0, word_ptr = 0, progv_ptr = 0, progs_ptr = 0; line[i] != '\0'; i++){
 			if (is_long_args(progv_ptr, PROGV_MAX)){
-				/*free_word_buff(word_buff);
-				free_progv_buff(progv_buff, PROGV_MAX);
-				*/
-				/*free progs too */
 				free_word_buff(word_buff);
-				free_prog_buff(progs_buff, PROGV_MAX, PROGS_MAX);
 				free_progv_buff(progv_buff, PROGV_MAX);
+				free_prog_buff(progs_buff, PROGS_MAX, PROGV_MAX);
+				/*free progs too */
 				many_arg();
 				return NULL;
 			}
@@ -334,8 +310,6 @@ char ***get_progs_with_options(char *line){
 			}else if(line[i] != ' ' && line[i+1] == '|'){
 				
 				/* free everything  */
-				printf("not a valid input");
-				exit(EXIT_FAILURE);
 			/*Case 3 - not a new program or word*/
 			}else{
 				
@@ -368,10 +342,8 @@ char ***get_progs_with_options(char *line){
 		progs_argc += progv_ptr+1;
 		progs_ptr++;
 	}
-
 	free_word_buff(word_buff);
 	free_progv_buff(progv_buff, PROGV_MAX);
-
 
 	return progs_buff;
 }

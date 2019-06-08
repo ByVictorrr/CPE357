@@ -16,8 +16,7 @@ char *read_long_line(FILE *stream, int interactive)
 	memset(pbuff, '\0', MAXCHAR);
 	
 	fwrite("8-P: ",1,strlen("8-P: "), stdout);
-	while((c = getc(stream)) != EOF)
-	{
+	while((c = getc(stream)) != EOF){
 		/*Case 1 - interactive cmd line mode read until "\n"*/
 		if(interactive == INTERACTIVE){
 			if(c == '\n')
