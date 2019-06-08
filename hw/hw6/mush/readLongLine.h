@@ -21,5 +21,5 @@
 #include <string.h>
 #define MAXCHAR 1000 /*inital amt of lines in the buffer*/
 
-char *read_long_line(int inFd);
+char *read_long_line(FILE *stream, int interactive)
 #endif
