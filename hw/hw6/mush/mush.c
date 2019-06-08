@@ -209,23 +209,6 @@ int is_cd_in_pipe_line(stage_t *stages, int size){
 	}
 	return 0;
 }
-/*input double char pointer, and pass by reference output (single pointer)  */
-void char_double_pointer_to_single_with_space(char **input, char *output){
-	int i;
-	if(input == NULL){
-		perror("input double pointer is null");
-		exit(EXIT_FAILURE);
-	}
-	for(i = 0; input[i] != NULL; i++)
-	{
-		if(i == 0){
-			strcpy(output, input[0]);
-		}else{
-			strcat(output, " ");
-			strcat(output, input[i]);
-		}
-	}
-}
 /*=========Redirection functions=========================================*/
 /*Determien if a stage has redirection */
 /*returns values: -1 - no redirection
@@ -248,6 +231,7 @@ int has_redirection(stage_t stage){
 	return -1;
 }
 
+#define MODE_REDIRECTION 0600 
 int safe_open(char *path, int modes, int flags){
 	int fd;
 	if((fd = open(path, modes, flags)) < 0){
@@ -268,14 +252,14 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 		
 		/*Case 1 - out file redirection*/
 		if (has_redirection(stage) == 2){
-			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, 0644);
+			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, MODE_REDIRECTION);
 			in_fd = safe_open(stage.in_file, O_RDONLY | O_CREAT, 0644);
 			dup2(out_fd, STDOUT_FILENO);
 			dup2(in_fd, STDIN_FILENO);
 		}
 		/*Case 2 - out file redirection*/
 		else if(has_redirection(stage) == 1){
-			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, 0644);
+			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, MODE_REDIRECTION);
 			dup2(out_fd, STDOUT_FILENO);
 		}
 		/*Case 2 - read from in file*/
@@ -362,7 +346,6 @@ void script_shell(FILE *stream, struct sigaction *sa){
 end: ;
 			/*For script only run once */
 		}/*for */
-		free_progv_buff(line_prog, count_line_progs);
 	}
 /*===================================================================*/
 
@@ -441,6 +424,7 @@ int main(int argc, char **argv){
 		}else{
 			/*run shell scrpt */
 			script_shell(script, &sa);
+			fclose(script);
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
