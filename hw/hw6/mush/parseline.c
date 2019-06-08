@@ -193,7 +193,8 @@ stage_t *new_stages(char ***progs, int size)
 
 	if(!strcmp(progs[0][0],"\0")){
 		empty_stage();
-		exit(1);
+		/*free stages  */
+		return NULL;
 	}
 
 	/*Step 1 - (mallocing)setting up all members of stages */
@@ -329,8 +330,6 @@ char ***get_progs_with_options(char *line){
 			}else if(line[i] != ' ' && line[i+1] == '|'){
 				
 				/* free everything  */
-				printf("not a valid input");
-				exit(EXIT_FAILURE);
 			/*Case 3 - not a new program or word*/
 			}else{
 				

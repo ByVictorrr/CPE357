@@ -20,6 +20,8 @@
 #include <unistd.h>
 #include <string.h>
 #define MAXCHAR 1000 /*inital amt of lines in the buffer*/
+#define INTERACTIVE 0
+#define SCRIPT 1
 
-char *read_long_line(int inFd);
+char *read_long_line(FILE *stream, int interactive);
 #endif
