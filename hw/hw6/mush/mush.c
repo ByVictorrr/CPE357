@@ -365,7 +365,7 @@ int main(int argc, char **argv){
 	umask(f_mask);
 	/* signals */
 	sigemptyset(&sa.sa_mask);
-	sigaddset(SIGINT, &sa.sa_mask);
+	sigaddset(&sa.sa_mask, SIGINT);
 	sigprocmask(SIG_SETMASK, &sa.sa_mask, NULL);
 	sa.sa_handler = sig_handler_control_C_block;
 	sigaction(SIGINT, &sa, NULL);
