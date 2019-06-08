@@ -91,11 +91,14 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 }
 
 
+
+
 /*===================================================*/
 
 /*==============Parsing functions=================== */
-/*-1 means error*/
+
 int parse_progv(char **progv, stage_t *stage){
+	static stage_t *prev; /* kept the previous one and see if its an ambiguous input */
 	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
@@ -109,79 +112,75 @@ int parse_progv(char **progv, stage_t *stage){
 		}else{
 			/*Case 2.1 - at a < */
 			if(strcmp(progv[i], "<") == 0 ){
-				if (!progv[i+1]|| !*progv[i+1])
+				if (progv[i+1] == NULL)
 				{
 					bad_input(stage->cmd_line[0]);
 					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
-				if (*progv[i+1] == '>' || *progv[i+1] == '<')
+				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
 				{
+		
 					bad_input(stage->cmd_line[0]);
 					return -1;
 				}
 				/*----- update Stage's outfile -------*/
-				init_word_buff(&stage->in_file, WORD_MAX);
+				
 				strncpy(stage->in_file, progv[i+1], strlen(progv[i+1]));
 				in += 1;
 				i++;
+				if(prev != NULL){
+					ambiguous_input(stage->cmd_line[0]);
+					return -1;
+				}
 			/*Case 2.2 - at a >  */
 			}else{
-				if (!progv[i+1]|| !*progv[i+1])
+				if (strcmp(progv[i+1], "\0")==0)
 				{
 					bad_output(stage->cmd_line[0]);
 					return -1;
 					/* if > is the last arg - ERROR*/
 				}	
 				/*if two redirect signs stack together* - ERROR*/
-				if (*progv[i+1] == '>' || *progv[i+1] == '<')
+				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
 				{
 					bad_output(stage->cmd_line[0]);
 					return -1;
 				}
 				/*----- update Stage's outfile -------*/
 				
-				o += 1;
-							
-				init_word_buff(&stage->out_file, WORD_MAX);
+				o += 1;		
 				strncpy(stage->out_file, progv[i+1], strlen(progv[i+1]));
 				i++;
+				if(stage ->pipe_flag){
+					ambiguous_output(stage->cmd_line[0]);
+					return -1;
+				}
 			}			
 		}
 	}
 	stage->cmd_line[cmd_line_ptr] = NULL;
 	if (in > 1)
 	{
+		fprintf(stderr, "in -- %d  ", in);
 		bad_input(stage->cmd_line[0]);
 		return -1;
 	}
 	if (o > 1)
 	{
+		fprintf(stderr, "out-- %d  ", o);
 		bad_output(stage->cmd_line[0]);
 		return -1;
 	}
-	if (stage ->out_file){
-		/*if there is outfile and also pipe after --> error*/
-		if(stage ->pipe_flag){
-			ambiguous_output(stage->cmd_line[0]);
-			return -1;
-		}
-	}
-	if (stage -> in_file){
-		if(i>0){
-			ambiguous_input(stage->cmd_line[0]);
-			return -1;
-		}
-	}
-
+	prev = stage;
 	return 0; 
 }
 
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size)
 {
-	int i, k;
+	int i;
 	stage_t *stages;
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
@@ -203,7 +202,8 @@ stage_t *new_stages(char ***progs, int size)
 		{
 			/*=================Setting up ============================  */
 			init_progv_buff(&stages[i].cmd_line, PROGV_MAX, WORD_MAX);
-
+			init_word_buff(&stages[i].in_file, WORD_MAX);
+			init_word_buff(&stages[i].out_file, WORD_MAX);
 			stages[i].num_args = 0;
 			if(i < size -1){
 				stages[i].pipe_flag = 1;
@@ -212,8 +212,8 @@ stage_t *new_stages(char ***progs, int size)
 				stages[i].pipe_flag = 0;
 			}
 			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
-			stages[i].in_file = NULL;
-			stages[i].out_file = NULL;
+			/* stages[i].in_file = NULL;
+			stages[i].out_file = NULL;*/
 			/*========================================================= */
 			/*=============Set Up cmd_line - End with NULL ptr=================*/
 			/*only when i = size -1 when the stage will have pipe_flag == FALSE*/
