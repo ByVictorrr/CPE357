@@ -1,0 +1,2 @@
+ls | grep o | sort | wc
+ls Makefile mush > file1

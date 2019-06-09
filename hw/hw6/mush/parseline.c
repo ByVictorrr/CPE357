@@ -96,7 +96,7 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 void free_stage(stage_t *stage){
 	if(stage != NULL){
 		if(stage->cmd_line != NULL)
-			free_word_buff(stage->cmd_line);
+			free_progv_buff(stage->cmd_line, PROGV_MAX);
 		if(stage->in_file != NULL)
 			free_word_buff(stage->in_file);
 		if(stage->out_file != NULL)
@@ -179,6 +179,7 @@ int parse_progv(char **progv, stage_t *stage, int prev){
 			}			
 		}
 	}
+	free(stage->cmd_line[cmd_line_ptr]);
 	stage->cmd_line[cmd_line_ptr] = NULL;
 	if (in > 1)
 	{
@@ -208,6 +209,7 @@ stage_t *new_stages(char ***progs, int size){
 	/*======EMPTY ARGUMENTS=====*/
 
 	if(progs[0][0][0] == '\0'){
+		free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 		free_stages(stages, size);
 		empty_stage();
 		return NULL;
@@ -234,7 +236,8 @@ stage_t *new_stages(char ***progs, int size){
 				prev =1;
 			}
 			if(parse_progv(progs[i], &stages[i], prev)==-1){
-				free_stages(stages, size);
+				free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
+				free_stages(stages, i);
 				return NULL;
 			}
 		}
@@ -312,6 +315,8 @@ char ***get_progs_with_options(char *line){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
 
+
+				free(progs_buff[progs_ptr][progv_ptr+1]);
 				progs_buff[progs_ptr][progv_ptr+1] = NULL;
 				progs_ptr++;
 				/*=====reset word and progv =======*/
@@ -355,6 +360,8 @@ char ***get_progs_with_options(char *line){
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 		}
+
+		free(progs_buff[progs_ptr][progv_ptr+1]);
 		progs_buff[progs_ptr][progv_ptr+1] = NULL;
 		progs_argc += progv_ptr+1;
 		progs_ptr++;

@@ -267,10 +267,10 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 }
 /*=========================================================================*/
 
-char **line_script( char * line, int size){
+char **line_script(char * line, int size){
 	int i, j, k;
 	char **script_line;
-	init_progv_buff(&script_line, size, PROGV_MAX);
+	init_progv_buff(&script_line, size+1, CMD_LINE_MAX);
 	for(i = 0, j=0, k=0; line[i] != '\0'; i++){
 			/*Case 1 - while not a new program*/
 			if(line[i] != '\n'){
@@ -283,6 +283,7 @@ char **line_script( char * line, int size){
 				j++;
 			}
 	}
+	script_line[j][k] = '\0';
 	return script_line;
 }
 int count_line_progs(char *line){
@@ -323,13 +324,13 @@ void script_shell(FILE *stream){
 			}
 			/*Error check 3 - ambigous_output and bad_output and input */
 			if((stages = new_stages(progs, num_pipes+1)) == NULL){
-				free(progs);
 				goto end;
 			}
 			/*Case 1 - first program is cd */
 			if(is_cd_first(stages, num_pipes+1)){
 				if(chdir(stages[0].cmd_line[1]) < 0){
 					perror(stages[0].cmd_line[1]);
+					free_stages(stages, num_pipes+1);
 					goto end;
 				}
 			}else{
@@ -337,10 +338,11 @@ void script_shell(FILE *stream){
 				pipe_line(stages, num_pipes+1, num_pipes, pipes);
 			}
 			/*frees  */
-			free(stages);
+			free_stages(stages, num_pipes+1);
 end: ;
 			/*For script only run once */
 		}/*for */
+		free_progv_buff(line_prog, num_line_progs+1);
 	}
 /*===================================================================*/
 
@@ -370,7 +372,6 @@ start:
 			/*Error check 3 - ambigous_output and bad_output and input */
 			if((stages = new_stages(progs, num_pipes+1)) == NULL){
 				free(line);
-				free(progs);
 				goto start;
 			}
 			/*Case 1 - first program is cd */
@@ -378,8 +379,7 @@ start:
 				if(chdir(stages[0].cmd_line[1]) < 0){	
 					perror(stages[0].cmd_line[1]);	
 					free(line);
-					free(progs);
-					free(stages);
+					free_stages(stages, num_pipes+1);
 					goto start;
 				}
 			}else{
@@ -388,7 +388,7 @@ start:
 			}
 			/*frees  */
 			free(line);
-			free(stages);
+			free_stages(stages, num_pipes+1);
 		}
 }
 
