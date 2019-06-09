@@ -96,21 +96,21 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 void free_stage(stage_t *stage){
 	if(stage != NULL){
 		if(stage->cmd_line != NULL)
-			free_progv_buff(stage->cmd_line, PROGV_MAX);
+			free_word_buff(stage->cmd_line);
 		if(stage->in_file != NULL)
 			free_word_buff(stage->in_file);
 		if(stage->out_file != NULL)
-			free_word_buff(stage->out_file);		
+			free_word_buff(stage->out_file);
+		
 	}
 }
 void free_stages(stage_t * stages, int size){
 
 	int i;
-	if(stages != NULL){
-		for(i = 0; i< size; i++){		
+	for(i = 0; i< size; i++)
+		if(stages != NULL)
 			free_stage(&stages[i]);
-		}
-	}
+
 	free(stages);
 }
 /*===================================================*/
@@ -208,8 +208,7 @@ stage_t *new_stages(char ***progs, int size){
 	/*======EMPTY ARGUMENTS=====*/
 
 	if(progs[0][0][0] == '\0'){
-		free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
-		free(stages);
+		free_stages(stages, size);
 		empty_stage();
 		return NULL;
 	}
@@ -235,7 +234,6 @@ stage_t *new_stages(char ***progs, int size){
 				prev =1;
 			}
 			if(parse_progv(progs[i], &stages[i], prev)==-1){
-				
 				free_stages(stages, size);
 				return NULL;
 			}
@@ -279,7 +277,7 @@ char ***get_progs_with_options(char *line){
 
 	char ***progs_buff, **progv_buff, *word_buff;
 	int  word_ptr, progv_ptr, progs_ptr;
-	int i, fc;
+	int i;
 	/* i - line ptr */
 
 	/*Step 0 - initalize mem for all buffers */
@@ -313,13 +311,8 @@ char ***get_progs_with_options(char *line){
 				for(f = 0; f< PROGV_MAX; f++){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
-				/*set to NULL will cause memory loss
-				strcpy char* "\0" will  */
-				/* */
-				/* strcpy(progs_buff[progs_ptr][progv_ptr+1], "\0");*/
-				free_word_buff(progs_buff[progs_ptr][progv_ptr+1]);
+
 				progs_buff[progs_ptr][progv_ptr+1] = NULL;
-				
 				progs_ptr++;
 				/*=====reset word and progv =======*/
 				memset(word_buff, '\0', WORD_MAX);
@@ -362,13 +355,7 @@ char ***get_progs_with_options(char *line){
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 		}
-		for(fc = progv_ptr+1; fc < PROGV_MAX; fc++){
-			free_word_buff(progs_buff[progs_ptr][fc]);
-			progs_buff[progs_ptr][fc] = NULL;
-		}
-		
-		
-		
+		progs_buff[progs_ptr][progv_ptr+1] = NULL;
 		progs_argc += progv_ptr+1;
 		progs_ptr++;
 	}
