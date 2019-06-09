@@ -171,6 +171,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 		
 		if(execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ) < 0){
 			perror(stages[num_progs-1].cmd_line[0]);
+			free_stages(stages);
 			exit(EXIT_FAILURE);
 		}
 		}else{
@@ -193,7 +194,7 @@ int is_cd_first(stage_t *stage_0, int size){
 		exit(EXIT_FAILURE);
 	}
 	if(strcmp(stage_0[0].cmd_line[0],"cd") == 0 && is_cd_in_pipe_line(stage_0, size))
-			return 1;
+		return 1;
 	return 0;
 }
 /*checks to see if cd is in the stages  */
@@ -201,7 +202,7 @@ int is_cd_in_pipe_line(stage_t *stages, int size){
 	int i;
 	for(i = 0; i<size; i++){
 		if(strcmp(stages[i].cmd_line[0],"cd") == 0)
-				return 1;
+			return 1;
 	}
 	return 0;
 }
@@ -308,9 +309,7 @@ void script_shell(FILE *stream){
 		for(line = read_long_line(stream, SCRIPT), num_line_progs = count_line_progs(line), 
 			line_prog = line_script(line, num_line_progs) , i  = 0; i < num_line_progs; i++){ 
 			/*free line */
-			if(line != NULL && i == 0)
-				free(line);
-
+			free_word_buff(line);
 			num_pipes = count_pipes(line_prog[i]);
 			/*Error check 1 - to many programs  */
 			if(num_pipes >= PROGV_MAX){
@@ -323,7 +322,7 @@ void script_shell(FILE *stream){
 			}
 			/*Error check 3 - ambigous_output and bad_output and input */
 			if((stages = new_stages(progs, num_pipes+1)) == NULL){
-				free(progs);
+				free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 				goto end;
 			}
 			/*Case 1 - first program is cd */
@@ -358,19 +357,22 @@ start:
 			num_pipes = count_pipes(line);
 			/*Error check 1 - to many programs  */
 			if(num_pipes >= PROGV_MAX){
-				pipe_limit();
 				free(line);
+				pipe_limit();
+				free_stages(stages);
 				goto start; 
 			}
 			/*Error check 2 - to many arguments for one program  */
 			if((progs=get_progs_with_options(line)) == NULL){
 				free(line);
+				free_stages(stages);
 				goto start;
 			}
 			/*Error check 3 - ambigous_output and bad_output and input */
 			if((stages = new_stages(progs, num_pipes+1)) == NULL){
 				free(line);
 				free(progs);
+				free_stages(stages);
 				goto start;
 			}
 			/*Case 1 - first program is cd */
@@ -379,7 +381,7 @@ start:
 					perror(stages[0].cmd_line[1]);	
 					free(line);
 					free(progs);
-					free(stages);
+					free_stages(stages);
 					goto start;
 				}
 			}else{
@@ -388,7 +390,7 @@ start:
 			}
 			/*frees  */
 			free(line);
-			free(stages);
+			free_stages(stages);
 		}
 }
 
