@@ -8,16 +8,11 @@
 #define MODE_REDIRECTION 0600 
 
 
-<<<<<<< HEAD
 typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
 enum Kill_handler{DONT_KILL, KILL};
 /*==================Globals var====================  */
 pid_t child;
-||||||| merged common ancestors
-=======
-
->>>>>>> origin
 extern char **environ;
 int kill_flag;
 /*=================================================== */
@@ -78,13 +73,7 @@ void open_pipes(pipe_t *pipes, int size){
 void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
-<<<<<<< HEAD
 		return;
-||||||| merged common ancestors
-		printf("no pipes therefore cant close any\n");
-=======
-		/*printf("no pipes therefore cant close any\n");*/
->>>>>>> origin
  
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
 	if(ith_prog -2 >= 0 && left == 1){
@@ -107,36 +96,15 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 /*num_progs = num_pipes+1*/
 void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
 
-<<<<<<< HEAD
 
-||||||| merged common ancestors
-	pid_t child;
-=======
-	sigset_t old, new;
-	pid_t child;
->>>>>>> origin
 	int re_dir = -1;
-<<<<<<< HEAD
 	
-||||||| merged common ancestors
-=======
-	struct sigaction signalint;
-	signalint.sa_handler = sig_handler_control_C;
-	sigemptyset(&signalint.sa_mask);
-	sigemptyset(&old);
-    sigemptyset(&new);
-	signalint.sa_flags=0;
-	sigaction(SIGINT, &signalint, NULL);
-	sigaddset(&new, SIGINT);
->>>>>>> origin
 	/*base case   */
 	if(num_progs == 0){
 		return;
 	}else{
-		sigprocmask(SIG_BLOCK, &new, &old);
 		safe_fork(&child);
 		if(child == 0){
-			sigprocmask(SIG_SETMASK, &old, NULL);
 			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, 1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
 			if(num_pipes + 1 == num_progs){	
@@ -216,7 +184,6 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 	kill_flag = DONT_KILL;
 }
 
-<<<<<<< HEAD
 /*==========================CD error checking============================================ */
 
 /*Checks to see if cd is the first in the pipeline */
@@ -228,33 +195,7 @@ int is_cd_first(stage_t *stage_0, int size){
 	if(strcmp(stage_0[0].cmd_line[0],"cd") == 0 && is_cd_in_pipe_line(stage_0, size))
 			return 1;
 	return 0;
-||||||| merged common ancestors
-/*======================================================================== */
-
-/*================SIGNAL stuff==========================================*/
-
-void sig_handler_control_C(int signo){
-	if(signo == SIGINT){
-
-	}
-
-=======
-/*======================================================================== */
-
-/*================SIGNAL stuff==========================================*/
-
-void sig_handler_control_C(int signo){
-	struct sigaction sig;
-    sig.sa_handler = sig_handler_control_C;
-    sigemptyset(&sig.sa_mask);
-    sig.sa_flags = 0;
-    sigaction(SIGINT, &sig, NULL);
-    wait(NULL);
-    printf("\n");
-
->>>>>>> origin
 }
-<<<<<<< HEAD
 /*checks to see if cd is in the stages  */
 int is_cd_in_pipe_line(stage_t *stages, int size){
 	int i;
@@ -264,19 +205,6 @@ int is_cd_in_pipe_line(stage_t *stages, int size){
 	}
 	return 0;
 }
-||||||| merged common ancestors
-void sig_handler_control_D(int signo){
-	if(signo == SIGKILL){
-	}
-}
-/*======================================================================== */
-
-=======
-
-
-/*======================================================================== */
-
->>>>>>> origin
 /*=========Redirection functions=========================================*/
 /*Determien if a stage has redirection */
 /*returns values: -1 - no redirection
@@ -468,41 +396,12 @@ start:
 /*TODO : fix parsing in parseline, frees, signals*/
 int main(int argc, char **argv){
 
-<<<<<<< HEAD
 	FILE  *script;
 	mode_t f_mask= 0000;
 	umask(f_mask);
 	/* signals */
 	kill_flag = DONT_KILL;
 	signal(SIGINT, sig_handler_control_C);
-||||||| merged common ancestors
-	char ***progs;
-	char *line;
-	int num_pipes;
-	int script_fd;
-	pipe_t pipes[PIPE_MAX];
-	stage_t *stages;
-	int i;
-=======
-	char ***progs;
-	char *line;
-	int num_pipes;
-	int script_fd;
-	pipe_t pipes[PIPE_MAX];
-	stage_t *stages;
-	struct sigaction sa;
-    sigset_t set, old;
-
-	int i;
->>>>>>> origin
-
-    sa.sa_handler = sig_handler_control_C;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sigaction(SIGINT, &sa, NULL);
-    sigemptyset(&set);
-    sigemptyset(&old);
-    sigaddset(&set, SIGINT);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
