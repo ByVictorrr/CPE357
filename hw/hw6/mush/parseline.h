@@ -8,19 +8,21 @@
 #include <regex.h>
 #include <signal.h>
 #include <unistd.h>
+#define SCRIPT 1
+#define INTERACTIVE 0
+#define WORD_MAX 10
+#define PROGV_MAX 8
+#define PROGS_MAX 10
+#define CMD_LINE_MAX 512
+enum boolean{FALSE,TRUE};
 #define cd_limit() fprintf(stderr, "command too long\n");
 #define pipe_limit() fprintf(stderr, "pipeline too deep\n");   
 #define empty_stage() fprintf(stderr, "invalid null command\n");  
-#define many_arg(a) fprintf(stderr, "%s: too many arguments\n", a);  
+#define many_arg() fprintf(stderr, "too many arguments\n");  
 #define bad_input(a) fprintf(stderr, "%s: bad input redirection\n", a);  
 #define bad_output(a) fprintf(stderr, "%s: bad output redirection\n",a);  
 #define ambiguous_input(a) fprintf(stderr, "%s: ambiguous input\n", a);
 #define ambiguous_output(a) fprintf(stderr, "%s: ambiguous output\n", a);
-#define WORD_MAX 10
-#define PROGV_MAX 10
-#define PROGS_MAX 10
-#define CMD_LINE_MAX 10
-enum boolean{FALSE,TRUE};
 
 
 typedef struct stage{
@@ -54,7 +56,7 @@ void sig_handler_control_C(int signo);
 /*===================================================*/
 
 /*==============Parsing functions=================== */
-void parse_progv(char **progv, stage_t *stage);
+int parse_progv(char **progv, stage_t *stage, int prev);
 /*Takes in a progs and creates a size num of stage */
 stage_t *new_stages(char ***progs, int size);
 void print_stage(stage_t *stages, int size);
