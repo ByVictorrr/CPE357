@@ -76,6 +76,7 @@ void free_prog_buff(char ***prog, int progv_size, int progs_size){
 	
 }
 
+
 void clear_progv(char *** progv, int size){
 	int i;
 	for(i = 0; i< size; i++){
@@ -92,102 +93,32 @@ void memset_progs(char ***progs_nth, char **progv, int size){
 
 
 
-int redirect_is_valid(stage_t* stage)
-{
-	int argc = 0, i = 0, skip = 0;
-	/*pass in {"executable", "[flag|<|>|file|"} */
-	/*check if the redirection is valid
-    if valid: return TRUE 
-    if not: print input| output redirect error message and return FALSE
-    */
-	char str[WORD_MAX] = {'\0'};
-	char next[WORD_MAX] = {'\0'};
-	int o = 0, in = 0; /* test if there is redundant redirection sign*/
-	
-
-	while (stage->cmd_line[i])
-	{
-
-		if(strcmp(stage->cmd_line[i], "<") != 0 && strcmp(stage->cmd_line[i], ">") != 0){
-				
-			stage->num_args++;
-			strncpy(str, stage->cmd_line[i], WORD_MAX);
-			if(stage->cmd_line[i+1]){
-				strncpy(next, stage->cmd_line[i+1], WORD_MAX);
-			}
-			else{
-				*next = '\0';
-			}
-		}
+void free_stage(stage_t *stage){
+	if(stage != NULL){
+		if(stage->cmd_line != NULL)
+			free_progv_buff(stage->cmd_line, PROGV_MAX);
+		if(stage->in_file != NULL)
+			free_word_buff(stage->in_file);
+		if(stage->out_file != NULL)
+			free_word_buff(stage->out_file);
 		
-
-
-		if(!strcmp(str, ">"))
-		{
-			/*printf(" this is a > ");*/
-			if (!next || !*next)
-			{
-				return FALSE;
-				/* if > is the last arg - ERROR*/
-			}
-			/*if two redirect signs stack together* - ERROR*/
-			if (*next == '>' || *next == '<')
-			{
-				return FALSE;
-			}
-			/*----- update Stage's outfile -------*/
-			strncpy(stage->out_file, next, strlen(next));
-			skip = 1;
-			o += 1;
-		}
-		else if(!strcmp(str, "<"))
-		{
-			/*printf(" this is a < ");*/
-			if (!*next || !next)
-			{
-				return FALSE;
-				/* if > is the last arg - ERROR*/
-			}
-			/*if two redirect signs stack together* - ERROR*/
-			if (*next == '>' || *next == '<')
-			{
-				return FALSE;
-			}
-			/*----- update Stage's infile -------*/
-			strncpy(stage->in_file, next, strlen(next));
-			skip = 1;
-			in += 1;
-		}
-		else if(skip!= 1)
-		{
-			
-			
-			skip = 0;
-		}
-		i++;
 	}
-	/*since we cant have two outfile*/
-	if (in > 1)
-	{
-		bad_input(stage->cmd_line[0]);
-		return FALSE;
-	}
-	if (o > 1)
-	{
-		bad_output(stage->cmd_line[0]);
-		return FALSE;
-	}
-
-	return TRUE;
 }
+void free_stages(stage_t * stages, int size){
 
+	int i;
+	for(i = 0; i< size; i++)
+		if(stages != NULL)
+			free_stage(&stages[i]);
 
+	free(stages);
+}
 /*===================================================*/
 
 /*==============Parsing functions=================== */
 
-void parse_progv(char **progv, stage_t *stage){
-	int i;
+int parse_progv(char **progv, stage_t *stage, int prev){
+	int i, in = 0 , o= 0;
 	int cmd_line_ptr;
 	for (i=0, cmd_line_ptr = 0; progv[i] != NULL; i++){
 		/*Case 1 - just seperate cmd_line string */
@@ -195,27 +126,79 @@ void parse_progv(char **progv, stage_t *stage){
 			strcpy(stage->cmd_line[cmd_line_ptr],progv[i]);
 			stage->num_args++;
 			cmd_line_ptr++;
+
 		/*Case 2 - currently at a < or >*/
 		}else{
 			/*Case 2.1 - at a < */
 			if(strcmp(progv[i], "<") == 0 ){
-				strcpy(stage->in_file, progv[i+1]);
+				if (progv[i+1] == NULL)
+				{
+					bad_input(stage->cmd_line[0]);
+					return -1;
+					/* if > is the last arg - ERROR*/
+				}	
+				/*if two redirect signs stack together* - ERROR*/
+				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
+				{
+		
+					bad_input(stage->cmd_line[0]);
+					return -1;
+				}
+				/*----- update Stage's outfile -------*/
+				
+				strncpy(stage->in_file, progv[i+1], strlen(progv[i+1]));
+				in += 1;
 				i++;
+				if(prev){
+					ambiguous_input(stage->cmd_line[0]);
+					return -1;
+				}
 			/*Case 2.2 - at a >  */
 			}else{
-				strcpy(stage->out_file,progv[i+1]);
+				if (strcmp(progv[i+1], "\0")==0)
+				{
+					bad_output(stage->cmd_line[0]);
+					return -1;
+					/* if > is the last arg - ERROR*/
+				}	
+				/*if two redirect signs stack together* - ERROR*/
+				if (!strcmp(progv[i+1], ">") || !strcmp(progv[i+1], "<"))
+				{
+					bad_output(stage->cmd_line[0]);
+					return -1;
+				}
+				/*----- update Stage's outfile -------*/
+				
+				o += 1;		
+				strncpy(stage->out_file, progv[i+1], strlen(progv[i+1]));
 				i++;
-			}
-			
+				if(stage ->pipe_flag){
+					ambiguous_output(stage->cmd_line[0]);
+					return -1;
+				}
+			}			
 		}
 	}
+	free(stage->cmd_line[cmd_line_ptr]);
 	stage->cmd_line[cmd_line_ptr] = NULL;
+	if (in > 1)
+	{
+		fprintf(stderr, "in -- %d  ", in);
+		bad_input(stage->cmd_line[0]);
+		return -1;
+	}
+	if (o > 1)
+	{
+		fprintf(stderr, "out-- %d  ", o);
+		bad_output(stage->cmd_line[0]);
+		return -1;
+	}
+	return 0; 
 }
 
 /*Takes in a progs and creates a size num of stage */
-stage_t *new_stages(char ***progs, int size)
-{
-	int i, k;
+stage_t *new_stages(char ***progs, int size){
+	int i, prev = 0;
 	stage_t *stages;
 
 	if ((stages = (stage_t *)malloc(sizeof(stage_t) * size)) == NULL)
@@ -225,9 +208,11 @@ stage_t *new_stages(char ***progs, int size)
 	}
 	/*======EMPTY ARGUMENTS=====*/
 
-	if(!strcmp(progs[0][0],"\0")){
+	if(progs[0][0][0] == '\0'){
+		free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
+		free_stages(stages, size);
 		empty_stage();
-		exit(1);
+		return NULL;
 	}
 
 	/*Step 1 - (mallocing)setting up all members of stages */
@@ -246,34 +231,21 @@ stage_t *new_stages(char ***progs, int size)
 			else{			
 				stages[i].pipe_flag = 0;
 			}
-			/*printf("prog - %s %s \n", progs[i][0], progs[i][1]);*/
-			/*stages[i].in_file = NULL;
-			stages[i].out_file = NULL;*/
-			/*========================================================= */
-			/*=============Set Up cmd_line - End with NULL ptr=================*/
-			/*only when i = size -1 when the stage will have pipe_flag == FALSE*/
-			parse_progv(progs[i], &stages[i]);
-			/*============CHECK REDIRECTION < >  EXIT if error=================*/
-			
-			/*============update in, out, num_args================== */
-			if (!redirect_is_valid(&stages[i]))
-			{
-				exit(1);
+
+			if(i >0 ){
+				prev =1;
+			}
+			if(parse_progv(progs[i], &stages[i], prev)==-1){
+				free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
+				free_stages(stages, i);
+				return NULL;
 			}
 		}
 	}
+	free_prog_buff(progs, PROGV_MAX, PROGS_MAX);
 	return stages;
 }
 
-void print_stage(stage_t *stages, int size){
-	int i;
-	if(stages == NULL){
-		exit(EXIT_FAILURE);
-	}
-	for(i = 0; i< size; i++){
-	
-	}
-}
 /*=========================================================*/
 
 
@@ -296,6 +268,14 @@ int count_pipes(char *line){
  * */ 
 
 
+
+int is_long_args(int counter, int max)
+{
+	if(counter >= max){
+		return 1;
+	}
+	return 0;
+}
 char ***get_progs_with_options(char *line){
 
 	char ***progs_buff, **progv_buff, *word_buff;
@@ -309,6 +289,13 @@ char ***get_progs_with_options(char *line){
 	init_progs_buff(&progs_buff, PROGS_MAX, PROGV_MAX, WORD_MAX);
 
 	for( i = 0, word_ptr = 0, progv_ptr = 0, progs_ptr = 0; line[i] != '\0'; i++){
+			if (is_long_args(progv_ptr, PROGV_MAX)){
+				free_word_buff(word_buff);
+				free_prog_buff(progs_buff, PROGV_MAX, PROGS_MAX);
+				free_progv_buff(progv_buff, PROGV_MAX);
+				many_arg();
+				return NULL;
+			}
 			/*Case 1- new word*/
 			if(line[i] == ' ' && line[i+1] != '|' && word_buff[0] != '\0'){
 				/*Step 1 - add this word to the progv*/
@@ -328,6 +315,8 @@ char ***get_progs_with_options(char *line){
 					strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 				}
 
+
+				free(progs_buff[progs_ptr][progv_ptr+1]);
 				progs_buff[progs_ptr][progv_ptr+1] = NULL;
 				progs_ptr++;
 				/*=====reset word and progv =======*/
@@ -371,14 +360,15 @@ char ***get_progs_with_options(char *line){
 		for(f = 0; f< PROGV_MAX; f++){
 			strcpy(progs_buff[progs_ptr][f], progv_buff[f]);
 		}
+
+		free(progs_buff[progs_ptr][progv_ptr+1]);
 		progs_buff[progs_ptr][progv_ptr+1] = NULL;
 		progs_argc += progv_ptr+1;
 		progs_ptr++;
 	}
 
-	/*free_word_buff(word_buff);
+	free_word_buff(word_buff);
 	free_progv_buff(progv_buff, PROGV_MAX);
-	*/
 
 	return progs_buff;
 }
