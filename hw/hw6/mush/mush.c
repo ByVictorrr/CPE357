@@ -3,12 +3,24 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #define PIPE_MAX PROGS_MAX - 1
+#define SCRIPT 1
+#define INTERACTIVE 0
+#define MODE_REDIRECTION 0600 
+
+
+<<<<<<< HEAD
 typedef int pipe_t [2];
 enum Pipe_ends{READ, WRITE};
+enum Kill_handler{DONT_KILL, KILL};
+/*==================Globals var====================  */
 pid_t child;
+||||||| merged common ancestors
+=======
 
-
+>>>>>>> origin
 extern char **environ;
+int kill_flag;
+/*=================================================== */
 /*==================Safe Function ========================= */
 void safe_pipe(pipe_t *pipes){
 	if(pipe(*pipes) < 0){
@@ -26,13 +38,20 @@ void safe_fork(pid_t *pid){
 /*================SIGNAL stuff==========================================*/
 
 void sig_handler_control_C(int signo){
-	if(signo == SIGINT){
-		kill(child, SIGKILL);
+
+		if(signo == SIGINT){
+			if(kill_flag == DONT_KILL){
+				printf("\n8-P: ");
+				fflush(stdout);
+			}else{
+				kill(child, SIGTERM);
+				fflush(stdout);
+			}
+			signal(SIGINT, sig_handler_control_C);
+		}
 	}
 
-}
 /*======================================================================== */
-
 
 /*=================================================== */
 /*====================Shell/Exec function============================= */
@@ -47,7 +66,7 @@ void get_pipes(pipe_t *pipes, int size){
 		safe_pipe(&pipes[i]);
 }
 void open_pipes(pipe_t *pipes, int size){
-	int i; 
+
 	if(size > PIPE_MAX){
 		perror("to many pipes");
 		exit(EXIT_FAILURE);
@@ -59,7 +78,13 @@ void open_pipes(pipe_t *pipes, int size){
 void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe_t pipes[PIPE_MAX]){
 
 	if(num_pipes  == 0)
+<<<<<<< HEAD
 		return;
+||||||| merged common ancestors
+		printf("no pipes therefore cant close any\n");
+=======
+		/*printf("no pipes therefore cant close any\n");*/
+>>>>>>> origin
  
 	/* Case 1 - not able to close any pipes to the left of ith_pipe*/
 	if(ith_prog -2 >= 0 && left == 1){
@@ -78,17 +103,40 @@ void close_uncess_pipes(int num_pipes, int ith_prog, int org_ith, int left, pipe
 		close_uncess_pipes(num_pipes, ith_prog+1, org_ith, 0, pipes);
 	}/* cant close pipes */
 }
-/*num_progs = num_pipes+1*/
-void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX], sigset_t *mask){
 
+/*num_progs = num_pipes+1*/
+void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_MAX]){
+
+<<<<<<< HEAD
+
+||||||| merged common ancestors
+	pid_t child;
+=======
+	sigset_t old, new;
+	pid_t child;
+>>>>>>> origin
 	int re_dir = -1;
-	sigprocmask(SIG_UNBLOCK, mask, NULL);
+<<<<<<< HEAD
+	
+||||||| merged common ancestors
+=======
+	struct sigaction signalint;
+	signalint.sa_handler = sig_handler_control_C;
+	sigemptyset(&signalint.sa_mask);
+	sigemptyset(&old);
+    sigemptyset(&new);
+	signalint.sa_flags=0;
+	sigaction(SIGINT, &signalint, NULL);
+	sigaddset(&new, SIGINT);
+>>>>>>> origin
 	/*base case   */
 	if(num_progs == 0){
 		return;
 	}else{
+		sigprocmask(SIG_BLOCK, &new, &old);
 		safe_fork(&child);
 		if(child == 0){
+			sigprocmask(SIG_SETMASK, &old, NULL);
 			close_uncess_pipes(num_pipes, num_progs-1, num_progs-1, 1, pipes);
 			/*Case 1 - if the last program, leave stdout alone*/
 			if(num_pipes + 1 == num_progs){	
@@ -100,7 +148,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 					}
 					else if(re_dir == 0){
 						/*read from std in  */
-						
+
 					}else{
 						/*read from std out  */
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
@@ -113,8 +161,7 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 				close(pipes[num_progs-1][READ]);
 				if((re_dir = redir(stages[num_progs-1], num_pipes, pipes[num_progs-2], pipes[num_progs-1], 1)) != -1){
 					/*Case 3.1 - double redirection*/
-					if (re_dir == 2){	
-						
+					if (re_dir == 2){
 					}
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
@@ -139,12 +186,10 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 					/*Case 3.2 - < redirection */
 					else if(re_dir == 0){
 						/*read from std in  */
-						
 						dup2(pipes[num_progs-1][WRITE], STDOUT_FILENO);
 					/*Case 3.3 - > redirection  */
 					}else{
 						/*read from std out  */
-						
 						dup2(pipes[num_progs-2][READ], STDIN_FILENO);
 					}
 				}else{
@@ -157,19 +202,21 @@ void pipe_line(stage_t *stages, int num_progs, int num_pipes, pipe_t pipes[PIPE_
 			}
 		
 		if(execvpe(stages[num_progs-1].cmd_line[0], stages[num_progs-1].cmd_line, environ) < 0){
-			perror("exec errr");
+			perror(stages[num_progs-1].cmd_line[0]);
 			exit(EXIT_FAILURE);
 		}
 		}else{
-			pipe_line(stages, num_progs-1, num_pipes, pipes, mask);
+			kill_flag = KILL;
+			pipe_line(stages, num_progs-1, num_pipes, pipes);
 			/*close everything on the first program  */
 			close_uncess_pipes(num_pipes, -1, -1 , 0,pipes);
 			wait(NULL);
 		}
 	}
-	sigprocmask(SIG_BLOCK, mask, NULL);
+	kill_flag = DONT_KILL;
 }
 
+<<<<<<< HEAD
 /*==========================CD error checking============================================ */
 
 /*Checks to see if cd is the first in the pipeline */
@@ -181,7 +228,33 @@ int is_cd_first(stage_t *stage_0, int size){
 	if(strcmp(stage_0[0].cmd_line[0],"cd") == 0 && is_cd_in_pipe_line(stage_0, size))
 			return 1;
 	return 0;
+||||||| merged common ancestors
+/*======================================================================== */
+
+/*================SIGNAL stuff==========================================*/
+
+void sig_handler_control_C(int signo){
+	if(signo == SIGINT){
+
+	}
+
+=======
+/*======================================================================== */
+
+/*================SIGNAL stuff==========================================*/
+
+void sig_handler_control_C(int signo){
+	struct sigaction sig;
+    sig.sa_handler = sig_handler_control_C;
+    sigemptyset(&sig.sa_mask);
+    sig.sa_flags = 0;
+    sigaction(SIGINT, &sig, NULL);
+    wait(NULL);
+    printf("\n");
+
+>>>>>>> origin
 }
+<<<<<<< HEAD
 /*checks to see if cd is in the stages  */
 int is_cd_in_pipe_line(stage_t *stages, int size){
 	int i;
@@ -191,23 +264,19 @@ int is_cd_in_pipe_line(stage_t *stages, int size){
 	}
 	return 0;
 }
-/*input double char pointer, and pass by reference output (single pointer)  */
-void char_double_pointer_to_single_with_space(char **input, char *output){
-	int i;
-	if(input == NULL){
-		perror("input double pointer is null");
-		exit(EXIT_FAILURE);
-	}
-	for(i = 0; input[i] != NULL; i++)
-	{
-		if(i == 0){
-			strcpy(output, input[0]);
-		}else{
-			strcat(output, " ");
-			strcat(output, input[i]);
-		}
+||||||| merged common ancestors
+void sig_handler_control_D(int signo){
+	if(signo == SIGKILL){
 	}
 }
+/*======================================================================== */
+
+=======
+
+
+/*======================================================================== */
+
+>>>>>>> origin
 /*=========Redirection functions=========================================*/
 /*Determien if a stage has redirection */
 /*returns values: -1 - no redirection
@@ -250,14 +319,14 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 		
 		/*Case 1 - out file redirection*/
 		if (has_redirection(stage) == 2){
-			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, 0644);
+			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, MODE_REDIRECTION);
 			in_fd = safe_open(stage.in_file, O_RDONLY | O_CREAT, 0644);
 			dup2(out_fd, STDOUT_FILENO);
 			dup2(in_fd, STDIN_FILENO);
 		}
 		/*Case 2 - out file redirection*/
 		else if(has_redirection(stage) == 1){
-			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, 0644);
+			out_fd = safe_open(stage.out_file, O_TRUNC | O_CREAT | O_WRONLY, MODE_REDIRECTION);
 			dup2(out_fd, STDOUT_FILENO);
 		}
 		/*Case 2 - read from in file*/
@@ -270,11 +339,143 @@ int redir(stage_t stage, int num_pipes, pipe_t in, pipe_t out, int std_stream){
 }
 /*=========================================================================*/
 
+char **line_script(char * line, int size){
+	int i, j, k;
+	char **script_line;
+	init_progv_buff(&script_line, size+1, CMD_LINE_MAX);
+	for(i = 0, j=0, k=0; line[i] != '\0'; i++){
+			/*Case 1 - while not a new program*/
+			if(line[i] != '\n'){
+				script_line[j][k] = line[i];
+				k++;
+			/*case 2 - new program */
+			}else{
+				script_line[j][k] = '\0';
+				k=0;
+				j++;
+			}
+	}
+	script_line[j][k] = '\0';
+	return script_line;
+}
+int count_line_progs(char *line){
+	int i, count_progs;
+	/*Count each new line and then add a final one for \0 */
+	for(i = 0, count_progs = 0; line[i] != '\0'; i++)
+		if(line[i] == '\n')
+			count_progs++;
+	return count_progs;
+}
+/*for script version for prompt version  */
+void script_shell(FILE *stream){
+			stage_t *stages;
+			char **line_prog, *line;
+			int num_line_progs;
+			char cd[WORD_MAX];
+			int num_pipes;
+			char ***progs;
+			pipe_t pipes[PIPE_MAX];
+			int i, j;
+			
+		/*go through each line_prog[i] */
+		for(line = read_long_line(stream, SCRIPT), num_line_progs = count_line_progs(line), 
+			line_prog = line_script(line, num_line_progs) , i  = 0; i < num_line_progs; i++){ 
+			/*free line */
+			if(line != NULL && i == 0)
+				free(line);
+
+			num_pipes = count_pipes(line_prog[i]);
+			/*Error check 1 - to many programs  */
+			if(num_pipes >= PROGV_MAX){
+				pipe_limit();
+				goto end;
+			}
+			/*Error check 2 - to many arguments for one program  */
+			if((progs=get_progs_with_options(line_prog[i])) == NULL){
+				goto end;
+			}
+			/*Error check 3 - ambigous_output and bad_output and input */
+			if((stages = new_stages(progs, num_pipes+1)) == NULL){
+				goto end;
+			}
+			/*Case 1 - first program is cd */
+			if(is_cd_first(stages, num_pipes+1)){
+				if(chdir(stages[0].cmd_line[1]) < 0){
+					perror(stages[0].cmd_line[1]);
+					free_stages(stages, num_pipes+1);
+					goto end;
+				}
+			}else{
+				get_pipes(pipes, num_pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes);
+			}
+			/*frees  */
+			free_stages(stages, num_pipes+1);
+end: ;
+			/*For script only run once */
+		}/*for */
+		free_progv_buff(line_prog, num_line_progs+1);
+	}
+/*===================================================================*/
+
+void interactive_shell(FILE *stream){
+			stage_t *stages;
+			char *line;
+			char cd[WORD_MAX];
+			int num_pipes;
+			char ***progs;
+			pipe_t pipes[PIPE_MAX];
+			/*set up handler */
+start:
+		while(1){
+			line = read_long_line(stream, INTERACTIVE);
+			num_pipes = count_pipes(line);
+			/*Error check 1 - to many programs  */
+			if(num_pipes >= PROGV_MAX){
+				pipe_limit();
+				free(line);
+				goto start; 
+			}
+			/*Error check 2 - to many arguments for one program  */
+			if((progs=get_progs_with_options(line)) == NULL){
+				free(line);
+				goto start;
+			}
+			/*Error check 3 - ambigous_output and bad_output and input */
+			if((stages = new_stages(progs, num_pipes+1)) == NULL){
+				free(line);
+				goto start;
+			}
+			/*Case 1 - first program is cd */
+			if(is_cd_first(stages, num_pipes+1)){
+				if(chdir(stages[0].cmd_line[1]) < 0){	
+					perror(stages[0].cmd_line[1]);	
+					free(line);
+					free_stages(stages, num_pipes+1);
+					goto start;
+				}
+			}else{
+				get_pipes(pipes, num_pipes);
+				pipe_line(stages, num_pipes+1, num_pipes, pipes);
+			}
+			/*frees  */
+			free(line);
+			free_stages(stages, num_pipes+1);
+		}
+}
 
 
 /*TODO : fix parsing in parseline, frees, signals*/
 int main(int argc, char **argv){
 
+<<<<<<< HEAD
+	FILE  *script;
+	mode_t f_mask= 0000;
+	umask(f_mask);
+	/* signals */
+	kill_flag = DONT_KILL;
+	signal(SIGINT, sig_handler_control_C);
+||||||| merged common ancestors
 	char ***progs;
 	char *line;
 	int num_pipes;
@@ -282,15 +483,26 @@ int main(int argc, char **argv){
 	pipe_t pipes[PIPE_MAX];
 	stage_t *stages;
 	int i;
-	char cd[WORD_MAX];
-	mode_t f_mask= 0000;
-	umask(f_mask);
+=======
+	char ***progs;
+	char *line;
+	int num_pipes;
+	int script_fd;
+	pipe_t pipes[PIPE_MAX];
+	stage_t *stages;
+	struct sigaction sa;
+    sigset_t set, old;
 
-	sigset_t s_mask;
-	sigemptyset(&s_mask);
-	sigaddset(&s_mask, SIGINT);
-	sigprocmask(SIG_BLOCK, &s_mask, NULL);
-	signal(SIGINT, sig_handler_control_C);
+	int i;
+>>>>>>> origin
+
+    sa.sa_handler = sig_handler_control_C;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+    sigemptyset(&set);
+    sigemptyset(&old);
+    sigaddset(&set, SIGINT);
 
 	/*Case 0 - see if the input is valid*/
 	if(argc != 1 && argc != 2){
@@ -299,42 +511,17 @@ int main(int argc, char **argv){
 	}
 	/*Case 1 - see if we have a script inputted  */
 	if(argc == 2){
-		if((script_fd = open(argv[1], O_RDONLY)) < 0){
+		if((script = fopen(argv[1], "r")) < 0){
 			perror(argv[1]);
 			exit(EXIT_FAILURE);
 		}else{
 			/*run shell scrpt */
-			line = read_long_line(script_fd);
-			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			if(is_cd_first(stages, num_pipes+1)){
-				chdir(stages[0].cmd_line[1]);
-			}else{
-				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
-			}
-			free(line);
-			free(stages);
+			script_shell(script);
+			fclose(script);
 		}
 	/*Case 2 - no script regular prompting */
 	}else{
-		/*  */
-		while(1){
-			line = read_long_line(STDIN_FILENO);
-			progs=get_progs_with_options(line);
-			num_pipes = count_pipes(line);
-			stages = new_stages(progs, num_pipes+1);
-			if(is_cd_first(stages, num_pipes+1)){
-				chdir(stages[0].cmd_line[1]);
-			}else{
-				get_pipes(pipes, num_pipes);
-				pipe_line(stages, num_pipes+1, num_pipes, pipes, &s_mask);
-			}
-			/*Case 1 - num_pipes == 0 ; could be redirection*/
-			free(line);
-			free(stages);
-		}
+		interactive_shell(stdin);
 	}
 	/*===================================================*/
 return 0;
